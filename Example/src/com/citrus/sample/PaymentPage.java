@@ -20,7 +20,7 @@ import com.citrus.payment.UserDetails;
 import com.citruspay.sampleapp.R;
 
 public class PaymentPage extends Activity {
-    private static final String BILL_URL = "http://yourwebsite.com/default.aspx";// host your bill url here
+    private static final String BILL_URL = "http://192.168.42.185:8080/billGenerator.jsp";// host your bill url here
     Button cardpayment, tokenpayment, bankpay;
 
     JSONObject customer;
@@ -42,7 +42,7 @@ public class PaymentPage extends Activity {
         cardpayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new GetBill(BILL_URL, new Callback() {
+                new GetBill(BILL_URL, 2, new Callback() {
                     @Override
                     public void onTaskexecuted(String bill, String error) {
                         if (TextUtils.isEmpty(error)) {
@@ -56,7 +56,7 @@ public class PaymentPage extends Activity {
         tokenpayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new GetBill(BILL_URL, new Callback() {
+                new GetBill(BILL_URL, 2, new Callback() {
                     @Override
                     public void onTaskexecuted(String bill, String error) {
                           tokenpay(bill);
@@ -68,7 +68,7 @@ public class PaymentPage extends Activity {
         bankpay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new GetBill(BILL_URL, new Callback() {
+                new GetBill(BILL_URL, 3, new Callback() {
                     @Override
                     public void onTaskexecuted(String bill, String error) {
                           bankpay(bill);

@@ -29,6 +29,8 @@ public class MainActivity extends Activity {
 
         init();
 
+        DebugLogConfig.enable();
+
         callback = new Callback() {
             @Override
             public void onTaskexecuted(String success, String error) {
@@ -47,7 +49,7 @@ public class MainActivity extends Activity {
         bind.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Binduser(MainActivity.this, callback).execute("tester@gmail.com", "9020184710");
+                new Binduser(MainActivity.this, callback).execute("tester46@gmail.com", "9020184710");
             }
         });
 
@@ -78,18 +80,20 @@ public class MainActivity extends Activity {
 
 
     private void init() {
-        
-        Config.setEnv("sandbox"); //replace it with production when you are ready
 
-        Config.setupSignupId("test-signup");
-        Config.setupSignupSecret("c78ec84e389814a05d3ae46546d16d2e");
+        Config.setEnv("production"); //replace it with production when you are ready
 
-        Config.setSigninId("test-signin");
-        Config.setSigninSecret("52f7e15efd4208cf5345dd554443fd99"); 
-        
-        
-       
+//        Config.setupSignupId("test-signup");
+//        Config.setupSignupSecret("c78ec84e389814a05d3ae46546d16d2e");
+//
+//        Config.setSigninId("test-signin");
+//        Config.setSigninSecret("52f7e15efd4208cf5345dd554443fd99");
 
+        Config.setupSignupId("tinqrin-mobile-signup");
+        Config.setupSignupSecret("cd871c73c0624d0f10a96db4fcb2b99d");
+
+        Config.setSigninId("tinqrin-mobile-signedin");
+        Config.setSigninSecret("1ef04e72eceb83138e2538e5fc3c4f8e");
     }
 
     private void showToast(String message, String error) {
