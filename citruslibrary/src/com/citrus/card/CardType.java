@@ -27,10 +27,11 @@ public enum CardType {
     DINERCLUB("30", "36", "38", "39"),
     JCB("35"),
     AMEX("34", "37"),
-    DISCOVER("60", "62", "64", "65");
+    DISCOVER("60", "62", "64", "65"),
+    UNKNOWN("0");
 
     private final String[] pattern;
-
+    
     private CardType(String... pattern) {
         this.pattern = pattern;
     }
@@ -41,6 +42,27 @@ public enum CardType {
                 return type;
             }
         }
-        throw new IllegalArgumentException();
+       return null;
+    }
+    
+    public static String getScheme(CardType cardType) {
+    	switch (cardType) {
+		case VISA:
+			return "VISA";
+		case MCRD:
+			return "MCRD";
+		case MAESTRO:
+			return "MAESTRO";
+		case DINERCLUB:
+			return "DINERCLUB";
+		case JCB:
+			return "JCB";
+		case AMEX:
+			return "AMEX";
+		case DISCOVER:
+			return "DISCOVER";
+		default:
+			return "UNKNOWN";
+		}
     }
 }
