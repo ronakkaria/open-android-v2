@@ -20,164 +20,164 @@ import com.citrus.payment.UserDetails;
 import com.citruspay.sampleapp.R;
 
 public class PaymentPage extends Activity {
-    private static final String BILL_URL = "http://yourwebsite.com/default.aspx";// host your bill url here
-    Button cardpayment, tokenpayment, bankpay;
+	private static final String BILL_URL = "http://yourwebsite.com/billGenerator.jsp";// host your bill url here
+	Button cardpayment, tokenpayment, bankpay;
 
-    JSONObject customer;
+	JSONObject customer;
 
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_payment_page);
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_payment_page);
+		cardpayment = (Button) this.findViewById(R.id.cardpayment);
 
-        cardpayment = (Button) this.findViewById(R.id.cardpayment);
+		tokenpayment = (Button) this.findViewById(R.id.tokenpayment);
 
-        tokenpayment = (Button) this.findViewById(R.id.tokenpayment);
+		bankpay = (Button) this.findViewById(R.id.bankpay);
 
-        bankpay = (Button) this.findViewById(R.id.bankpay);
+		customer = new JSONObject();
 
-        customer = new JSONObject();
+		cardpayment.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				new GetBill(BILL_URL, 2, new Callback() {
+					@Override
+					public void onTaskexecuted(String bill, String error) {
+						if (TextUtils.isEmpty(error)) {
+							cardpay(bill);
+						}
+					}
+				}).execute();
+			}
+		});
 
-        cardpayment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new GetBill(BILL_URL, new Callback() {
-                    @Override
-                    public void onTaskexecuted(String bill, String error) {
-                        if (TextUtils.isEmpty(error)) {
-                            cardpay(bill);
-                        }
-                    }
-                }).execute();
-            }
-        });
+		tokenpayment.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				new GetBill(BILL_URL, 2, new Callback() {
+					@Override
+					public void onTaskexecuted(String bill, String error) {
+						tokenpay(bill);
+					}
+				}).execute();
+			}
+		});
 
-        tokenpayment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new GetBill(BILL_URL, new Callback() {
-                    @Override
-                    public void onTaskexecuted(String bill, String error) {
-                          tokenpay(bill);
-                    }
-                }).execute();
-            }
-        });
+		bankpay.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				new GetBill(BILL_URL, 3, new Callback() {
+					@Override
+					public void onTaskexecuted(String bill, String error) {
+						bankpay(bill);
+					}
+				}).execute();
+			}
+		});
 
-        bankpay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new GetBill(BILL_URL, new Callback() {
-                    @Override
-                    public void onTaskexecuted(String bill, String error) {
-                          bankpay(bill);
-                    }
-                }).execute();
-            }
-        });
+		filluserDetails();
+	}
 
-        filluserDetails();
-    }
+	private void cardpay(String bill_string) {
+		Bill bill = new Bill(bill_string);
 
-    private void cardpay(String bill_string) {
-        Bill bill = new Bill(bill_string);
+		Card card = new Card("4111111111111111", "11", "21", "000", "Tony Stark", "debit");
 
-        Card card = new Card("4111111111111111", "11", "21", "000", "Tony Stark", "debit");
+		UserDetails userDetails = new UserDetails(customer);
 
-        UserDetails userDetails = new UserDetails(customer);
+		PG paymentgateway = new PG(card, bill, userDetails);
 
-        PG paymentgateway = new PG(card, bill, userDetails);
+		paymentgateway.charge(new Callback() {
+			@Override
+			public void onTaskexecuted(String success, String error) {
+				processresponse(success, error);
+			}
+		});
+	}
 
-        paymentgateway.charge(new Callback() {
-            @Override
-            public void onTaskexecuted(String success, String error) {
-                processresponse(success, error);
-            }
-        });
-    }
+	private void tokenpay(String bill_string) {
+		Bill bill = new Bill(bill_string);
 
-    private void tokenpay(String bill_string) {
-        Bill bill = new Bill(bill_string);
+		Card card = new Card("e8c18a9aac39cfeb6f0d02f28ed4660b", "123");
 
-        Card card = new Card("e8c18a9aac39cfeb6f0d02f28ed4660b", "123");
+		UserDetails userDetails = new UserDetails(customer);
 
-        UserDetails userDetails = new UserDetails(customer);
+		PG paymentgateway = new PG(card, bill, userDetails);
 
-        PG paymentgateway = new PG(card, bill, userDetails);
+		paymentgateway.charge(new Callback() {
+			@Override
+			public void onTaskexecuted(String success, String error) {
+				processresponse(success, error);
+			}
+		});
+	}
 
-        paymentgateway.charge(new Callback() {
-            @Override
-            public void onTaskexecuted(String success, String error) {
-                processresponse(success, error);
-            }
-        });
-    }
+	private void bankpay(String bill_string) {
+		Bill bill = new Bill(bill_string);
 
-    private void bankpay(String bill_string) {
-        Bill bill = new Bill(bill_string);
+		Bank netbank = new Bank("CID002");
 
-        Bank netbank = new Bank("CID002");
+		UserDetails userDetails = new UserDetails(customer);
 
-        UserDetails userDetails = new UserDetails(customer);
+		PG paymentgateway = new PG(netbank, bill, userDetails);
 
-        PG paymentgateway = new PG(netbank, bill, userDetails);
+		paymentgateway.charge(new Callback() {
+			@Override
+			public void onTaskexecuted(String success, String error) {
+				processresponse(success, error);
+			}
+		});
+	}
 
-        paymentgateway.charge(new Callback() {
-            @Override
-            public void onTaskexecuted(String success, String error) {
-                processresponse(success, error);
-            }
-        });
-    }
+	private void filluserDetails() {
+		/*
+		 * All the below mentioned parameters are mandatory - missing anyone of them may create errors Do not change the
+		 * key in the json below - only change the values
+		 */
 
-    private void filluserDetails() {
-        /*All the below mentioned parameters are mandatory - missing anyone of them may create errors
-        * Do not change the key in the json below - only change the values*/
+		try {
+			customer.put("firstName", "Tester");
+			customer.put("lastName", "Citrus");
+			customer.put("email", "tester@gmail.com");
+			customer.put("mobileNo", "9170164284");
+			customer.put("street1", "streetone");
+			customer.put("street2", "streettwo");
+			customer.put("city", "Mumbai");
+			customer.put("state", "Maharashtra");
+			customer.put("country", "India");
+			customer.put("zip", "400052");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 
-        try {
-            customer.put("firstName", "Tester");
-            customer.put("lastName", "Citrus");
-            customer.put("email", "tester@gmail.com");
-            customer.put("mobileNo", "9170164284");
-            customer.put("street1", "streetone");
-            customer.put("street2", "streettwo");
-            customer.put("city", "Mumbai");
-            customer.put("state", "Maharashtra");
-            customer.put("country", "India");
-            customer.put("zip", "400052");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+	}
 
-    }
+	private void processresponse(String response, String error) {
 
-    private void processresponse(String response, String error) {
+		if (!TextUtils.isEmpty(response)) {
+			try {
 
-        if (!TextUtils.isEmpty(response)) {
-            try {
+				JSONObject redirect = new JSONObject(response);
+				Intent i = new Intent(PaymentPage.this, WebPage.class);
 
-                JSONObject redirect = new JSONObject(response);
-                Intent i = new Intent(PaymentPage.this, WebPage.class);
+				if (!TextUtils.isEmpty(redirect.getString("redirectUrl"))) {
 
-                if (!TextUtils.isEmpty(redirect.getString("redirectUrl"))) {
+					i.putExtra("url", redirect.getString("redirectUrl"));
+					startActivity(i);
+				} else {
+					Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+				}
 
-                    i.putExtra("url", redirect.getString("redirectUrl"));
-                    startActivity(i);
-                }
-                else {
-                    Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
-                }
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
+		else {
+			Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
+		}
 
-        else {
-            Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
-        }
-
-    }
+	}
 
 }

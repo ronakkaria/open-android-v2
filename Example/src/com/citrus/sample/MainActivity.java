@@ -18,86 +18,83 @@ import com.citruspay.sampleapp.R;
 
 public class MainActivity extends Activity {
 
-    Button bind, savecard, getWallet, paybutton;
+	Button bind, savecard, getWallet, paybutton;
 
-    Callback callback;
+	Callback callback;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
 
-        init();
+		init();
 
-        callback = new Callback() {
-            @Override
-            public void onTaskexecuted(String success, String error) {
-                showToast(success, error);
-            }
-        };
+		DebugLogConfig.enable();
 
-        bind = (Button) this.findViewById(R.id.bind);
+		callback = new Callback() {
+			@Override
+			public void onTaskexecuted(String success, String error) {
+				showToast(success, error);
+			}
+		};
 
-        savecard = (Button) this.findViewById(R.id.savecard);
+		bind = (Button) this.findViewById(R.id.bind);
 
-        getWallet = (Button) this.findViewById(R.id.getWallet);
+		savecard = (Button) this.findViewById(R.id.savecard);
 
-        paybutton = (Button) this.findViewById(R.id.paybutton);
+		getWallet = (Button) this.findViewById(R.id.getWallet);
 
-        bind.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new Binduser(MainActivity.this, callback).execute("tester@gmail.com", "9020184710");
-            }
-        });
+		paybutton = (Button) this.findViewById(R.id.paybutton);
 
-        savecard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Card card = new Card("4242424242424242", "12", "20", "123", "Bruce Wayne", "debit");
+		bind.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				new Binduser(MainActivity.this, callback).execute("tester46@gmail.com", "9020184710");
+			}
+		});
 
-                new Savecard(MainActivity.this, callback).execute(card);
-            }
-        });
+		savecard.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Card card = new Card("4242424242424242", "12", "20", "123", "Bruce Wayne", "debit");
 
-        getWallet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new GetWallet(MainActivity.this, callback).execute();
-            }
-        });
+				new Savecard(MainActivity.this, callback).execute(card);
+			}
+		});
 
-        paybutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, PaymentPage.class);
-                startActivity(intent);
-            }
-        });
-    }
+		getWallet.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				new GetWallet(MainActivity.this, callback).execute();
+			}
+		});
 
+		paybutton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(MainActivity.this, PaymentPage.class);
+				startActivity(intent);
+			}
+		});
+	}
 
-    private void init() {
-        
-        Config.setEnv("sandbox"); //replace it with production when you are ready
+	private void init() {
 
-        Config.setupSignupId("test-signup");
-        Config.setupSignupSecret("c78ec84e389814a05d3ae46546d16d2e");
+		Config.setEnv("sandbox"); // replace it with production when you are ready
 
-        Config.setSigninId("test-signin");
-        Config.setSigninSecret("52f7e15efd4208cf5345dd554443fd99"); 
-        
-        
-       
+		Config.setupSignupId("test-signup");
+		Config.setupSignupSecret("c78ec84e389814a05d3ae46546d16d2e");
 
-    }
+		Config.setSigninId("test-signin");
+		Config.setSigninSecret("52f7e15efd4208cf5345dd554443fd99");
+	}
 
-    private void showToast(String message, String error) {
-        if (!TextUtils.isEmpty(message))
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+	private void showToast(String message, String error) {
+		if (!TextUtils.isEmpty(message))
+			Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
 
-        if (!TextUtils.isEmpty(error))
-            Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
-    }
+		if (!TextUtils.isEmpty(error))
+			Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
+	}
 
 }

@@ -11,29 +11,41 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.AsyncTask;
+import android.text.TextUtils;
 
 import com.citrus.mobile.Callback;
 
-class GetBill extends AsyncTask<Void, Void, Void> {
+class GetBill extends AsyncTask<Void, Void, String> {
     String billurl;
-
-    HttpResponse response;
-
     Callback callback;
+    double amount;
 
-    public GetBill(String url, Callback callback) {
+    public GetBill(String url, double amount, Callback callback) {
         billurl = url;
         this.callback = callback;
+        this.amount = amount;
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
+    protected String doInBackground(Void... params) {
         HttpClient httpClient = new DefaultHttpClient();
-        HttpGet httpGet = new HttpGet(billurl);
+        HttpGet httpGet = new HttpGet(billurl + "?amount=" + amount);
+        HttpResponse response = null;
 
         try {
             response = httpClient.execute(httpGet);
+
+            if (response.getStatusLine().getStatusCode() == 200) {
+                JSONObject jsonObject = new JSONObject(EntityUtils.toString(response.getEntity()));
+                if (jsonObject != null) {
+                    return jsonObject.toString();
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -41,21 +53,10 @@ class GetBill extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
-
-        if (response.getStatusLine().getStatusCode() == 200) {
-            JSONObject jsonObject = null;
-            try {
-                jsonObject = new JSONObject(EntityUtils.toString(response.getEntity()));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            callback.onTaskexecuted(jsonObject.toString(), "");
-        }
-        else {
+    protected void onPostExecute(String response) {
+        if (!TextUtils.isEmpty(response)) {
+            callback.onTaskexecuted(response, "");
+        } else {
             callback.onTaskexecuted("", "Could not get the bill");
         }
     }
