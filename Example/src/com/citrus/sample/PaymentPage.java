@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -20,7 +21,7 @@ import com.citrus.payment.UserDetails;
 import com.citruspay.sampleapp.R;
 
 public class PaymentPage extends Activity {
-	private static final String BILL_URL = "http://yourwebsite.com/billGenerator.jsp";// host your bill url here
+	private static final String BILL_URL = "http://192.168.10.9:8080/billGenerator.prod.jsp";// host your bill url here
 	Button cardpayment, tokenpayment, bankpay;
 
 	JSONObject customer;
@@ -82,7 +83,7 @@ public class PaymentPage extends Activity {
 	private void cardpay(String bill_string) {
 		Bill bill = new Bill(bill_string);
 
-		Card card = new Card("4111111111111111", "11", "21", "000", "Tony Stark", "debit");
+        Card card = new Card("4111111111111111", "12", "19", "123", "James Bond", "debit");
 
 		UserDetails userDetails = new UserDetails(customer);
 
@@ -116,7 +117,7 @@ public class PaymentPage extends Activity {
 	private void bankpay(String bill_string) {
 		Bill bill = new Bill(bill_string);
 
-		Bank netbank = new Bank("CID002");
+		Bank netbank = new Bank("CID010");
 
 		UserDetails userDetails = new UserDetails(customer);
 
@@ -179,5 +180,4 @@ public class PaymentPage extends Activity {
 		}
 
 	}
-
 }

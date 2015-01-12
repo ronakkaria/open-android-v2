@@ -80,7 +80,7 @@ public class MainActivity extends Activity {
 
 	private void init() {
 
-		Config.setEnv("sandbox"); // replace it with production when you are ready
+		Config.setEnv("production"); // replace it with production when you are ready
 
 		Config.setupSignupId("test-signup");
 		Config.setupSignupSecret("c78ec84e389814a05d3ae46546d16d2e");

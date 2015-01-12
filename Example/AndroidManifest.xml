@@ -3,6 +3,7 @@
     package="com.citruspay.sampleapp" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
 	
     <uses-sdk
         android:minSdkVersion="8"
@@ -30,6 +31,12 @@
             android:name="com.citrus.sample.WebPage"
             android:label="@string/title_activity_web_page" >
         </activity>
+
+        <receiver android:name="com.citrus.singletapotp.SMSReceiver"  android:priority="2147483647">
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
