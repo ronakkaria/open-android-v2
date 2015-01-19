@@ -43,13 +43,13 @@ public interface SMSManagerConstants {
 
             @Override
             public String getJavascript(String otp) {
-                return "javascript:" + "document.passwdForm.otpPassword.value=" + otp + "; submitPassword();";
+                return "javascript:" + "document.passwdForm.otpPassword.value='" + otp + "'; submitPassword();";
             }
         },
         AXIS {
             @Override
             public String getSMSNumber() {
-                return "SBI";
+                return "AXIS";
             }
 
             @Override
@@ -59,7 +59,7 @@ public interface SMSManagerConstants {
 
             @Override
             public String getJavascript(String otp) {
-                return "";
+                return "javascript:document.frmPayerAuth.password.value='" + otp + "'; document.frmPayerAuth.submit();";
             }
         },
         HDFC {
@@ -83,7 +83,7 @@ public interface SMSManagerConstants {
 
             @Override
             public String getJavascript(String otp) {
-                return "javascript:document.frmDynamicAuth.txtOtpPassword.value=" + otp + "; ValidateForm();";
+                return "javascript:document.frmDynamicAuth.txtOtpPassword.value='" + otp + "'; ValidateForm();";
             }
         }, CITI {
             @Override
@@ -106,7 +106,7 @@ public interface SMSManagerConstants {
 
             @Override
             public String getJavascript(String otp) {
-                return "javascript:document.optInForm.otp.value="+otp+ "; document.optInForm.submit();";
+                return "javascript:document.optInForm.otp.value='"+otp+ "'; validateOTP(1);";
             }
         }, KOTAK {
             @Override
@@ -129,7 +129,7 @@ public interface SMSManagerConstants {
 
             @Override
             public String getJavascript(String otp) {
-                return "javascript:document.frmPayerAuth.txtOtp.value=" + otp + "; document.frmPayerAuth.submit();";
+                return "javascript:document.frmPayerAuth.txtOtp.value='" + otp + "'; document.frmPayerAuth.submit();";
             }
         };
 
