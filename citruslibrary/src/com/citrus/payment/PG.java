@@ -9,209 +9,235 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- */
+*/
 package com.citrus.payment;
 
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.citrus.asynch.MakePayment;
 import com.citrus.card.Card;
-import com.citrus.card.CardType;
 import com.citrus.mobile.Callback;
 import com.citrus.netbank.Bank;
 
 public class PG {
-	private Card card;
-	private Bill bill;
-	private UserDetails userDetails;
-	private Callback callback;
+    private Card card;
+    private Bill bill;
+    private UserDetails userDetails;
+    private Callback callback;
 
-	private JSONObject payment;
+    private JSONObject payment;
 
-	private Bank bank;
+    private Bank bank;
 
-	private String paymenttype;
+    private String paymenttype;
+    
+    private JSONObject customParameters = null;
 
-	ArrayList<String> mylist = new ArrayList<String>();
+    ArrayList<String> mylist = new ArrayList<String>();
 
-	public PG(Card card, Bill bill, UserDetails userDetails) {
-		this.card = card;
-		this.bill = bill;
-		this.userDetails = userDetails;
 
-		if (TextUtils.isEmpty(card.getCardNumber())) {
-			paymenttype = "cardtoken";
-		} else {
-			paymenttype = "card";
-		}
-	}
+    public PG(Card card, Bill bill, UserDetails userDetails) {
+        this.card = card;
+        this.bill = bill;
+        this.userDetails = userDetails;
 
-	public PG(Bank bank, Bill bill, UserDetails userDetails) {
-		this.bank = bank;
-		this.bill = bill;
-		this.userDetails = userDetails;
-		paymenttype = "netbank";
-	}
+        if (TextUtils.isEmpty(card.getCardNumber())) {
+            paymenttype = "cardtoken";
+        }
+        else {
+            paymenttype = "card";
+        }
+    }
 
-	public void charge(Callback callback) {
-		this.callback = callback;
+    public PG(Bank bank, Bill bill, UserDetails userDetails) {
+        this.bank = bank;
+        this.bill = bill;
+        this.userDetails = userDetails;
+        paymenttype = "netbank";
+    }
 
-		validate();
+    public void charge(Callback callback) {
+        this.callback = callback;
 
-	}
+        validate();
 
-	private void validate() {
+    }
 
-		if (TextUtils.equals(paymenttype.toString(), "card") || TextUtils.equals(paymenttype.toString(), "cardtoken")) {
-			if (TextUtils.isEmpty(card.getCardNumber()) && TextUtils.isEmpty(card.getcardToken())) {
-				callback.onTaskexecuted("", "Invalid Card or Card token!");
-				return;
-			}
+    
+    public void setCustomParameters(JSONObject customParameters)
+    {
+    	this.customParameters = customParameters;
+    }
 
-			if (!TextUtils.isEmpty(card.getCardNumber())) {
-				if (!card.validateCard()) {
-					callback.onTaskexecuted("", "Invalid Card!");
-					return;
-				}
-			}
-		}
+    private void validate() {
 
-		String access_key = bill.getAccess_key();
-		String txn_id = bill.getTxnId();
-		String signature = bill.getSignature();
-		String returnUrl = bill.getReturnurl();
+        if (TextUtils.equals(paymenttype.toString(), "card") || TextUtils.equals(paymenttype.toString(), "cardtoken")) {
+            if (TextUtils.isEmpty(card.getCardNumber()) && TextUtils.isEmpty(card.getcardToken())) {
+                callback.onTaskexecuted("","Invalid Card or Card token!");
+                return;
+            }
 
-		String email = userDetails.getEmail();
-		String mobile = userDetails.getMobile();
-		String firstname = userDetails.getFirstname();
-		String lastname = userDetails.getLastname();
+            if (!TextUtils.isEmpty(card.getCardNumber())) {
+                if (!card.validateCard()) {
+                    callback.onTaskexecuted("","Invalid Card!");
+                    return;
+                }
+            }
+        }
 
-		mylist.add(access_key);
-		mylist.add(txn_id);
-		mylist.add(signature);
-		mylist.add(returnUrl);
-		mylist.add(email);
-		mylist.add(mobile);
-		mylist.add(firstname);
-		mylist.add(lastname);
 
-		checkifnull();
 
-		formjson();
-	}
+        String access_key = bill.getAccess_key();
+        String txn_id = bill.getTxnId();
+        String signature = bill.getSignature();
+        String returnUrl = bill.getReturnurl();
 
-	private void checkifnull() {
-		for (String param : mylist) {
-			if (TextUtils.isEmpty(param)) {
-				callback.onTaskexecuted("", "Bill or userdetails can not contain empty parameters");
-				return;
-			}
-		}
-	}
+        String email = userDetails.getEmail();
+        String mobile = userDetails.getMobile();
+        String firstname = userDetails.getFirstname();
+        String lastname = userDetails.getLastname();
 
-	private void formjson() {
-		JSONObject paymentToken = new JSONObject();
-		JSONObject paymentmode;
-		if (TextUtils.equals(paymenttype.toString(), "card")) {
+        mylist.add(access_key);
+        mylist.add(txn_id);
+        mylist.add(signature);
+        mylist.add(returnUrl);
+        mylist.add(email);
+        mylist.add(mobile);
+        mylist.add(firstname);
+        mylist.add(lastname);
 
-			paymentmode = new JSONObject();
-			try {
-				paymentmode.put("cvv", card.getCvvNumber());
-				paymentmode.put("holder", card.getCardHolderName());
-				paymentmode.put("number", card.getCardNumber());
-				paymentmode.put("scheme", CardType.getScheme(card.getCardType()));
-				paymentmode.put("type", card.getCrdr());
-				paymentmode.put("expiry", card.getExpiryMonth() + "/" + card.getExpiryYear());
+        checkifnull();
 
-				paymentToken.put("type", "paymentOptionToken");
-				paymentToken.put("paymentMode", paymentmode);
-			} catch (JSONException e) {
-				e.printStackTrace();
-				callback.onTaskexecuted("", "Problem forming payment Json");
-				return;
-			}
+        formjson();
+    }
 
-		} else if (TextUtils.equals(paymenttype.toString(), "cardtoken")) {
-			try {
-				paymentToken.put("type", "paymentOptionIdToken");
-				paymentToken.put("id", card.getcardToken());
-				paymentToken.put("cvv", card.getCvvNumber());
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
+    private void checkifnull() {
+        for (String param : mylist) {
+            if (TextUtils.isEmpty(param)) {
+                callback.onTaskexecuted("", "Bill or userdetails can not contain empty parameters");
+                return;
+            }
+        }
+    }
 
-		} else {
-			try {
-				paymentmode = new JSONObject();
-				paymentmode.put("type", "netbanking");
-				paymentmode.put("code", bank.getCidnumber());
-				paymentToken.put("type", "paymentOptionToken");
-				paymentToken.put("paymentMode", paymentmode);
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
+    private void formjson() {
+        JSONObject paymentToken = new JSONObject();
+        JSONObject paymentmode;
+        if (TextUtils.equals(paymenttype.toString(), "card")){
 
-		}
+            paymentmode = new JSONObject();
+            try {
+                paymentmode.put("cvv", card.getCvvNumber());
+                paymentmode.put("holder", card.getCardHolderName());
+                paymentmode.put("number", card.getCardNumber());
+                paymentmode.put("scheme", card.getCardType());
+                paymentmode.put("type", card.getCrdr());
+                paymentmode.put("expiry", card.getExpiryMonth() + "/" + card.getExpiryYear());
 
-		JSONObject userdetails = new JSONObject();
+                paymentToken.put("type","paymentOptionToken");
+                paymentToken.put("paymentMode", paymentmode);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                callback.onTaskexecuted("", "Problem forming payment Json");
+                return;
+            }
 
-		JSONObject address = new JSONObject();
+        }
+        else if (TextUtils.equals(paymenttype.toString(), "cardtoken")) {
+            try {
+                paymentToken.put("type","paymentOptionIdToken");
+                paymentToken.put("id", card.getcardToken());
+                paymentToken.put("cvv", card.getCvvNumber());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-		try {
-			address.put("state", userDetails.getState());
-			address.put("street1", userDetails.getStreet1());
-			address.put("street2", userDetails.getStreet2());
-			address.put("city", userDetails.getCity());
-			address.put("country", userDetails.getCountry());
-			address.put("zip", userDetails.getZip());
-		} catch (JSONException e) {
-			e.printStackTrace();
-			callback.onTaskexecuted("", "Problem forming in address Json");
-			return;
-		}
+        }
+        else {
+            try {
+                paymentmode = new JSONObject();
+                paymentmode.put("type", "netbanking");
+                paymentmode.put("code", bank.getCidnumber());
+                paymentToken.put("type", "paymentOptionToken");
+                paymentToken.put("paymentMode", paymentmode);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-		try {
-			userdetails.put("email", userDetails.getEmail());
-			userdetails.put("mobileNo", userDetails.getMobile());
-			userdetails.put("firstName", userDetails.getFirstname());
-			userdetails.put("lastName", userDetails.getLastname());
-			userdetails.put("address", address);
-		} catch (JSONException e) {
-			e.printStackTrace();
-			callback.onTaskexecuted("", "Problem forming in userdetails Json");
-			return;
-		}
+        }
 
-		payment = new JSONObject();
 
-		try {
-			payment.put("returnUrl", bill.getReturnurl());
-			payment.put("amount", bill.getAmount());
-			payment.put("merchantAccessKey", bill.getAccess_key());
-			payment.put("paymentToken", paymentToken);
-			payment.put("merchantTxnId", bill.getTxnId());
-			payment.put("requestSignature", bill.getSignature());
-			payment.put("userDetails", userdetails);
-		} catch (JSONException e) {
-			e.printStackTrace();
-			callback.onTaskexecuted("", "Problem forming in userdetails Json");
-			return;
-		}
+        JSONObject userdetails = new JSONObject();
 
-		JSONObject headers = new JSONObject();
+        JSONObject address = new JSONObject();
 
-		try {
-			headers.put("Content-Type", "application/json");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+        try {
+            address.put("state", userDetails.getState());
+            address.put("street1", userDetails.getStreet1());
+            address.put("street2", userDetails.getStreet2());
+            address.put("city", userDetails.getCity());
+            address.put("country", userDetails.getCountry());
+            address.put("zip", userDetails.getZip());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            callback.onTaskexecuted("", "Problem forming in address Json");
+            return;
+        }
 
-		new MakePayment(payment, headers, callback).execute();
+        try {
+            userdetails.put("email", userDetails.getEmail());
+            userdetails.put("mobileNo", userDetails.getMobile());
+            userdetails.put("firstName", userDetails.getFirstname());
+            userdetails.put("lastName", userDetails.getLastname());
+            userdetails.put("address", address);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            callback.onTaskexecuted("", "Problem forming in userdetails Json");
+            return;
+        }
 
-	}
+        payment = new JSONObject();
+
+        try {
+            payment.put("returnUrl", bill.getReturnurl());
+            payment.put("amount", bill.getAmount());
+            payment.put("merchantAccessKey", bill.getAccess_key());
+            
+            if(customParameters!=null)
+            {
+            	payment.put("customParameters", customParameters);
+            }
+    
+            
+            payment.put("paymentToken", paymentToken);
+            payment.put("merchantTxnId", bill.getTxnId());
+            payment.put("requestSignature", bill.getSignature());
+            payment.put("userDetails", userdetails);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            callback.onTaskexecuted("", "Problem forming in userdetails Json");
+            return;
+        }
+
+        JSONObject headers = new JSONObject();
+
+        try {
+            headers.put("Content-Type", "application/json");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        
+        new MakePayment(payment, headers, callback).execute();
+
+    }
 }
