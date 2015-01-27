@@ -14,7 +14,7 @@ import com.citrus.asynch.Savecard;
 import com.citrus.card.Card;
 import com.citrus.mobile.Callback;
 import com.citrus.mobile.Config;
-import com.citrus.user.User;
+import com.citrus.mobile.User;
 import com.citruspay.sampleapp.R;
 
 public class MainActivity extends Activity {
