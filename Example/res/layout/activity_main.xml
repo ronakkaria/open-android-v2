@@ -32,5 +32,12 @@
         android:layout_height="50dp"
         android:text="Payments"
         android:layout_marginBottom="20dp"/>
+    
+     <Button
+        android:id="@+id/logoutbutton"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Logout"
+        android:layout_marginBottom="20dp"/>
 
 </LinearLayout>
