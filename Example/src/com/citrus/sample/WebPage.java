@@ -1,5 +1,6 @@
 package com.citrus.sample;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,13 +10,13 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
-
-import com.citruspay.sampleapp.R;
+import com.citruspay.sample.R;
 
 public class WebPage extends Activity {
     WebView webView;
 
-    @Override
+    @SuppressLint("NewApi")
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_page);

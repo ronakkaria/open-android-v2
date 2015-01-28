@@ -15,11 +15,11 @@ import com.citrus.card.Card;
 import com.citrus.mobile.Callback;
 import com.citrus.mobile.Config;
 import com.citrus.mobile.User;
-import com.citruspay.sampleapp.R;
+import com.citruspay.sample.R;
 
 public class MainActivity extends Activity {
 
-	Button bind, savecard, getWallet, paybutton, logoutButton;
+	Button bind, savecard, getWallet, paybutton, logoutButton, widgetButton;
 
 	Callback callback;
 
@@ -48,6 +48,8 @@ public class MainActivity extends Activity {
 		paybutton = (Button) this.findViewById(R.id.paybutton);
 		
 		logoutButton = (Button) this.findViewById(R.id.logoutbutton);
+		
+		widgetButton = (Button) this.findViewById(R.id.widgets);
 		
 		
 
@@ -101,6 +103,16 @@ public class MainActivity extends Activity {
 			
 			}
 		});
+		
+		
+        widgetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, Widgets.class);
+                startActivity(intent);
+            }
+        });
+
 	}
 
 	private void init() {
