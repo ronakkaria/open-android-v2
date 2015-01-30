@@ -10,16 +10,18 @@ import android.widget.Toast;
 
 import com.citrus.asynch.Binduser;
 import com.citrus.asynch.GetWallet;
+import com.citrus.asynch.SaveBank;
 import com.citrus.asynch.Savecard;
 import com.citrus.card.Card;
 import com.citrus.mobile.Callback;
 import com.citrus.mobile.Config;
 import com.citrus.mobile.User;
+import com.citrus.netbank.Bank;
 import com.citruspay.sample.R;
 
 public class MainActivity extends Activity {
 
-	Button bind, savecard, getWallet, paybutton, logoutButton, widgetButton;
+	Button bind, savecard, savebank, getWallet, paybutton, logoutButton, widgetButton;
 
 	Callback callback;
 
@@ -42,6 +44,8 @@ public class MainActivity extends Activity {
 		bind = (Button) this.findViewById(R.id.bind);
 
 		savecard = (Button) this.findViewById(R.id.savecard);
+
+        savebank = (Button) this.findViewById(R.id.savebank);
 
 		getWallet = (Button) this.findViewById(R.id.getWallet);
 
@@ -71,6 +75,18 @@ public class MainActivity extends Activity {
 
 			}
 		});
+
+        savebank.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               Bank bank = new Bank("ICICI Bank", "CID001");
+                if(User.isUserLoggedIn(MainActivity.this))
+                    new SaveBank(MainActivity.this, callback).execute(bank);
+                else
+                    Toast.makeText(getApplicationContext(), "Bind the user before saving bank details.", Toast.LENGTH_LONG).show();
+
+            }
+        });
 
 		getWallet.setOnClickListener(new View.OnClickListener() {
 			@Override

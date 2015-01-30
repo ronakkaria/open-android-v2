@@ -26,9 +26,6 @@ public class WebPage extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_page);
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
-                new IntentFilter("action_otp_received"));
-
         String url = getIntent().getStringExtra("url");
 
         webView = (WebView) this.findViewById(R.id.webview);
@@ -55,6 +52,21 @@ public class WebPage extends Activity {
         webView.loadUrl(url);
 
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+                new IntentFilter("action_otp_received"));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
     }
 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
