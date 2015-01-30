@@ -19,8 +19,19 @@ public class Bank {
 
     private String cidnumber;
 
+    private String bankName;
+
     public Bank(String cidnumber) {
         this.cidnumber = cidnumber;
+    }
+
+    public Bank(String bankName, String cidnumber) {
+        this.bankName = bankName;
+        this.cidnumber = cidnumber;
+    }
+
+    public String getBankName() {
+        return this.bankName;
     }
 
     public String getCidnumber() {
