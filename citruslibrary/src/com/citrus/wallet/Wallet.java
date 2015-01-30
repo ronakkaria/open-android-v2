@@ -12,10 +12,6 @@
  */
 package com.citrus.wallet;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 
 import com.citrus.card.Card;
@@ -23,106 +19,186 @@ import com.citrus.card.CardType;
 import com.citrus.mobile.Config;
 import com.citrus.mobile.OauthToken;
 import com.citrus.mobile.RESTclient;
+import com.citrus.netbank.Bank;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by shardul on 19/11/14.
  */
 public class Wallet {
-	private Card card;
+    private Card card;
+    private Bank bank;
 
-	public Wallet(Card card) {
-		this.card = card;
-		base_url = Config.getEnv();
-	}
+    public Wallet(Card card) {
+        this.card = card;
+        base_url = Config.getEnv();
+    }
 
-	private String base_url;
+    public Wallet(Bank bank) {
+        this.bank = bank;
+        base_url = Config.getEnv();
+    }
 
-	public Wallet() {
-		base_url = Config.getEnv();
-	}
+    private String base_url;
 
-	public String saveCard(Activity activity) {
+    public Wallet() {
+        base_url = Config.getEnv();
+    }
 
-		OauthToken token = new OauthToken(activity);
-		String access_token = null;
+    /**
+     * Save the netbanking option as user preffered option.
+     *
+     * @param activity
+     * @return
+     */
+    public String saveBank(Activity activity) {
 
-		try {
-			access_token = token.getuserToken().getString("access_token");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+        /*
+         * Following json will be required to save the bank as payment option.
+          *
+          * {"paymentOptions":[{"owner":"","type":"netbanking","bank":"ICICI Bank"}],"type":"payment","defaultOption":""}
+         */
 
-		JSONObject cardJson = new JSONObject();
-		JSONObject cardDetails = new JSONObject();
+        OauthToken token = new OauthToken(activity);
+        String access_token = null;
 
-		try {
-			cardJson.put("type", "payment");
-			cardDetails.put("owner", card.getCardHolderName());
-			cardDetails.put("number", card.getCardNumber());
-			cardDetails.put("scheme", CardType.getScheme(card.getCardType()));
-			cardDetails.put("type", card.getCrdr().toLowerCase());
-			cardDetails.put("expiryDate",
-					card.getExpiryMonth() + "/" + card.getExpiryYear().substring(card.getExpiryYear().length() - 2));
+        try {
+            access_token = token.getuserToken().getString("access_token");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-			JSONArray array = new JSONArray();
-			array.put(cardDetails);
+        JSONObject bankJson = new JSONObject();
+        JSONObject bankDetails = new JSONObject();
 
-			cardJson.put("paymentOptions", array);
+        try {
+            bankJson.put("type", "payment");
+            bankJson.put("defaultOption", "");
+            bankDetails.put("owner", "");
+            bankDetails.put("type", "netbanking");
+            bankDetails.put("bank", bank.getBankName());
 
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+            JSONArray array = new JSONArray();
+            array.put(bankDetails);
 
-		JSONObject headers = new JSONObject();
+            bankJson.put("paymentOptions", array);
 
-		try {
-			headers.put("Content-Type", "application/json");
-			headers.put("Authorization", "Bearer " + access_token);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-		RESTclient resTclient = new RESTclient("wallet", base_url, null, headers);
+        JSONObject headers = new JSONObject();
 
-		JSONObject response = resTclient.makePutrequest(cardJson);
+        try {
+            headers.put("Content-Type", "application/json");
+            headers.put("Authorization", "Bearer " + access_token);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-		if (response == null) {
-			JSONObject jsonObject = new JSONObject();
-			try {
-				jsonObject.put("response", "card saved successfully!");
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			return jsonObject.toString();
-		}
+        RESTclient resTclient = new RESTclient("wallet", base_url, null, headers);
 
-		return response.toString();
+        JSONObject response = resTclient.makePutrequest(bankJson);
 
-	}
+        if (response == null) {
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("response", "bank saved successfully!");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return jsonObject.toString();
+        }
 
-	public String getWallet(Activity activity) {
+        return response.toString();
 
-		OauthToken token = new OauthToken(activity);
-		String access_token = null;
+    }
 
-		try {
-			access_token = token.getuserToken().getString("access_token");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+    public String saveCard(Activity activity) {
 
-		JSONObject headers = new JSONObject();
+        OauthToken token = new OauthToken(activity);
+        String access_token = null;
 
-		try {
-			headers.put("Authorization", "Bearer " + access_token);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+        try {
+            access_token = token.getuserToken().getString("access_token");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-		RESTclient resTclient = new RESTclient("wallet", base_url, null, headers);
+        JSONObject cardJson = new JSONObject();
+        JSONObject cardDetails = new JSONObject();
 
-		JSONObject response = resTclient.makegetRequest();
+        try {
+            cardJson.put("type", "payment");
+            cardDetails.put("owner", card.getCardHolderName());
+            cardDetails.put("number", card.getCardNumber());
+            cardDetails.put("scheme", CardType.getScheme(card.getCardType()));
+            cardDetails.put("type", card.getCrdr().toLowerCase());
+            cardDetails.put("expiryDate",
+                    card.getExpiryMonth() + "/" + card.getExpiryYear().substring(card.getExpiryYear().length() - 2));
 
-		return response.toString();
-	}
+            JSONArray array = new JSONArray();
+            array.put(cardDetails);
+
+            cardJson.put("paymentOptions", array);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject headers = new JSONObject();
+
+        try {
+            headers.put("Content-Type", "application/json");
+            headers.put("Authorization", "Bearer " + access_token);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RESTclient resTclient = new RESTclient("wallet", base_url, null, headers);
+
+        JSONObject response = resTclient.makePutrequest(cardJson);
+
+        if (response == null) {
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("response", "card saved successfully!");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return jsonObject.toString();
+        }
+
+        return response.toString();
+
+    }
+
+    public String getWallet(Activity activity) {
+
+        OauthToken token = new OauthToken(activity);
+        String access_token = null;
+
+        try {
+            access_token = token.getuserToken().getString("access_token");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject headers = new JSONObject();
+
+        try {
+            headers.put("Authorization", "Bearer " + access_token);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RESTclient resTclient = new RESTclient("wallet", base_url, null, headers);
+
+        JSONObject response = resTclient.makegetRequest();
+
+        return response.toString();
+    }
 }
