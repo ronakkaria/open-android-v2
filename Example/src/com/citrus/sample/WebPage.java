@@ -32,7 +32,7 @@ public class WebPage extends Activity {
 
         webView.addJavascriptInterface(new JsInterface(), "CitrusResponse");
 
-        webView.setWebViewClient(new WebViewClient(){
+        webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
@@ -45,8 +45,7 @@ public class WebPage extends Activity {
         });
 
         webView.loadUrl(url);
-
-    }
+	}
 
 
     private class JsInterface {
