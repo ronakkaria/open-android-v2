@@ -18,7 +18,7 @@ import com.citrus.netbank.Bank;
 import com.citrus.payment.Bill;
 import com.citrus.payment.PG;
 import com.citrus.payment.UserDetails;
-import com.citruspay.sampleapp.R;
+import com.citruspay.sample.R;
 
 public class PaymentPage extends Activity {
 	private static final String BILL_URL = "http://192.168.10.9:8080/billGenerator.prod.jsp";// host your bill url here

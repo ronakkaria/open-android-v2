@@ -7,5 +7,6 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_payment_page">PaymentPage</string>
     <string name="title_activity_web_page">WebPage</string>
+    <string name="title_activity_widgets">Widgets</string>
 
 </resources>

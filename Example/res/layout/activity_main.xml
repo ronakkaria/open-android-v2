@@ -3,34 +3,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.citrus.sample.MainActivity">
+    tools:context="com.citrus.sample.MainActivity" >
 
     <Button
         android:id="@+id/bind"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Bind User"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="20dp"
+        android:text="Bind User" />
 
     <Button
         android:id="@+id/savecard"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Save Card"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="20dp"
+        android:text="Save Card" />
 
     <Button
         android:id="@+id/getWallet"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Get Cards"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="20dp"
+        android:text="Get Cards" />
 
     <Button
         android:id="@+id/paybutton"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Payments"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="20dp"
+        android:text="Payments" />
+
+    <Button
+        android:id="@+id/logoutbutton"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginBottom="20dp"
+        android:text="Logout" />
+
+    <Button
+        android:id="@+id/widgets"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Widgets" />
 
 </LinearLayout>

@@ -14,11 +14,12 @@ import com.citrus.asynch.Savecard;
 import com.citrus.card.Card;
 import com.citrus.mobile.Callback;
 import com.citrus.mobile.Config;
-import com.citruspay.sampleapp.R;
+import com.citrus.mobile.User;
+import com.citruspay.sample.R;
 
 public class MainActivity extends Activity {
 
-	Button bind, savecard, getWallet, paybutton;
+	Button bind, savecard, getWallet, paybutton, logoutButton, widgetButton;
 
 	Callback callback;
 
@@ -45,6 +46,12 @@ public class MainActivity extends Activity {
 		getWallet = (Button) this.findViewById(R.id.getWallet);
 
 		paybutton = (Button) this.findViewById(R.id.paybutton);
+		
+		logoutButton = (Button) this.findViewById(R.id.logoutbutton);
+		
+		widgetButton = (Button) this.findViewById(R.id.widgets);
+		
+		
 
 		bind.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -57,15 +64,21 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				Card card = new Card("4242424242424242", "12", "20", "123", "Bruce Wayne", "debit");
+				if(User.isUserLoggedIn(MainActivity.this))
+					new Savecard(MainActivity.this, callback).execute(card);
+				else
+					Toast.makeText(getApplicationContext(), "Bind the user before saving card details.", Toast.LENGTH_LONG).show();
 
-				new Savecard(MainActivity.this, callback).execute(card);
 			}
 		});
 
 		getWallet.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new GetWallet(MainActivity.this, callback).execute();
+				if(User.isUserLoggedIn(MainActivity.this))
+					new GetWallet(MainActivity.this, callback).execute();
+				else
+					Toast.makeText(getApplicationContext(), "Bind the user to get wallet.", Toast.LENGTH_LONG).show();
 			}
 		});
 
@@ -76,6 +89,30 @@ public class MainActivity extends Activity {
 				startActivity(intent);
 			}
 		});
+		
+		logoutButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+			User.logoutUser(MainActivity.this);
+			if(User.logoutUser(MainActivity.this)) {
+				Toast.makeText(getApplicationContext(), "User Logged out successfully.", Toast.LENGTH_LONG).show();
+			}
+			else {
+				Toast.makeText(getApplicationContext(), "Failed to logout user.", Toast.LENGTH_LONG).show();
+			}
+			
+			}
+		});
+		
+		
+        widgetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, Widgets.class);
+                startActivity(intent);
+            }
+        });
+
 	}
 
 	private void init() {
