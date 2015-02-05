@@ -11,7 +11,7 @@
    </body>										
    </html>            										
    <?php               										
-   $secret_key = "MERCHANT_ACCESS_KEY";										
+   $secret_key = "MERCHANT_SECRET_KEY";										
    $data =array();										
    foreach ($_POST as $name => $value) {										
          $data[$name] = $value;										
