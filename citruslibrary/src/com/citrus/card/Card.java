@@ -67,7 +67,7 @@ public class Card {
 	public String getExpiryMonth() {
 
 		if (Integer.valueOf(expMonth) < 10) {
-			return "0" + String.valueOf(expMonth);
+			return "0" + String.valueOf(Integer.valueOf(expMonth));
 		}
 
 		return String.valueOf(expMonth);
