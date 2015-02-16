@@ -1,0 +1,105 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:paddingTop="20dp"
+                tools:context="com.citruspay.sdkui.CardPaymentFragment">
+
+    <RadioGroup
+        android:id="@+id/radioGroupCardType"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        >
+
+        <RadioButton
+            android:id="@+id/radioDebitCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_horizontal"
+            android:padding="@dimen/activity_vertical_margin"
+            android:text="Debit"
+            android:buttonTint="#ff33a24e"/>
+
+        <RadioButton
+            android:id="@+id/radioCreditCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/activity_vertical_margin"
+            android:text="Credit"
+            android:buttonTint="#ff33a24e"/>
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/editCardNo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_below="@id/radioGroupCardType"
+        android:layout_gravity="left|center_vertical"
+        android:hint="Card Number"
+        android:inputType="number"
+        android:padding="@dimen/activity_vertical_margin"
+        android:backgroundTint="#ff33a24e"/>
+
+    <EditText
+        android:id="@+id/editNameOnCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_below="@id/editCardNo"
+        android:layout_gravity="left|center_vertical"
+        android:ems="10"
+        android:hint="Name On The Card"
+        android:inputType="textPersonName"
+        android:padding="@dimen/activity_vertical_margin"
+        android:backgroundTint="#ff33a24e"/>
+
+    <EditText
+        android:id="@+id/editExpiryDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editNameOnCard"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_gravity="left|center_vertical"
+        android:ems="10"
+        android:hint="MM/YY"
+        android:inputType="text"
+        android:padding="@dimen/activity_vertical_margin"
+        android:backgroundTint="#ff33a24e"/>
+
+    <EditText
+        android:id="@+id/editCVV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editNameOnCard"
+        android:layout_gravity="left|center_vertical"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_toRightOf="@id/editExpiryDate"
+        android:ems="10"
+        android:hint="CVV"
+        android:inputType="numberPassword"
+        android:padding="@dimen/activity_vertical_margin"
+        android:maxLength="3"
+        android:backgroundTint="#ff33a24e"/>
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/text_button_pay"
+        android:id="@+id/buttonPay"
+        android:layout_marginBottom="-3dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="#ff33a24e"/>
+
+</RelativeLayout>
