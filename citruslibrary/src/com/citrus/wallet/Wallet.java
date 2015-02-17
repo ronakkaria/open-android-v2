@@ -12,7 +12,7 @@
  */
 package com.citrus.wallet;
 
-import android.app.Activity;
+import android.content.Context;
 
 import com.citrus.card.Card;
 import com.citrus.card.CardType;
@@ -51,10 +51,10 @@ public class Wallet {
     /**
      * Save the netbanking option as user preffered option.
      *
-     * @param activity
+     * @param context
      * @return
      */
-    public String saveBank(Activity activity) {
+    public String saveBank(Context context) {
 
         /*
          * Following json will be required to save the bank as payment option.
@@ -62,7 +62,7 @@ public class Wallet {
           * {"paymentOptions":[{"owner":"","type":"netbanking","bank":"ICICI Bank"}],"type":"payment","defaultOption":""}
          */
 
-        OauthToken token = new OauthToken(activity);
+        OauthToken token = new OauthToken(context);
         String access_token = null;
 
         try {
@@ -117,9 +117,9 @@ public class Wallet {
 
     }
 
-    public String saveCard(Activity activity) {
+    public String saveCard(Context context) {
 
-        OauthToken token = new OauthToken(activity);
+        OauthToken token = new OauthToken(context);
         String access_token = null;
 
         try {
@@ -176,9 +176,9 @@ public class Wallet {
 
     }
 
-    public String getWallet(Activity activity) {
+    public String getWallet(Context context) {
 
-        OauthToken token = new OauthToken(activity);
+        OauthToken token = new OauthToken(context);
         String access_token = null;
 
         try {

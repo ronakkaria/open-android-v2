@@ -12,25 +12,26 @@
 */
 package com.citrus.mobile;
 
-import java.io.IOException;
+import android.app.Activity;
+import android.content.Context;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
+import java.io.IOException;
 
 /**
  * Created by shardul on 18/11/14.
  */
 public class User {
-    private Activity activity;
+    private Context context;
 
     //private SharedPreferences sharedPreferences;
 
     private String base_url;
 
-    public User(Activity activity) {
-        this.activity = activity;
+    public User(Context context) {
+        this.context = context;
         base_url = Config.getEnv();
     }
 
@@ -155,7 +156,7 @@ public class User {
         }
 
         if (response.has("access_token")) {
-            OauthToken token = new OauthToken(activity);
+            OauthToken token = new OauthToken(context);
             return token.createToken(response);
         }
         else {

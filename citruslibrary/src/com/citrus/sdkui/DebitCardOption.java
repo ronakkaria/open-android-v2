@@ -1,4 +1,4 @@
-package com.citruspay.sdkui;
+package com.citrus.sdkui;
 
 /**
  * Created by salil on 13/2/15.
@@ -15,6 +15,6 @@ public class DebitCardOption extends CardOption {
 
     @Override
     public String getCardType() {
-        return CardType.CREDIT.getCardType();
+        return CardType.DEBIT.getCardType();
     }
 }

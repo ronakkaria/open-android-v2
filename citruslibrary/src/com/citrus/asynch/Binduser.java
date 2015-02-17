@@ -13,10 +13,11 @@
 
 package com.citrus.asynch;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 
 import com.citrus.mobile.Callback;
+import com.citrus.mobile.Config;
 import com.citrus.mobile.User;
 
 /**
@@ -25,19 +26,25 @@ import com.citrus.mobile.User;
 public class Binduser extends AsyncTask<String, Void, Void> {
 
     boolean binderesult;
-    Activity activity;
+    Context context;
     Callback callback;
     User user;
 
-    public Binduser(Activity activity, Callback callback) {
-        this.activity = activity;
+    public Binduser(Context context, Callback callback) {
+        this.context = context;
         this.callback = callback;
     }
 
     @Override
     protected Void doInBackground(String... params) {
-        user = new User(activity);
-        binderesult = user.binduser(params[0], params[1]);
+        user = new User(context);
+        if(params.length==0){
+            binderesult = user.binduser(Config.getEmailID(), Config.getMobileNo());
+        }
+        else {
+            binderesult = user.binduser(params[0], params[1]);
+        }
+
         return null;
     }
 

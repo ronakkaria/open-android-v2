@@ -1,4 +1,4 @@
-package com.citruspay.sdkui;
+package com.citrus.sdkui;
 
 import android.text.TextUtils;
 

@@ -4,7 +4,6 @@ package com.citruspay.sdkui;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.internal.widget.TintSpinner;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,9 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.citrus.sdkui.NetbankingOption;
+
+import java.util.List;
 
 
 /**
@@ -27,7 +28,12 @@ public class NetbankingPaymentFragment extends Fragment implements View.OnClickL
     private OnPaymentOptionSelectedListener mListener = null;
     private NetbankingOption mNetbankingOption = null;
     private Spinner mSpinnerBankList = null;
-    private ArrayList<NetbankingOption> mListBanks = null;
+
+    public void setBankList(List<NetbankingOption> mListBanks) {
+        this.mListBanks = mListBanks;
+    }
+
+    private List<NetbankingOption> mListBanks = null;
     private Button mButtonPay = null;
 
     /**
@@ -37,8 +43,9 @@ public class NetbankingPaymentFragment extends Fragment implements View.OnClickL
      * @return A new instance of fragment NetbankingPaymentFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static NetbankingPaymentFragment newInstance() {
+    public static NetbankingPaymentFragment newInstance(List<NetbankingOption> bankList) {
         NetbankingPaymentFragment fragment = new NetbankingPaymentFragment();
+        fragment.setBankList(bankList);
         return fragment;
     }
 
@@ -62,12 +69,7 @@ public class NetbankingPaymentFragment extends Fragment implements View.OnClickL
 
         mSpinnerBankList = (Spinner) rootView.findViewById(R.id.spinnerBankList);
 
-        mListBanks = new ArrayList<NetbankingOption>();
-        mListBanks.add(new NetbankingOption("ICICI", "CID001"));
-        mListBanks.add(new NetbankingOption("AXIS Bank", "CID002"));
-        mListBanks.add(new NetbankingOption("Kotak Mahindra Bank", "CID033"));
-        mListBanks.add(new NetbankingOption("SBI Bank", "CID005"));
-        ArrayAdapter<NetbankingOption> adapter = new ArrayAdapter<NetbankingOption>(getActivity(),android.R.layout.simple_spinner_dropdown_item, mListBanks);
+        ArrayAdapter<NetbankingOption> adapter = new ArrayAdapter<NetbankingOption>(getActivity(), android.R.layout.simple_spinner_dropdown_item, mListBanks);
         mSpinnerBankList.setAdapter(adapter);
 
         mSpinnerBankList.setOnItemSelectedListener(this);

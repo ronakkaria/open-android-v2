@@ -20,11 +20,13 @@ import com.citrus.netbank.Bank;
 import com.citrus.payment.Bill;
 import com.citrus.payment.PG;
 import com.citrus.payment.UserDetails;
+import com.citrus.sdkui.CardOption;
+import com.citrus.sdkui.NetbankingOption;
+import com.citrus.sdkui.PaymentOption;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -47,13 +49,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     ViewPager mViewPager;
     private double mTransactionAmount = 0.0;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
 
-        init();
 
         mTransactionAmount = getIntent().getDoubleExtra("MERCHANT_TRANSACTION_AMOUNT", 2.0);
 
@@ -92,6 +94,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             .setTabListener(this));
         }
     }
+
+
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
@@ -209,24 +213,11 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     }
 
-    private void init() {
-        Config.setEnv("sandbox"); // replace it with production when you are ready
 
-        Config.setupSignupId("test-signup");
-        Config.setupSignupSecret("c78ec84e389814a05d3ae46546d16d2e");
-
-        Config.setSigninId("test-signin");
-        Config.setSigninSecret("52f7e15efd4208cf5345dd554443fd99");
-    }
 
     private List<PaymentOption> getCitrusWalletForUser() {
-        List<PaymentOption> citrusWallet = null;
+        List<PaymentOption> citrusWallet = Config.getCitrusWallet();
 
-        citrusWallet = new ArrayList<>();
-        citrusWallet.add(new NetbankingOption("Net Banking - ICICI Bank", "9521f901a425fca1299b83508bfb02f0", "ICICI Bank"));
-        citrusWallet.add(new NetbankingOption("Net Banking - AXIS Bank", "9748a167a2f3b73823e005c22a9b6d33", "AXIS Bank"));
-        citrusWallet.add(new CreditCardOption("Credit Card (4142)", "60f06b72ff0effa48619f3534a1a1045", "Bruce Wayne", "XXXXXXXXXXXX4142", "122020"));
-        citrusWallet.add(new CreditCardOption("Debit Card (4242)", "60f06b72ff0effa48619f3534a1a104d", "Bruce Wayne", "XXXXXXXXXXXX4242", "122020"));
 
         return citrusWallet;
     }
@@ -277,7 +268,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 case 1:
                     return CardPaymentFragment.newInstance();
                 case 2:
-                    return NetbankingPaymentFragment.newInstance();
+                    return NetbankingPaymentFragment.newInstance(Config.getBankList());
             }
 
             return null;

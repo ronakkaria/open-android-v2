@@ -1,4 +1,4 @@
-package com.citruspay.sdkui;
+package com.citrus.sdkui;
 
 /**
  * Created by salil on 13/2/15.

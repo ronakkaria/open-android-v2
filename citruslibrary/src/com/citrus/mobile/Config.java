@@ -12,8 +12,62 @@
 */
 package com.citrus.mobile;
 
+import android.content.Context;
+
+import com.citrus.asynch.InitSDK;
+import com.citrus.interfaces.InitListener;
+import com.citrus.sdkui.NetbankingOption;
+import com.citrus.sdkui.PaymentOption;
+
+import java.util.List;
+
 public class Config {
     private static String env, signinId, signinSecret, signupId, signupSecret;
+
+    public static void setVanity(String vanity) {
+        Config.vanity = vanity;
+    }
+
+    private static String vanity;
+    private static String emailID;
+    private static String mobileNo;
+
+
+    public static void setMobileNo(String mobileNo) {
+        Config.mobileNo = mobileNo;
+    }
+
+    public static void setEmailID(String emailID) {
+        Config.emailID = emailID;
+    }
+
+
+
+    //private static Context context;
+
+    public static List<NetbankingOption> getBankList() {
+        return bankList;
+    }
+
+    public static void setBankList(List<NetbankingOption> bankList) {
+        Config.bankList = bankList;
+    }
+
+    private static List<NetbankingOption> bankList;
+
+    public static String getVanity() {
+        return vanity;
+    }
+
+    public static String getEmailID() {
+        return emailID;
+    }
+
+    public static String getMobileNo() {
+        return mobileNo;
+    }
+
+
 
     public static void setEnv(String sip) {
         env = sip;
@@ -53,5 +107,23 @@ public class Config {
 
     public static String getSignupSecret() {
         return signupSecret;
+    }
+
+
+    public static void setCitrusWallet(List<PaymentOption> citrusWallet) {
+        Config.citrusWallet = citrusWallet;
+    }
+
+    public static List<PaymentOption> getCitrusWallet() {
+        return citrusWallet;
+    }
+
+    static List<PaymentOption> citrusWallet = null;
+
+
+    public static void initUser(Context context,InitListener initListener) {
+
+        new InitSDK(context,initListener);
+
     }
 }
