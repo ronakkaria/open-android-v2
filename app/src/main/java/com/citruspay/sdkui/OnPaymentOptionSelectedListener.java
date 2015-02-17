@@ -5,5 +5,5 @@ package com.citruspay.sdkui;
  */
 public interface OnPaymentOptionSelectedListener {
 
-    void OnOptionSelected(PaymentOption paymentOption);
+    void onOptionSelected(PaymentOption paymentOption);
 }

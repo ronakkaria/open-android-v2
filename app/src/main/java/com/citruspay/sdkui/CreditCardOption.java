@@ -10,6 +10,10 @@ public class CreditCardOption extends CardOption {
         super(cardHolderName, cardNumber, cardCVV, cardExpiry);
     }
 
+    CreditCardOption(String name, String token, String cardHolderName, String cardNumber, String cardExpiry) {
+        super(name, token, cardHolderName, cardNumber, cardExpiry);
+    }
+
     @Override
     public String getCardType() {
         return CardType.DEBIT.getCardType();

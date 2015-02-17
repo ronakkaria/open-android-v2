@@ -88,7 +88,6 @@
         android:hint="CVV"
         android:inputType="numberPassword"
         android:padding="@dimen/activity_vertical_margin"
-        android:maxLength="3"
         android:backgroundTint="#ff33a24e"/>
 
     <Button

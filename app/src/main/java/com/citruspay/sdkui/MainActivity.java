@@ -1,5 +1,6 @@
 package com.citruspay.sdkui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,6 +10,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.citrus.card.Card;
@@ -22,11 +24,14 @@ import com.citrus.payment.UserDetails;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener, OnPaymentOptionSelectedListener {
 
+    private static final String BILL_URL = "http://192.168.1.5:8080/billGenerator.orig.jsp";// host your bill url here
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -36,23 +41,19 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     SectionsPagerAdapter mSectionsPagerAdapter;
-
     /**
      * The {@link ViewPager} that will host the section contents.
      */
     ViewPager mViewPager;
-
-    private static final String BILL_URL = "http://192.168.1.5:8080/billGenerator.orig.jsp";// host your bill url here
-
     private double mTransactionAmount = 0.0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        init();
-
         setContentView(R.layout.activity_main);
+
+        init();
 
         mTransactionAmount = getIntent().getDoubleExtra("MERCHANT_TRANSACTION_AMOUNT", 2.0);
 
@@ -92,16 +93,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
     }
 
-    private void init() {
-        Config.setEnv("sandbox"); // replace it with production when you are ready
-
-        Config.setupSignupId("test-signup");
-        Config.setupSignupSecret("c78ec84e389814a05d3ae46546d16d2e");
-
-        Config.setSigninId("test-signin");
-        Config.setSigninSecret("52f7e15efd4208cf5345dd554443fd99");
-    }
-
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
         // When the given tab is selected, switch to the corresponding page in
@@ -118,7 +109,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     }
 
     @Override
-    public void OnOptionSelected(final PaymentOption paymentOption) {
+    public void onOptionSelected(final PaymentOption paymentOption) {
 
         if (paymentOption instanceof CardOption) {
             final CardOption cardOption = (CardOption) paymentOption;
@@ -167,51 +158,29 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
     }
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Utils.REQUEST_CODE_PAYMENT_ACTIVITY) {
+            if (resultCode == RESULT_OK) {
+                String response = data.getStringExtra(Utils.INTENT_EXTRA_PAYMENT_RESPONSE);
+                JSONObject jsonObject = null;
+                CitrusTransactionResponse transactionResponse = null;
+                try {
+                    jsonObject = new JSONObject(response);
+                    transactionResponse = CitrusTransactionResponse.fromJSONObject(jsonObject);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
+                if (jsonObject == null) {
+                    transactionResponse = new CitrusTransactionResponse();
+                    transactionResponse.setJsonResponse(response);
+                }
 
-        @Override
-        public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return CitrusWalletFragment.newInstance();
-                case 1:
-                    return CardPaymentFragment.newInstance();
-                case 2:
-                    return NetbankingPaymentFragment.newInstance();
+                Log.d("SDKUI", "Transaction Response : " + transactionResponse.toString());
             }
-
-            return null;
-        }
-
-        @Override
-        public int getCount() {
-            return 3;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            Locale l = Locale.getDefault();
-
-            switch (position) {
-                case 0:
-                    return getString(R.string.title_section1).toUpperCase(l);
-                case 1:
-                    return getString(R.string.title_section2).toUpperCase(l);
-                case 2:
-                    return getString(R.string.title_section3).toUpperCase(l);
-            }
-            return null;
         }
     }
-
 
     private void processresponse(String response, String error) {
 
@@ -219,15 +188,15 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             try {
 
                 JSONObject redirect = new JSONObject(response);
-//                Intent i = new Intent(MainActivity.this, WebPage.class);
-//
-//                if (!TextUtils.isEmpty(redirect.getString("redirectUrl"))) {
-//
-//                    i.putExtra("url", redirect.getString("redirectUrl"));
-//                    startActivity(i);
-//                } else {
-//                    Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
-//                }
+                Intent i = new Intent(MainActivity.this, CitrusPaymentActivity.class);
+
+                if (!TextUtils.isEmpty(redirect.getString("redirectUrl"))) {
+
+                    i.putExtra(Utils.INTENT_EXTRA_PAYMENT_URL, redirect.getString("redirectUrl"));
+                    startActivityForResult(i, Utils.REQUEST_CODE_PAYMENT_ACTIVITY);
+                } else {
+                    Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+                }
 
                 Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
 
@@ -238,6 +207,28 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
         }
 
+    }
+
+    private void init() {
+        Config.setEnv("sandbox"); // replace it with production when you are ready
+
+        Config.setupSignupId("test-signup");
+        Config.setupSignupSecret("c78ec84e389814a05d3ae46546d16d2e");
+
+        Config.setSigninId("test-signin");
+        Config.setSigninSecret("52f7e15efd4208cf5345dd554443fd99");
+    }
+
+    private List<PaymentOption> getCitrusWalletForUser() {
+        List<PaymentOption> citrusWallet = null;
+
+        citrusWallet = new ArrayList<>();
+        citrusWallet.add(new NetbankingOption("Net Banking - ICICI Bank", "9521f901a425fca1299b83508bfb02f0", "ICICI Bank"));
+        citrusWallet.add(new NetbankingOption("Net Banking - AXIS Bank", "9748a167a2f3b73823e005c22a9b6d33", "AXIS Bank"));
+        citrusWallet.add(new CreditCardOption("Credit Card (4142)", "60f06b72ff0effa48619f3534a1a1045", "Bruce Wayne", "XXXXXXXXXXXX4142", "122020"));
+        citrusWallet.add(new CreditCardOption("Debit Card (4242)", "60f06b72ff0effa48619f3534a1a104d", "Bruce Wayne", "XXXXXXXXXXXX4242", "122020"));
+
+        return citrusWallet;
     }
 
     private JSONObject getCustomer() {
@@ -266,5 +257,50 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
 
         return customer;
+    }
+
+    /**
+     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
+     * one of the sections/tabs/pages.
+     */
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0:
+                    return CitrusWalletFragment.newInstance(getCitrusWalletForUser());
+                case 1:
+                    return CardPaymentFragment.newInstance();
+                case 2:
+                    return NetbankingPaymentFragment.newInstance();
+            }
+
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return 3;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            Locale l = Locale.getDefault();
+
+            switch (position) {
+                case 0:
+                    return getString(R.string.title_section1).toUpperCase(l);
+                case 1:
+                    return getString(R.string.title_section2).toUpperCase(l);
+                case 2:
+                    return getString(R.string.title_section3).toUpperCase(l);
+            }
+            return null;
+        }
     }
 }

@@ -112,7 +112,7 @@ public class CardPaymentFragment extends Fragment implements View.OnClickListene
             break;
         }
 
-        mListener.OnOptionSelected(cardOption);
+        mListener.onOptionSelected(cardOption);
 
         Log.i("Citrus", "Card No. " + mEditCardNo.getText() + "  Card Name : " + mEditNameOnCard.getText() + " Expiry : " + mEditExpiry.getText() + " CVV : " + mEditCVV.getText() + " Card Type : " + mCardType);
     }

@@ -3,7 +3,7 @@ package com.citruspay.sdkui;
 /**
  * Created by salil on 13/2/15.
  */
-public class NetbankingOption implements PaymentOption {
+public class NetbankingOption extends PaymentOption {
 
     private String bankName = null;
     private String bankCID = null;
@@ -13,11 +13,22 @@ public class NetbankingOption implements PaymentOption {
         this.bankCID = bankCID;
     }
 
+    NetbankingOption(String name, String token, String bankName) {
+        super(name, token);
+        this.bankName = bankName;
+    }
+
+
     public String getBankName() {
         return bankName;
     }
 
     public String getBankCID() {
         return bankCID;
+    }
+
+    @Override
+    public String toString() {
+        return bankName;
     }
 }
