@@ -10,7 +10,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-
 package com.citrus.asynch;
 
 import android.app.Activity;
@@ -19,9 +18,6 @@ import android.os.AsyncTask;
 import com.citrus.mobile.Callback;
 import com.citrus.mobile.User;
 
-/**
- * Created by shardul on 20/11/14.
- */
 public class Binduser extends AsyncTask<String, Void, Void> {
 
     boolean binderesult;

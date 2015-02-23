@@ -15,9 +15,7 @@ package com.citrus.payment;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by shardul on 19/11/14.
- */
+
 public class Bill {
     private String txnId, signature, access_key, returnurl;
     private JSONObject amount;

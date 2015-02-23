@@ -9,12 +9,10 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
- */
+*/
 package com.citrus.card;
 
-/**
- * Created by shardul on 19/11/14.
- */
+
 public class Card {
 	private String cardnumber;
 	private String cardCVV;
@@ -40,9 +38,7 @@ public class Card {
 		this.cardnumber = null;
 	}
 
-	/***
-	 * /* The below methods are to retrieve cardDetails
-	 */
+
 
 	public CardType getCardType() {
 		return CardType.typeOf(cardnumber);

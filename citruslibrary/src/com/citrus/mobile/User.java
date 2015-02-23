@@ -19,13 +19,15 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 
-/**
- * Created by shardul on 18/11/14.
- */
 public class User {
-    private Activity activity;
 
-    //private SharedPreferences sharedPreferences;
+	public static final String SIGNIN_TOKEN = "signin_token";
+	
+	public static final String SIGNUP_TOKEN = "signup_token";
+	
+	public static final String PREPAID_TOKEN = "prepaid_token";
+	
+    private Activity activity;
 
     private String base_url;
 
@@ -68,6 +70,8 @@ public class User {
         }
 
         if (response.has("access_token")) {
+        	OauthToken signuptoken = new OauthToken(activity, SIGNUP_TOKEN);
+        	signuptoken.createToken(response);
             return signupuser(email, mobile, response);
         }
         else {
@@ -155,7 +159,7 @@ public class User {
         }
 
         if (response.has("access_token")) {
-            OauthToken token = new OauthToken(activity);
+            OauthToken token = new OauthToken(activity, SIGNIN_TOKEN);
             return token.createToken(response);
         }
         else {
@@ -163,20 +167,4 @@ public class User {
         }
 
     }
-    
-    
-    public final static boolean logoutUser(Activity activity) {
-		OauthToken token = new OauthToken(activity);
-		return token.clearToken();
-	}
-	
-	public final static boolean isUserLoggedIn(Activity activity) {
-		OauthToken token = new OauthToken(activity);
-		if(token.getuserToken() == null)
-			return false;
-		else
-			return true;
-	}
-    
-    
 }

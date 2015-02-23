@@ -21,10 +21,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.citrus.asynch.MakePayment;
 import com.citrus.card.Card;
+import com.citrus.cash.Prepaid;
 import com.citrus.mobile.Callback;
 import com.citrus.netbank.Bank;
 
@@ -37,6 +37,8 @@ public class PG {
     private JSONObject payment;
 
     private Bank bank;
+    
+    private Prepaid prepaid;
 
     private String paymenttype;
     
@@ -63,6 +65,13 @@ public class PG {
         this.bill = bill;
         this.userDetails = userDetails;
         paymenttype = "netbank";
+    }
+    
+    public PG(Prepaid prepaid, Bill bill, UserDetails userDetails) {
+         this.bill = bill;
+         this.userDetails = userDetails;
+         this.prepaid = prepaid;
+         paymenttype = "prepaid";
     }
 
     public void charge(Callback callback) {
@@ -152,6 +161,26 @@ public class PG {
             }
 
         }
+        
+        else if(TextUtils.equals(paymenttype.toString(), "prepaid")) {
+        	paymentmode = new JSONObject();
+            try {
+                paymentmode.put("cvv", "000");
+                paymentmode.put("holder", prepaid.getUserEmail());
+                paymentmode.put("number", "1234561234561234");
+                paymentmode.put("scheme", "CPAY");
+                paymentmode.put("type", "prepaid");
+                paymentmode.put("expiry", "04/2030");
+
+                paymentToken.put("type","paymentOptionToken");
+                paymentToken.put("paymentMode", paymentmode);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                callback.onTaskexecuted("", "Problem forming payment Json");
+                return;
+            }
+        }
+        
         else if (TextUtils.equals(paymenttype.toString(), "cardtoken")) {
             try {
                 paymentToken.put("type","paymentOptionIdToken");
@@ -236,7 +265,6 @@ public class PG {
             e.printStackTrace();
         }
 
-        
         new MakePayment(payment, headers, callback).execute();
 
     }
