@@ -23,12 +23,8 @@ import com.citrus.card.CardType;
 import com.citrus.mobile.Config;
 import com.citrus.mobile.OauthToken;
 import com.citrus.mobile.RESTclient;
-import com.citrus.netbank.Bank;
 import com.citrus.mobile.User;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.citrus.netbank.Bank;
 
 
 public class Wallet {
@@ -65,7 +61,7 @@ public class Wallet {
           * {"paymentOptions":[{"owner":"","type":"netbanking","bank":"ICICI Bank"}],"type":"payment","defaultOption":""}
          */
 
-        OauthToken token = new OauthToken(activity);
+        OauthToken token = new OauthToken(activity, User.SIGNIN_TOKEN);
         String access_token = null;
 
         try {
