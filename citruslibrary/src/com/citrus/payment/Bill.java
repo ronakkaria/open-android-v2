@@ -37,6 +37,24 @@ public class Bill {
             e.printStackTrace();
         }
     }
+    
+    public Bill(String bill, String type) {
+    	JSONObject jsonBill = null;
+        try {
+            jsonBill = new JSONObject(bill);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        try {
+            this.txnId = jsonBill.getString("merchantTransactionId");
+            this.amount = jsonBill.getJSONObject("amount");
+            this.signature = jsonBill.getString("signature");
+            this.access_key = jsonBill.getString("merchantAccessKey");
+            this.returnurl = jsonBill.getString("returnUrl");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     public String getTxnId() {
         return this.txnId;
