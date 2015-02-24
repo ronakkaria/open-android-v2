@@ -27,6 +27,7 @@ import com.citrus.asynch.MakePayment;
 import com.citrus.card.Card;
 import com.citrus.mobile.Callback;
 import com.citrus.netbank.Bank;
+import com.citrus.netbank.BankPaymentType;
 
 public class PG {
     private Card card;
@@ -62,7 +63,10 @@ public class PG {
         this.bank = bank;
         this.bill = bill;
         this.userDetails = userDetails;
-        paymenttype = "netbank";
+        if(this.bank.getPaymentType()!=null)
+        	paymenttype = this.bank.getPaymentType().toString();
+        else
+            paymenttype = "netbank";
     }
 
     public void charge(Callback callback) {
@@ -165,10 +169,17 @@ public class PG {
         else {
             try {
                 paymentmode = new JSONObject();
-                paymentmode.put("type", "netbanking");
-                paymentmode.put("code", bank.getCidnumber());
-                paymentToken.put("type", "paymentOptionToken");
-                paymentToken.put("paymentMode", paymentmode);
+                if(paymenttype!=null && paymenttype.equalsIgnoreCase(BankPaymentType.TOKEN.toString())) { //tokenized bank payment
+ 	                paymentToken.put("id", bank.getBankToken());
+ 	                paymentToken.put("type", bank.getPaymentType().toString()); 
+                }
+                else { //bank payment with CID
+                	
+	                paymentmode.put("type", "netbanking");
+	                paymentmode.put("code", bank.getCidnumber());
+	                paymentToken.put("type", "paymentOptionToken");
+	                paymentToken.put("paymentMode", paymentmode); 
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }

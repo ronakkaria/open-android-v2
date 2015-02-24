@@ -26,5 +26,12 @@
         android:layout_height="50dp"
         android:text="Net Banking"
         android:layout_marginBottom="20dp"/>
+    
+     <Button
+        android:id="@+id/tokenbankpay"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Token Net Banking"
+        android:layout_marginBottom="20dp"/>
 
 </LinearLayout>
