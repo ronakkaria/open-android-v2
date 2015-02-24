@@ -47,7 +47,6 @@ public class RESTclient {
 
     private HttpResponse response;
 
-    private final String TAG = "SDKV2";
 
      public RESTclient(String type, String base_url, JSONObject params, JSONObject headers) {
 
@@ -82,8 +81,6 @@ public class RESTclient {
          } catch (JSONException e) {
              e.printStackTrace();
          }
-         Log.d(TAG, "HTTP POST REQUEST ***");
-         Log.d(TAG, "URL****" + httpPost.getURI().toString());
          List<NameValuePair> postData = new ArrayList<NameValuePair>(2);
          Iterator<String> iter = params.keys();
          while (iter.hasNext()) {
@@ -98,7 +95,6 @@ public class RESTclient {
 
          
          httpPost.setEntity(new UrlEncodedFormEntity(postData));
-         Log.d(TAG, "POST DATA ***" + 	EntityUtils.toString(httpPost.getEntity()));
          Iterator<String> iterhead = headers.keys();
          while (iterhead.hasNext()) {
              String key = iterhead.next();
@@ -109,7 +105,6 @@ public class RESTclient {
                  Log.d("exception", e.toString());
              }
          }
-         Log.d(TAG, "HEADERS ***" + httpPost.getAllHeaders().toString());
          try {
              response = httpClient.execute(httpPost);
          } catch (IOException e) {
@@ -256,15 +251,5 @@ public class RESTclient {
     }
     
     
-    static {
-    	Log.d("SDKV2", "This block is called ****");
-    	java.util.logging.Logger.getLogger("org.apache.http.wire").setLevel(java.util.logging.Level.FINEST);
-    	java.util.logging.Logger.getLogger("org.apache.http.headers").setLevel(java.util.logging.Level.FINEST);
-    	 
-    	System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
-    	System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "true");
-    	System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire", "debug");
-    	System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http", "debug");
-    	System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.http.headers", "debug");
-    }
+   
 }

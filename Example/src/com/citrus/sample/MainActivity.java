@@ -32,8 +32,6 @@ public class MainActivity extends Activity {
 
 		init();
 
-		DebugLogConfig.enable();
-
 		callback = new Callback() {
 			@Override
 			public void onTaskexecuted(String success, String error) {
