@@ -17,7 +17,7 @@ import org.json.JSONObject;
 
 
 public class Bill {
-    private String txnId, signature, access_key, returnurl;
+    private String txnId, signature, access_key, returnurl, notifyurl=null;
     private JSONObject amount;
 
     public Bill(String bill) {
@@ -33,6 +33,11 @@ public class Bill {
             this.signature = jsonBill.getString("requestSignature");
             this.access_key = jsonBill.getString("merchantAccessKey");
             this.returnurl = jsonBill.getString("returnUrl");
+            
+            if (jsonBill.has("notifyUrl")) {
+            	this.notifyurl = jsonBill.getString("notifyUrl");
+            }
+            
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -51,6 +56,11 @@ public class Bill {
             this.signature = jsonBill.getString("signature");
             this.access_key = jsonBill.getString("merchantAccessKey");
             this.returnurl = jsonBill.getString("returnUrl");
+            
+            if (jsonBill.has("notifyUrl")) {
+            	this.notifyurl = jsonBill.getString("notifyUrl");
+            }
+            
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -74,5 +84,9 @@ public class Bill {
 
     public String getReturnurl() {
         return this.returnurl;
+    }
+    
+    public String getNotifyurl() {
+    	return this.notifyurl;
     }
 }

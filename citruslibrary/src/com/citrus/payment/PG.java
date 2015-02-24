@@ -236,6 +236,11 @@ public class PG {
 
         try {
             payment.put("returnUrl", bill.getReturnurl());
+            
+            if (bill.getNotifyurl() != null) {
+            	payment.put("notifyUrl", bill.getNotifyurl());
+            }
+            
             payment.put("amount", bill.getAmount());
             payment.put("merchantAccessKey", bill.getAccess_key());
             
