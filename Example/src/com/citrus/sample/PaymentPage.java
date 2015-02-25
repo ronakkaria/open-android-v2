@@ -154,10 +154,10 @@ public class PaymentPage extends Activity {
         * Do not change the key in the json below - only change the values*/
 
         try {
-            customer.put("firstName", "Shardul");
-            customer.put("lastName", "Lavekar");
-            customer.put("email", "anurag.theprophet@gmail.com");
-            customer.put("mobileNo", "7875432990");
+            customer.put("firstName", "Tester");
+            customer.put("lastName", "Citrus");
+            customer.put("email", "testeremail@mailinator.com");
+            customer.put("mobileNo", "9787543290");
             customer.put("street1", "streetone");
             customer.put("street2", "streettwo");
             customer.put("city", "Mumbai");
