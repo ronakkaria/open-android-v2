@@ -32,7 +32,7 @@ import com.citrus.sample.WebPage;
 
 public class PrepaidWallet extends Activity {
 	
-	private static final String bill_url = "http://103.13.97.20/citrus/sandbox/sign.php";
+	private static final String bill_url = "http://yourwebsite.com/billgenerator.php";
 	
 	Button linkuser, setpass, forgot, signin, getbalance, getprepaidbill
 	,card_load, token_load, bank_load, citrus_cashpay;
