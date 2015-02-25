@@ -40,18 +40,24 @@ public class Prepaid {
    
 	}
 	
-	private class GetBalance extends AsyncTask<Void, Void, Void> {
+	private class GetBalance extends AsyncTask<Void, Void, String> {
 
 		@Override
-		protected Void doInBackground(Void... params) {
+		protected String doInBackground(Void... params) {
 			OauthToken token = new OauthToken(activity, User.SIGNIN_TOKEN);
 	        String access_token = null;
 
 	        try {
-	            access_token = token.getuserToken().getString("access_token");
+	        	JSONObject jsontoken = token.getuserToken();
+	        	if (jsontoken != null) {
+		            access_token = token.getuserToken().getString("access_token");	
+	        	}
+	        	else {
+	        		return "User token not found -  Bind user first!";
+	        	}
 	        } catch (JSONException e) {
 	            e.printStackTrace();
-	            callback.onTaskexecuted("", "User not bound - Please bind the user");
+	            return "Bind Token not found - Bind user first";
 	        }
 	        
 	        JSONObject headers = new JSONObject();
@@ -60,8 +66,7 @@ public class Prepaid {
 	            headers.put("Authorization", "Bearer " + access_token);
 	        } catch (JSONException e) {
 	            e.printStackTrace();
-	            callback.onTaskexecuted("", "Access Token Not Found");
-	            
+	            return "Bind Token not found - Bind user first";
 	        }
 	        
 	        RESTclient resTclient = new RESTclient("balance",base_url, null, headers);
@@ -71,21 +76,15 @@ public class Prepaid {
 				response = resTclient.makegetRequest();
 			} catch (JSONException e) {
 				e.printStackTrace();
-				callback.onTaskexecuted("", "Unable to get User Balance");
+				return "Could not get user balance";
 			}
-			return null;
+			return response.toString();
 		}
 		
 		@Override
-		protected void onPostExecute(Void result) {
+		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
-			if (response != null) {
-				callback.onTaskexecuted(response.toString(), "");
-			}
-			else {
-				callback.onTaskexecuted("", "Unable to get Response from the server");
-			}
-			
+			callback.onTaskexecuted(result, "");
 		}
 		
 	}

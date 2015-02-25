@@ -46,9 +46,9 @@ public class PrepaidOauth {
         }
 		
 		try {
-			userJson.put("client_id", "fasos-test-wallet");
+			userJson.put("client_id", Config.getSigninId());
 			
-	        userJson.put("client_secret", "cd4875180ac4f38e61e8a8f5279cfdd7");
+	        userJson.put("client_secret", Config.getSigninSecret());
 	        
 	        userJson.put("grant_type", "password");
 	        
@@ -72,7 +72,7 @@ public class PrepaidOauth {
 			return "prepaid token received";
 		}
 		else {
-			return "Could not create prepaid user - signin error";
+			return response.toString();
 		}
 	}
 	
@@ -144,11 +144,11 @@ public class PrepaidOauth {
 				
 				config.setCookie(sessionCookie);
 				
-				return "Prepaid set for user!";
+				return "User logged in with prepaid credentials!";
 								
 			} catch (JSONException e) {
 				e.printStackTrace();
-				return "Could not get Prepaid Cookie";
+				return response.toString();
 			}
 		}
 		else {
@@ -156,15 +156,4 @@ public class PrepaidOauth {
 		}
 	}
 	
-	public String getPrepaidToken() {
-		OauthToken prepaid_token = new OauthToken(activity, User.PREPAID_TOKEN);
-		JSONObject token_getbalance = prepaid_token.getuserToken();
-		
-		if (token_getbalance != null) {
-			return token_getbalance.toString();
-		}		
-		else {
-			return "Error: Prepaid Token is not available!";
-		}
-	}
 }

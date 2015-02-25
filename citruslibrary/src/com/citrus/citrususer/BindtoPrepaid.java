@@ -35,7 +35,12 @@ public class BindtoPrepaid {
         	OauthToken token = new OauthToken(activity, User.SIGNIN_TOKEN);
         	JSONObject jsontoken = token.getuserToken();
             headers.put("Content-Type", "application/x-www-form-urlencoded");
-            headers.put("Authorization", "Bearer " + jsontoken.getString("access_token"));
+            if (jsontoken != null) {
+                headers.put("Authorization", "Bearer " + jsontoken.getString("access_token"));
+            }
+            else {
+            	return "Signin Token not found - Link user first";
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -58,7 +63,7 @@ public class BindtoPrepaid {
 				return createprepaidAccount();
 			}
 			else {
-				return "Could not update user password";
+				return response.toString();
 			}
 
 	        

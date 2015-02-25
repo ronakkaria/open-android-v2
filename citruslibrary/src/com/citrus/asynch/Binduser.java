@@ -20,7 +20,7 @@ import com.citrus.mobile.User;
 
 public class Binduser extends AsyncTask<String, Void, Void> {
 
-    boolean binderesult;
+    String binderesult;
     Activity activity;
     Callback callback;
     User user;
@@ -40,11 +40,6 @@ public class Binduser extends AsyncTask<String, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        if (binderesult) {
-            callback.onTaskexecuted("User Bound Successfully!", "");
-        }
-        else {
-            callback.onTaskexecuted("", "Could not bind user - check oauth details");
-        }
+        callback.onTaskexecuted(binderesult, "");
     }
 }

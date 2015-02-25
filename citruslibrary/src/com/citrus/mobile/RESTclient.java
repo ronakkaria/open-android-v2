@@ -271,6 +271,11 @@ public class RESTclient {
 
     private JSONObject parseResponse(HttpResponse response) {
         try {
+        	
+        	if (response == null) {
+        		return formError(600, "Null response - is your internet connection functional?");
+        	}
+        	
             switch (response.getStatusLine().getStatusCode()) {
                 case HttpStatus.SC_OK:
                     return new JSONObject(EntityUtils.toString(response.getEntity()));

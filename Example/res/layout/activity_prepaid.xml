@@ -85,7 +85,7 @@
         	android:layout_margin="10dp"
         	android:text="Pay Using Citrus Cash"
         	android:layout_below="@+id/bankload"/>
-    
+     
     </RelativeLayout>
 
     </ScrollView>

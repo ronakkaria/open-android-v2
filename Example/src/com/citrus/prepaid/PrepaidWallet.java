@@ -32,10 +32,10 @@ import com.citrus.sample.WebPage;
 
 public class PrepaidWallet extends Activity {
 	
-	private static final String bill_url = "http://yourwebsite.com/billgenerator.php";
+	private static final String bill_url = "http://yourwebsite.com/billurl.php";
 	
 	Button linkuser, setpass, forgot, signin, getbalance, getprepaidbill
-	,card_load, token_load, bank_load, citrus_cashpay;
+	,card_load, token_load, bank_load, citrus_cashpay, get_prepaidToken;
 
 	Callback callback;
 	
@@ -89,7 +89,7 @@ public class PrepaidWallet extends Activity {
 			@Override
 			public void onClick(View v) {
 				new LinkUser(PrepaidWallet.this, callback)
-				.execute(new String[]{"shardullavekar@mailinator.com", "9910312345"});
+				.execute(new String[]{"testeremail@mailinator.com", "9769507476"});
 			}
 		});
 		
@@ -98,7 +98,7 @@ public class PrepaidWallet extends Activity {
 			@Override
 			public void onClick(View v) {
 				new SetPassword(PrepaidWallet.this, callback)
-				.execute(new String[]{"shardullavekar@mailinator.com", "9910312345", "password@123"});
+				.execute(new String[]{"testeremail@mailinator.com", "9769507476", "tester@123"});
 			}
 		});
 		
@@ -106,7 +106,7 @@ public class PrepaidWallet extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				new ForgotPass(PrepaidWallet.this, "shardullavekar@mailinator.com", callback)
+				new ForgotPass(PrepaidWallet.this, "testeremail@mailinator.com", callback)
 				.execute();
 			}
 		});
@@ -116,7 +116,7 @@ public class PrepaidWallet extends Activity {
 			@Override
 			public void onClick(View v) {
 				new SignIn(PrepaidWallet.this, callback)
-				.execute(new String[]{"shardullavekar@mailinator.com", "tester@123"});
+				.execute(new String[]{"testeremail@mailinator.com", "tester@123"});
 			}
 		});
 		
@@ -124,7 +124,7 @@ public class PrepaidWallet extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				Prepaid user = new Prepaid("shardullavekar@mailinator.com");
+				Prepaid user = new Prepaid("testeremail@mailinator.com");
 				user.getBalance(PrepaidWallet.this, callback);
 			}
 		});
@@ -236,7 +236,10 @@ public class PrepaidWallet extends Activity {
 					
 					@Override
 					public void onTaskexecuted(String bill, String error) {
-						walletpay(bill);
+						if (!TextUtils.isEmpty(bill))
+							walletpay(bill);
+						
+						showToast(bill, error);
 					}
 				})
 				.execute();
@@ -291,10 +294,10 @@ public class PrepaidWallet extends Activity {
 	        * Do not change the key in the json below - only change the values*/
 
 	        try {
-	            customer.put("firstName", "Shardul");
-	            customer.put("lastName", "Lavekar");
-	            customer.put("email", "shardullavekar@mailinator.com");
-	            customer.put("mobileNo", "7875432990");
+	            customer.put("firstName", "Tester");
+	            customer.put("lastName", "Citrus");
+	            customer.put("email", "testeremail@mailinator.com");
+	            customer.put("mobileNo", "9769507476");
 	            customer.put("street1", "streetone");
 	            customer.put("street2", "streettwo");
 	            customer.put("city", "Mumbai");
@@ -310,7 +313,7 @@ public class PrepaidWallet extends Activity {
 	private void walletpay(String bill_string) {
     	Bill bill = new Bill(bill_string);
     	
-    	Prepaid prepaid = new Prepaid("shardullavekar@mailinator.com");
+    	Prepaid prepaid = new Prepaid("testeremail@mailinator.com");
     	
     	UserDetails userDetails = new UserDetails(customer);
 

@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.text.TextUtils;
 
 import com.citrus.mobile.Config;
 import com.citrus.mobile.RESTclient;
@@ -37,11 +38,13 @@ public class SignupUser {
 	private String binduser() {
 		User user = new User(activity);
 		
-		if (user.binduser(this.email, this.mobile)) {
+		String result = user.binduser(this.email, this.mobile);
+		
+		if (TextUtils.equals(result, "user bound")) {
 			return signinRandomPassword();
 		}
 		
-		return "Could not bind user - check oauth details";
+		return result;
 	}
 		
 	private String signinRandomPassword() {

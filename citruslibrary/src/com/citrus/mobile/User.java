@@ -36,7 +36,7 @@ public class User {
         base_url = Config.getEnv();
     }
 
-    private boolean getSignupToken(final String email, final String mobile) {
+    private String getSignupToken(final String email, final String mobile) {
         JSONObject response = new JSONObject();
 
 
@@ -75,16 +75,16 @@ public class User {
             return signupuser(email, mobile, response);
         }
         else {
-            return false;
+            return response.toString();
         }
 
     }
 
-    public boolean binduser(final String email, final String mobile) {
+    public String binduser(final String email, final String mobile) {
         return getSignupToken(email, mobile);
     }
 
-    private boolean signupuser(final String email, String mobile, JSONObject token) {
+    private String signupuser(final String email, String mobile, JSONObject token) {
 
         JSONObject signupJson = new JSONObject();
 
@@ -120,11 +120,11 @@ public class User {
             return signinUser(email);
         }
         else {
-            return false;
+            return response.toString();
         }
     }
 
-    private boolean signinUser(String email) {
+    private String signinUser(String email) {
         JSONObject response = new JSONObject();
 
         JSONObject userJson = new JSONObject();
@@ -160,10 +160,12 @@ public class User {
 
         if (response.has("access_token")) {
             OauthToken token = new OauthToken(activity, SIGNIN_TOKEN);
-            return token.createToken(response);
+            token.createToken(response);
+            
+            return "user bound";
         }
         else {
-            return false;
+            return response.toString();
         }
 
     }
