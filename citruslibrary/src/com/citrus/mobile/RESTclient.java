@@ -73,6 +73,7 @@ public class RESTclient {
             urls.put("specialbalance", "service/v2/prepayment/balance");
             urls.put("resetpassword", "service/v2/identity/passwords/reset");
             urls.put("prepaidbill", "service/v2/prepayment/load");
+            urls.put("paymentoptions", "service/v1/merchant/pgsetting");
         } catch (JSONException e) {
             return;
         }
