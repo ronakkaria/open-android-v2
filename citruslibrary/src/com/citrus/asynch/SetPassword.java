@@ -1,12 +1,14 @@
 package com.citrus.asynch;
 
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.os.AsyncTask;
 
 import com.citrus.citrususer.BindtoPrepaid;
 import com.citrus.mobile.Callback;
 
-public class SetPassword extends AsyncTask<String, Void, String> {
+public class SetPassword extends AsyncTask<String, Void, JSONObject> {
 	Activity activity;
 	
 	Callback callback;
@@ -19,7 +21,7 @@ public class SetPassword extends AsyncTask<String, Void, String> {
 	}
 	
 	@Override
-	protected String doInBackground(String... params) {
+	protected JSONObject doInBackground(String... params) {
 		email = params[0];
 		
 		mobile = params[1];
@@ -28,14 +30,21 @@ public class SetPassword extends AsyncTask<String, Void, String> {
 		
 		BindtoPrepaid pwd = new BindtoPrepaid(activity, email, mobile, password);
 		
-		String result = pwd.setPassword();
+		JSONObject result = pwd.setPassword();
 		
 		return result;
 	}
 	
 	@Override
-	protected void onPostExecute(String result) {
+	protected void onPostExecute(JSONObject result) {
 		super.onPostExecute(result);
-		callback.onTaskexecuted(result, "");
+		
+		if (result.has("error")) {
+			callback.onTaskexecuted("", result.toString());
+		}
+		
+		else {
+			callback.onTaskexecuted(result.toString(), "");
+		}
 	}
 }

@@ -12,6 +12,8 @@
 */
 package com.citrus.asynch;
 
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.os.AsyncTask;
 
@@ -20,7 +22,7 @@ import com.citrus.mobile.User;
 
 public class Binduser extends AsyncTask<String, Void, Void> {
 
-    String binderesult;
+    JSONObject binderesult;
     Activity activity;
     Callback callback;
     User user;
@@ -40,6 +42,16 @@ public class Binduser extends AsyncTask<String, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        callback.onTaskexecuted(binderesult, "");
+        
+        if (binderesult != null) {
+        	
+        	if (binderesult.has("error")) {
+        		callback.onTaskexecuted("", binderesult.toString());	
+        	}
+        	else {
+        		callback.onTaskexecuted(binderesult.toString(), "");	
+        	}
+        	
+        }
     }
 }

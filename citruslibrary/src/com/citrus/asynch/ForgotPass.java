@@ -8,7 +8,7 @@ import android.os.AsyncTask;
 import com.citrus.citrususer.ResetPassword;
 import com.citrus.mobile.Callback;
 
-public class ForgotPass extends AsyncTask<Void, Void, String>{
+public class ForgotPass extends AsyncTask<Void, Void, JSONObject>{
 	Callback callback;	
 	String email;
 	
@@ -23,15 +23,22 @@ public class ForgotPass extends AsyncTask<Void, Void, String>{
 	}
 	
 	@Override
-	protected String doInBackground(Void... params) {
+	protected JSONObject doInBackground(Void... params) {
 		ResetPassword reset = new ResetPassword(activity, email);
-		String results = reset.sendresetEmail();
+		JSONObject results = reset.sendresetEmail();
 		return results;
 	}
 	
 	@Override
-	protected void onPostExecute(String result) {
+	protected void onPostExecute(JSONObject result) {
 		super.onPostExecute(result);
-		callback.onTaskexecuted(result, "");
+		
+		if (result.has("error")) {
+			callback.onTaskexecuted("", result.toString());
+		}
+		
+		else {
+			callback.onTaskexecuted(result.toString(), "");
+		}
 	}
 }

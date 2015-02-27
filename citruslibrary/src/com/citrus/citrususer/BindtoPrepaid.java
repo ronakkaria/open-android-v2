@@ -4,9 +4,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.text.TextUtils;
 
 import com.citrus.mobile.Config;
+import com.citrus.mobile.Errorclass;
 import com.citrus.mobile.OauthToken;
 import com.citrus.mobile.RESTclient;
 import com.citrus.mobile.User;
@@ -26,7 +26,7 @@ public class BindtoPrepaid {
 		oauth = new PrepaidOauth(activity, email, password);
 	}
 	
-	public String setPassword() {
+	public JSONObject setPassword() {
 		JSONObject headers = new JSONObject();
         JSONObject userJson = new JSONObject();
         JSONObject response = new JSONObject();
@@ -38,8 +38,8 @@ public class BindtoPrepaid {
             if (jsontoken != null) {
                 headers.put("Authorization", "Bearer " + jsontoken.getString("access_token"));
             }
-            else {
-            	return "Signin Token not found - Link user first";
+            else {            	
+            	return Errorclass.addErrorFlag("Signin Token not found - Link user first", null);
             }
 
         } catch (JSONException e) {
@@ -63,7 +63,7 @@ public class BindtoPrepaid {
 				return createprepaidAccount();
 			}
 			else {
-				return response.toString();
+				return Errorclass.addErrorFlag("", response);
 			}
 
 	        
@@ -71,31 +71,31 @@ public class BindtoPrepaid {
 			e.printStackTrace();
 		}
         
-        return "could not update password";
+        return Errorclass.addErrorFlag("could not update password", null);
 	}
 	
-	private String createprepaidAccount() {
-		String result = oauth.create();
+	private JSONObject createprepaidAccount() {
+		JSONObject result = oauth.create();
 		
-		if (TextUtils.equals(result, "prepaid token received")) {
+		if (result.has("status")) {
 			return getbalance();
 		}
 		
 	    return result;
 	}
 	
-	private String getbalance() {
-		String result = oauth.getbalance();
+	private JSONObject getbalance() {
+		JSONObject result = oauth.getbalance();
 		
-		if (TextUtils.equals(result, "prepaid user created")) {
+		if (result.has("status")) {
 			return getPrepaidCookie();
 		}
 		
 		return result;
 	}
 	
-	private String getPrepaidCookie() {
-		String result = oauth.getsetCookie();
+	private JSONObject getPrepaidCookie() {
+		JSONObject result = oauth.getsetCookie();
 		return result;
 	}
 	

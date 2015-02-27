@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import com.citrus.mobile.Callback;
 import com.citrus.mobile.Config;
+import com.citrus.mobile.Errorclass;
 import com.citrus.mobile.OauthToken;
 import com.citrus.mobile.RESTclient;
 import com.citrus.mobile.User;
@@ -14,7 +15,7 @@ import com.citrus.mobile.User;
 import android.app.Activity;
 import android.os.AsyncTask;
 
-public class GetPrepaidbill extends AsyncTask<String, Void, String> {
+public class GetPrepaidbill extends AsyncTask<String, Void, JSONObject> {
 	Activity activity;
 	Callback callback;
 	
@@ -26,7 +27,7 @@ public class GetPrepaidbill extends AsyncTask<String, Void, String> {
 	}
 	
 	@Override
-	protected String doInBackground(String... params) {
+	protected JSONObject doInBackground(String... params) {
 		headers = new JSONObject();
 		OauthToken token = new OauthToken(activity, User.PREPAID_TOKEN);
 		try {
@@ -36,7 +37,7 @@ public class GetPrepaidbill extends AsyncTask<String, Void, String> {
 				access_token = tokenjson.getString("access_token");
 			}
 			else {
-				return "Prepaid Oauth Token is missing - did you sign in the user?";
+				return Errorclass.addErrorFlag("Prepaid Oauth Token is missing - did you sign in the user?", null);
 			}
 			
 			try {
@@ -47,7 +48,7 @@ public class GetPrepaidbill extends AsyncTask<String, Void, String> {
 	        }
 		} catch (JSONException e) {
 			e.printStackTrace();
-			return "Prepaid Oauth Token is missing - did you sign in the user?";
+			return Errorclass.addErrorFlag("Prepaid Oauth Token is missing - did you sign in the user?", null);
 		}
 		
 		try {
@@ -58,7 +59,7 @@ public class GetPrepaidbill extends AsyncTask<String, Void, String> {
 
 		} catch (JSONException e) {
 			e.printStackTrace();
-			return "Prepaid bill parameters are missing";
+			return Errorclass.addErrorFlag("Prepaid bill parameters are missing", null);
 		}
 		
 		RESTclient restClient = new RESTclient("prepaidbill", Config.getEnv(), this.params, headers);
@@ -67,20 +68,22 @@ public class GetPrepaidbill extends AsyncTask<String, Void, String> {
 			response = restClient.makePostrequest();
 		} catch (IOException e) {
 			e.printStackTrace();
-			return "IO Exception - check if internet is working!";
+			return Errorclass.addErrorFlag("IO Exception - check if internet is working!", null);
 		}
 		
-		return response.toString();
+		return response;
 	}
 	
 	@Override
-	protected void onPostExecute(String result) {
+	protected void onPostExecute(JSONObject result) {
 		super.onPostExecute(result);
-		if (response != null) {
-			callback.onTaskexecuted(response.toString(), "");
+		
+		if (result.has("error")) {
+			callback.onTaskexecuted("", result.toString());
 		}
+		
 		else {
-			callback.onTaskexecuted("", result);
+			callback.onTaskexecuted(result.toString(), "");
 		}
 	}
 

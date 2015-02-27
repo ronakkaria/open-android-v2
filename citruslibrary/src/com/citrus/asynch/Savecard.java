@@ -21,7 +21,7 @@ import com.citrus.wallet.Wallet;
 
 
 public class Savecard extends AsyncTask<Card,Void,Void> {
-    String savecardresult, error;
+    String savecardresult = "", error = "";
     Activity activity;
     Callback callback;
 

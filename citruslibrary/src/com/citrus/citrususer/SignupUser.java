@@ -6,10 +6,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.text.TextUtils;
 
 import com.citrus.mobile.Config;
 import com.citrus.mobile.RESTclient;
+import com.citrus.mobile.SuccessCall;
 import com.citrus.mobile.User;
 
 public class SignupUser {
@@ -24,7 +24,7 @@ public class SignupUser {
 		this.activity = activity;
 	}
 	
-	public String register(String email, String mobile) {
+	public JSONObject register(String email, String mobile) {
 		
 		this.email = email;
 		
@@ -35,19 +35,19 @@ public class SignupUser {
 		return binduser();		
 	}
 	
-	private String binduser() {
+	private JSONObject binduser() {
 		User user = new User(activity);
 		
-		String result = user.binduser(this.email, this.mobile);
+		JSONObject result = user.binduser(this.email, this.mobile);
 		
-		if (TextUtils.equals(result, "user bound")) {
+		if (result.has("status")) {		
 			return signinRandomPassword();
 		}
 		
 		return result;
 	}
 		
-	private String signinRandomPassword() {
+	private JSONObject signinRandomPassword() {
 		JSONObject response = new JSONObject();
 
         JSONObject userJson = new JSONObject();
@@ -88,11 +88,11 @@ public class SignupUser {
         }
         
         if (response.has("access_token")) {
-        	return "set user password";
+        	return SuccessCall.successMessage("set user password", null);
         }
         
         else {
-        	return "password is set already";
+        	return SuccessCall.successMessage("password is set already", null);
         }
         
 	}

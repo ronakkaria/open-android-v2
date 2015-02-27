@@ -5,12 +5,14 @@ import java.io.IOException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
+
 import com.citrus.mobile.Config;
+import com.citrus.mobile.Errorclass;
 import com.citrus.mobile.OauthToken;
 import com.citrus.mobile.RESTclient;
+import com.citrus.mobile.SuccessCall;
 import com.citrus.mobile.User;
-
-import android.app.Activity;
 
 public class ResetPassword {
 	private Activity activity;
@@ -22,12 +24,12 @@ public class ResetPassword {
 		this.emailid = email;
 	}
 	
-	public String sendresetEmail() {
+	public JSONObject sendresetEmail() {
 		OauthToken signuptoken = new OauthToken(activity, User.SIGNUP_TOKEN);
 		
 		JSONObject jsonToken = signuptoken.getuserToken();
 		
-		JSONObject response, params = null;
+		JSONObject response = null, params = null;
 		
 		if (jsonToken != null) {
 			
@@ -36,8 +38,8 @@ public class ResetPassword {
 			try {
 				headers.put("Authorization", "Bearer " + jsonToken.getString("access_token"));
 			} catch (JSONException e) {
-				e.printStackTrace();
-				return "Could not reset Password - signup token missing";
+				e.printStackTrace();				
+				return Errorclass.addErrorFlag("Could not reset Password - signup token missing", response);
 			}
 			
 			try {
@@ -51,20 +53,20 @@ public class ResetPassword {
 			try {
 				response = restClient.makePostrequest();
 			} catch (IOException e) {
-				e.printStackTrace();
-				return "Check your internet connection";
+				e.printStackTrace();				
+				return Errorclass.addErrorFlag("Check your internet connection", response);
 			}
 			
 			if (response == null) {
-				return "Reset Password Email sent on the mail Id";
+				return SuccessCall.successMessage("Reset Password Email sent on the mail Id", response);
 			}
 			else {
-				return response.toString();
+				return Errorclass.addErrorFlag("", response);
 			}
 			
 		}
 		else {
-			return "User is not bound - bind the user first";
+			return Errorclass.addErrorFlag("User is not bound - bind the user first", null);
 		}
 	}
 }

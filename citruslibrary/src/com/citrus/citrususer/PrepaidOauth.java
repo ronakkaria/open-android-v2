@@ -11,8 +11,10 @@ import android.webkit.CookieSyncManager;
 
 import com.citrus.cash.PersistentConfig;
 import com.citrus.mobile.Config;
+import com.citrus.mobile.Errorclass;
 import com.citrus.mobile.OauthToken;
 import com.citrus.mobile.RESTclient;
+import com.citrus.mobile.SuccessCall;
 import com.citrus.mobile.User;
 
 public class PrepaidOauth {
@@ -34,7 +36,7 @@ public class PrepaidOauth {
 		this.activity = activity;		
 	}
 	
-	public String create() {
+	public JSONObject create() {
 		JSONObject headers = new JSONObject();
         JSONObject userJson = new JSONObject();
         JSONObject response = new JSONObject();
@@ -69,14 +71,14 @@ public class PrepaidOauth {
 		if (response.has("access_token")) {
 			OauthToken prepaid_token = new OauthToken(activity, User.PREPAID_TOKEN);
 			prepaid_token.createToken(response);	
-			return "prepaid token received";
+			return SuccessCall.successMessage("prepaid token received", null);
 		}
 		else {
-			return response.toString();
+			return Errorclass.addErrorFlag("", response);
 		}
 	}
 	
-	public String getbalance() {
+	public JSONObject getbalance() {
 		JSONObject headers = new JSONObject();
 		JSONObject response = new JSONObject();
 		
@@ -96,15 +98,15 @@ public class PrepaidOauth {
 			e.printStackTrace();
 		}
         
-        if (response.has("value")) {        	
-        	return "prepaid user created";
+        if (response.has("value")) {
+        	return SuccessCall.successMessage("prepaid user created", null);
         } 
         else {
-        	return "Could not create prepaid user - get balance error";
+        	return Errorclass.addErrorFlag("Could not create prepaid user - get balance error", null);
         }
 	}
 	
-	public String getsetCookie() {
+	public JSONObject getsetCookie() {
 		JSONObject user = new JSONObject();
 		JSONObject headers = new JSONObject();		
 		JSONObject response = new JSONObject();
@@ -116,7 +118,7 @@ public class PrepaidOauth {
 			headers.put("Content-Type", "application/x-www-form-urlencoded");
 			
 		} catch (JSONException e) {
-			return "email or password missing";
+			return Errorclass.addErrorFlag("email or password missing", null);
 		}
 
 		RESTclient restClient = new RESTclient("prepaid", Config.getEnv(), user, headers);
@@ -124,7 +126,7 @@ public class PrepaidOauth {
 			response = restClient.makePostrequest();
 		} catch (IOException e) {
 			e.printStackTrace();
-			return "Check your internet connection";
+			return Errorclass.addErrorFlag("Check your internet connection", null);
 		}
 		
 		if (!response.equals(null)) {
@@ -144,15 +146,15 @@ public class PrepaidOauth {
 				
 				config.setCookie(sessionCookie);
 				
-				return "User logged in with prepaid credentials!";
-								
+				return SuccessCall.successMessage("User logged in with prepaid credentials!", null);
+												
 			} catch (JSONException e) {
 				e.printStackTrace();
-				return response.toString();
+				return Errorclass.addErrorFlag("", response);			
 			}
 		}
 		else {
-			return "Could not get Prepaid Cookie";
+			return Errorclass.addErrorFlag("Could not get Prepaid Cookie", null);
 		}
 	}
 	

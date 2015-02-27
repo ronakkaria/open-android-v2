@@ -1,7 +1,8 @@
 package com.citrus.citrususer;
 
+import org.json.JSONObject;
+
 import android.app.Activity;
-import android.text.TextUtils;
 
 public class LoginUser {
 	Activity activity;
@@ -13,15 +14,16 @@ public class LoginUser {
 		this.password = password;
 	}
 	
-	public String login() {
+	public JSONObject login() {
 		PrepaidOauth oauth = new PrepaidOauth(activity, email, password);
 		
-		String result = oauth.create();
+		JSONObject result = oauth.create();
 		
-		if (TextUtils.equals(result, "prepaid token received")) {
+		if (result.has("status")) {
 			result = oauth.getsetCookie();
 		}
 		
 		return result;
 	}
+	
 }

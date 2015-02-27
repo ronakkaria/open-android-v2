@@ -8,9 +8,10 @@ import org.json.JSONObject;
 import android.os.AsyncTask;
 
 import com.citrus.mobile.Callback;
+import com.citrus.mobile.Errorclass;
 import com.citrus.mobile.RESTclient;
 
-public class PaymentOptions extends AsyncTask<Void, Void, String>{
+public class PaymentOptions extends AsyncTask<Void, Void, JSONObject>{
 	
 	Callback callback;
 	
@@ -22,7 +23,7 @@ public class PaymentOptions extends AsyncTask<Void, Void, String>{
 	}
 	
 	@Override
-	protected String doInBackground(Void... params) {
+	protected JSONObject doInBackground(Void... params) {
 		
 		JSONObject header, param, response;
 		
@@ -31,14 +32,14 @@ public class PaymentOptions extends AsyncTask<Void, Void, String>{
 		try {
 			header.put("Content-Type", "application/x-www-form-urlencoded");
 		} catch(JSONException e) {
-			return "Could not add headers";
+			return Errorclass.addErrorFlag("Could not add headers", null);
 		}
 		
 		param = new JSONObject();
 		try {
 		param.put("vanity", vanity);
 		} catch(JSONException e) {
-			return "Could not add vanity url";
+			return Errorclass.addErrorFlag("Could not add vanity url", null);
 		}
 		
 		RESTclient restClient = new RESTclient("paymentoptions", com.citrus.mobile.Config.getEnv(), param, header);
@@ -47,16 +48,24 @@ public class PaymentOptions extends AsyncTask<Void, Void, String>{
 			response = restClient.makePostrequest();
 		} catch (IOException e) {
 			e.printStackTrace();
-			return "Check your internet connection!";
+			return Errorclass.addErrorFlag("Check your internet connection!", null);
 		}
 		
-		return response.toString();
+		return response;
 		
 	}
 	
 	@Override
-	protected void onPostExecute(String result) {
+	protected void onPostExecute(JSONObject result) {
 		super.onPostExecute(result);
-		callback.onTaskexecuted(result, "");
+		
+		if (result.has("error")) {
+			callback.onTaskexecuted("", result.toString());
+		}
+		
+		else {
+			callback.onTaskexecuted(result.toString(), "");
+		}
+		
 	}
 }
