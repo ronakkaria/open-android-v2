@@ -26,5 +26,13 @@
         android:layout_height="50dp"
         android:text="Net Banking"
         android:layout_marginBottom="20dp"/>
+    
+    <Button
+        android:id="@+id/walletpay"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Citrus Cash Payment"
+        android:layout_marginBottom="20dp"/>
+    
 
 </LinearLayout>
