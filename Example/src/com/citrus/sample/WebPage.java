@@ -12,6 +12,7 @@
 */
 package com.citrus.sample;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -40,7 +41,8 @@ public class WebPage extends Activity {
     
     private BroadcastReceiver mMessageReceiver;
 
-    @Override
+    @TargetApi(Build.VERSION_CODES.L)
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_page);
@@ -59,8 +61,8 @@ public class WebPage extends Activity {
         
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-        }	
-
+        }
+        
         webView.addJavascriptInterface(new JsInterface(), "CitrusResponse");
 
         webView.setWebViewClient(new WebViewClient(){
