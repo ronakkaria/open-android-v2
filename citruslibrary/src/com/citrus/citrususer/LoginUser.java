@@ -2,6 +2,8 @@ package com.citrus.citrususer;
 
 import org.json.JSONObject;
 
+import com.citrus.mobile.User;
+
 import android.app.Activity;
 
 public class LoginUser {
@@ -15,15 +17,25 @@ public class LoginUser {
 	}
 	
 	public JSONObject login() {
-		PrepaidOauth oauth = new PrepaidOauth(activity, email, password);
 		
-		JSONObject result = oauth.create();
+		User citrususer = new User(activity);
 		
-		if (result.has("status")) {
-			result = oauth.getsetCookie();
+		JSONObject signinresult = citrususer.signinUser(email);
+		
+		if (signinresult.has("status")) {
+			PrepaidOauth oauth = new PrepaidOauth(activity, email, password);
+			
+			JSONObject result = oauth.create();
+			
+			if (result.has("status")) {
+				result = oauth.getsetCookie();
+			}
+			
+			return result;
 		}
 		
-		return result;
+		return signinresult;
+		
 	}
 	
 }

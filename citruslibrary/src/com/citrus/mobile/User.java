@@ -124,7 +124,7 @@ public class User {
         }
     }
 
-    private JSONObject signinUser(String email) {
+    public JSONObject signinUser(String email) {
         JSONObject response = new JSONObject();
 
         JSONObject userJson = new JSONObject();

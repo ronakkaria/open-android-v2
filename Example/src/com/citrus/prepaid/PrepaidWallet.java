@@ -17,6 +17,7 @@ import com.citrus.asynch.GetPrepaidbill;
 import com.citrus.asynch.LinkUser;
 import com.citrus.asynch.SetPassword;
 import com.citrus.asynch.SignIn;
+import com.citrus.asynch.WalletStatus;
 import com.citrus.card.Card;
 import com.citrus.cash.Prepaid;
 import com.citrus.cash.PrepaidPg;
@@ -34,7 +35,7 @@ public class PrepaidWallet extends Activity {
 	
 	private static final String bill_url = "http://yourwebsite.com/billurl.php";
 	
-	Button linkuser, setpass, forgot, signin, getbalance, getprepaidbill
+	Button isSignedin, linkuser, setpass, forgot, signin, getbalance, getprepaidbill
 	,card_load, token_load, bank_load, citrus_cashpay, get_prepaidToken;
 
 	Callback callback;
@@ -47,6 +48,8 @@ public class PrepaidWallet extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_prepaid);
+		
+		isSignedin = (Button) this.findViewById(R.id.issignedin);
 		
 		linkuser = (Button) this.findViewById(R.id.linkuser);
 		
@@ -84,6 +87,15 @@ public class PrepaidWallet extends Activity {
 	}
 	
 	private void init() {
+		
+		isSignedin.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				new WalletStatus(PrepaidWallet.this, callback).execute();
+			}
+		});
+		
 		linkuser.setOnClickListener(new OnClickListener() {
 			
 			@Override

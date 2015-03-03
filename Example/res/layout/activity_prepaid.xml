@@ -15,13 +15,20 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/background_light" >
-
+	
+    <Button android:id="@+id/issignedin"
+        	android:layout_width="match_parent"
+        	android:layout_height="50dp"
+        	android:layout_margin="10dp"
+        	android:text="Is User Signed In"
+        	android:layout_alignParentTop="true"/>          
+              
     <Button android:id="@+id/linkuser"
         	android:layout_width="match_parent"
         	android:layout_height="50dp"
         	android:layout_margin="10dp"
         	android:text="Link User"
-        	android:layout_alignParentTop="true"/>
+        	android:layout_below="@+id/issignedin"/>
     
     <Button android:id="@+id/setpassword"
         	android:layout_width="match_parent"
