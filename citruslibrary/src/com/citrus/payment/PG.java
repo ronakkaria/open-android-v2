@@ -13,24 +13,36 @@
 package com.citrus.payment;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
+import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import com.citrus.asynch.MakePayment;
 import com.citrus.card.Card;
+import com.citrus.cash.LoadMoney;
 import com.citrus.cash.Prepaid;
 import com.citrus.mobile.Callback;
+import com.citrus.mobile.Config;
+import com.citrus.mobile.Errorclass;
+import com.citrus.mobile.OauthToken;
+import com.citrus.mobile.RESTclient;
+import com.citrus.mobile.User;
 import com.citrus.netbank.Bank;
 
 public class PG {
+	
+	Activity activity;
+	
     private Card card;
     private Bill bill;
     private UserDetails userDetails;
-    private Callback callback;
+    private Callback callback, internal;
 
     private JSONObject payment;
 
@@ -41,6 +53,8 @@ public class PG {
     private String paymenttype;
     
     private JSONObject customParameters = null;
+    
+    private LoadMoney loadmoney;
 
     ArrayList<String> mylist = new ArrayList<String>();
 
@@ -71,14 +85,64 @@ public class PG {
          this.prepaid = prepaid;
          paymenttype = "prepaid";
     }
-
+    
+    public PG(Card card, LoadMoney load, UserDetails userDetails) {
+    	this.card = card;
+    	this.userDetails = userDetails;
+    	
+    	this.loadmoney = load;
+    	
+    	if (TextUtils.isEmpty(card.getCardNumber())) {
+            paymenttype = "cardtoken";
+        }
+        else {
+            paymenttype = "card";
+        }
+    	
+    }
+    
+    public PG(Bank bank, LoadMoney load, UserDetails userDetails) {
+    	this.bank = bank;
+    	this.userDetails = userDetails;
+    	this.loadmoney = load;
+    	paymenttype = "netbank";
+    }
+    
     public void charge(Callback callback) {
         this.callback = callback;
 
         validate();
 
     }
-
+    
+    public void load(Activity activity, Callback callback) {
+    	this.callback = callback;
+    	
+    	this.activity = activity;
+    	
+    	internal = new Callback() {
+			
+			@Override
+			public void onTaskexecuted(String success, String error) {
+				 if (!TextUtils.isEmpty(success)) {
+					 formprepaidBill(success);
+				 }
+				 else {
+					 PG.this.callback.onTaskexecuted("", error);
+				 }
+					  	
+			}
+		};
+		
+		new GetPrepaidbill()
+		.execute(new String[]{loadmoney.getAmount(), loadmoney.getReturl()});
+    }
+    
+    private void formprepaidBill(String prepaid_bill) {    	
+    	this.bill = new Bill(prepaid_bill, "prepaid");
+    	
+    	validate();
+    }
     
     public void setCustomParameters(JSONObject customParameters)
     {
@@ -271,4 +335,69 @@ public class PG {
         new MakePayment(payment, headers, callback).execute();
 
     }
+    
+    private class GetPrepaidbill extends AsyncTask<String, Void, JSONObject> {
+    	JSONObject headers, params, response = null;
+    	@Override
+    	protected JSONObject doInBackground(String... params) {
+    		headers = new JSONObject();
+    		OauthToken token = new OauthToken(activity, User.PREPAID_TOKEN);
+    		try {
+    			JSONObject tokenjson = token.getuserToken();
+    			String access_token = null;
+    			if (tokenjson != null) {
+    				access_token = tokenjson.getString("access_token");
+    			}
+    			else {
+    				return Errorclass.addErrorFlag("Prepaid Oauth Token is missing - did you sign in the user?", null);
+    			}
+    			
+    			try {
+    	            headers.put("Authorization", "Bearer " + access_token);
+    	            headers.put("Content-Type", "application/x-www-form-urlencoded");
+    	        } catch (JSONException e) {
+    	            e.printStackTrace();
+    	        }
+    		} catch (JSONException e) {
+    			e.printStackTrace();
+    			return Errorclass.addErrorFlag("Prepaid Oauth Token is missing - did you sign in the user?", null);
+    		}
+    		
+    		try {
+    			this.params = new JSONObject();
+    			this.params.put("amount", params[0]);
+    			this.params.put("currency", "INR");
+    			this.params.put("redirect", params[1]);
+
+    		} catch (JSONException e) {
+    			e.printStackTrace();
+    			return Errorclass.addErrorFlag("Prepaid bill parameters are missing", null);
+    		}
+    		
+    		RESTclient restClient = new RESTclient("prepaidbill", Config.getEnv(), this.params, headers);
+    		
+    		try {
+    			response = restClient.makePostrequest();
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    			return Errorclass.addErrorFlag("IO Exception - check if internet is working!", null);
+    		}
+    		
+    		return response;
+    	}
+    	
+    	@Override
+    	protected void onPostExecute(JSONObject result) {
+    		super.onPostExecute(result);
+    		
+    		if (result.has("error")) {
+    			internal.onTaskexecuted("", result.toString());
+    		}
+    		
+    		else {
+    			internal.onTaskexecuted(result.toString(), "");
+    		}
+    	}
+    }
+    
 }

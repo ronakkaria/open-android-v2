@@ -13,12 +13,12 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.citrus.asynch.ForgotPass;
-import com.citrus.asynch.GetPrepaidbill;
 import com.citrus.asynch.LinkUser;
 import com.citrus.asynch.SetPassword;
 import com.citrus.asynch.SignIn;
 import com.citrus.asynch.WalletStatus;
 import com.citrus.card.Card;
+import com.citrus.cash.LoadMoney;
 import com.citrus.cash.Prepaid;
 import com.citrus.cash.PrepaidPg;
 import com.citrus.mobile.Callback;
@@ -33,9 +33,9 @@ import com.citrus.sample.WebPage;
 
 public class PrepaidWallet extends Activity {
 	
-	private static final String bill_url = "http://yourwebsite.com/billurl.php";
+	private static final String bill_url = "http://yourwebsite.com/bill.php";
 	
-	Button isSignedin, linkuser, setpass, forgot, signin, getbalance, getprepaidbill
+	Button isSignedin, linkuser, setpass, forgot, signin, getbalance
 	,card_load, token_load, bank_load, citrus_cashpay, get_prepaidToken;
 
 	Callback callback;
@@ -60,9 +60,7 @@ public class PrepaidWallet extends Activity {
 		signin = (Button) this.findViewById(R.id.signin);
 		
 		getbalance = (Button) this.findViewById(R.id.getbalance);
-		
-		getprepaidbill = (Button) this.findViewById(R.id.getprepaidbill);
-		
+				
 		card_load = (Button) this.findViewById(R.id.cardload);
 		
 		token_load = (Button) this.findViewById(R.id.tokenload);
@@ -141,50 +139,26 @@ public class PrepaidWallet extends Activity {
 			}
 		});
 		
-		getprepaidbill.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				new GetPrepaidbill(PrepaidWallet.this, new Callback() {
-					
-					@Override
-					public void onTaskexecuted(String success, String error) {
-						showToast(success, error);
-						
-						if (!TextUtils.isEmpty(success.toString())) 
-								prepaid_bill = success;
-						
-					}
-				})
-				.execute(new String[]{"100", "http://yourwebsite.com/return_url.php"});
-			}
-		});
-		
 		card_load.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				
-				if (TextUtils.isEmpty(prepaid_bill)) {
-					Toast.makeText(getApplicationContext(), "Prepaid Bill is missing", Toast.LENGTH_LONG).show();
-				 	return;
-				}
-				
-				Bill bill = new Bill(prepaid_bill, "prepaid");
-				
 				Card card = new Card("4111111111111111", "05", "24", "078", "Tester Citrus", "debit");
-
-		        UserDetails userDetails = new UserDetails(customer);
-
-		        PG paymentgateway = new PG(card, bill, userDetails);
-
-		        paymentgateway.charge(new Callback() {
+				
+				LoadMoney load = new LoadMoney("100", "http://yourwebsite.com/return_url.php");
+				
+				UserDetails userDetails = new UserDetails(customer);
+				
+				PG paymentgateway = new PG(card, load, userDetails);
+				
+				paymentgateway.load(PrepaidWallet.this, new Callback() {
 		            @Override
 		            public void onTaskexecuted(String success, String error) {
 		                processresponse(success, error);
 		            }
 		        });
-				
+						
 			}
 		});
 		
@@ -192,25 +166,22 @@ public class PrepaidWallet extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				if (TextUtils.isEmpty(prepaid_bill)) {
-					Toast.makeText(getApplicationContext(), "Prepaid Bill is missing", Toast.LENGTH_LONG).show();
-				 	return;
-				}
 				
-				Bill bill = new Bill(prepaid_bill, "prepaid");
+				Card card = new Card("f1b2508e360c345285d7917d4f4eb112", "778");
 				
-				Card card = new Card("f1b2508e360c345285d7917d4f4eb112", "123");
-
-		        UserDetails userDetails = new UserDetails(customer);
-
-		        PG paymentgateway = new PG(card, bill, userDetails);
-
-		        paymentgateway.charge(new Callback() {
+				LoadMoney load = new LoadMoney("100", "http://yourwebsite.com/return_url.php");
+				
+				UserDetails userDetails = new UserDetails(customer);
+				
+				PG paymentgateway = new PG(card, load, userDetails);
+				
+				paymentgateway.load(PrepaidWallet.this, new Callback() {
 		            @Override
 		            public void onTaskexecuted(String success, String error) {
 		                processresponse(success, error);
 		            }
 		        });
+				
 			}
 		});
 		
@@ -218,20 +189,16 @@ public class PrepaidWallet extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				if (TextUtils.isEmpty(prepaid_bill)) {
-					Toast.makeText(getApplicationContext(), "Prepaid Bill is missing", Toast.LENGTH_LONG).show();
-				 	return;
-				}
 				
-				Bill bill = new Bill(prepaid_bill, "prepaid");
-
-		        Bank netbank = new Bank("CID002");
-
-		        UserDetails userDetails = new UserDetails(customer);
-
-		        PG paymentgateway = new PG(netbank, bill, userDetails);
-
-		        paymentgateway.charge(new Callback() {
+				Bank netbank = new Bank("CID002");
+				
+				LoadMoney load = new LoadMoney("100", "http://yourwebsite.com/return_url.php");
+				
+				UserDetails userDetails = new UserDetails(customer);
+				
+				PG paymentgateway = new PG(netbank, load, userDetails);
+				
+				paymentgateway.load(PrepaidWallet.this, new Callback() {
 		            @Override
 		            public void onTaskexecuted(String success, String error) {
 		                processresponse(success, error);
@@ -254,7 +221,7 @@ public class PrepaidWallet extends Activity {
 						showToast(bill, error);
 					}
 				})
-				.execute();
+				.execute();				
 			}
 		});
 		
@@ -303,7 +270,7 @@ public class PrepaidWallet extends Activity {
 	private void initcustdetails() {
 		customer = new JSONObject();
 		/*All the below mentioned parameters are mandatory - missing anyone of them may create errors
-	        * Do not change the key in the json below - only change the values*/
+	     * Do not change the key in the json below - only change the values*/
 
 	        try {
 	            customer.put("firstName", "Tester");

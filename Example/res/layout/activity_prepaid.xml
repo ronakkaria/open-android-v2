@@ -58,19 +58,14 @@
         	android:text="Get Balance"
         	android:layout_below="@+id/signin"/>
         
-    <Button android:id="@+id/getprepaidbill"
-        	android:layout_width="match_parent"
-        	android:layout_height="50dp"
-        	android:layout_margin="10dp"
-        	android:text="Get Prepaid Bill"
-        	android:layout_below="@+id/getbalance"/>
+
     
     <Button android:id="@+id/cardload"
         	android:layout_width="match_parent"
         	android:layout_height="50dp"
         	android:layout_margin="10dp"
         	android:text="Load Using Card"
-        	android:layout_below="@+id/getprepaidbill"/>
+        	android:layout_below="@+id/getbalance"/>
     
     <Button android:id="@+id/tokenload"
         	android:layout_width="match_parent"
