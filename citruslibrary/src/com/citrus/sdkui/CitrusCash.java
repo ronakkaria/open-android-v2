@@ -1,0 +1,38 @@
+package com.citrus.sdkui;
+
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+
+/**
+ * Created by salil on 4/3/15.
+ */
+public class CitrusCash extends PaymentOption {
+
+    private String amount = null;
+
+    public CitrusCash() {
+    }
+
+    /**
+     * @param name  - User friendly name of the payment option. e.g. Debit Card (4242) or Net Banking - ICICI Bank
+     * @param token - Token for payment option, used for tokenized payment.
+     */
+    public CitrusCash(String name, String token) {
+        super(name, token);
+    }
+
+    public CitrusCash(String amount) {
+        this.amount = amount;
+    }
+
+    @Override
+    public Drawable getOptionIcon(Context context) {
+        Drawable drawable = context.getResources().getDrawable(context.getResources().getIdentifier("citrus_cash", "drawable", context.getPackageName()));
+
+        return drawable;
+    }
+
+    public String getAmount() {
+        return amount;
+    }
+}

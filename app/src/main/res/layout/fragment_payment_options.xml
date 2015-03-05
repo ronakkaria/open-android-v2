@@ -1,0 +1,74 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#dec1c0c0"
+            android:padding="8dp"
+            tools:context="com.citruspay.sdkui.PaymentOptionsFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.citruspay.sdkui.PaymentOptionsCardView
+            android:id="@+id/cardview_citrus_cash"
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingBottom="16dp"
+            card_view:cardCornerRadius="4dp"
+            card_view:cardUseCompatPadding="true"
+            />
+
+        <com.citruspay.sdkui.PaymentOptionsCardView
+            android:id="@+id/cardview_saved_cards"
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingBottom="16dp"
+            card_view:cardCornerRadius="4dp"
+            card_view:cardUseCompatPadding="true"
+            />
+
+        <com.citruspay.sdkui.PaymentOptionsCardView
+            android:id="@+id/cardview_debit_credit_cards"
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingBottom="16dp"
+            card_view:cardCornerRadius="4dp"
+            card_view:cardUseCompatPadding="true"
+            />
+
+        <com.citruspay.sdkui.PaymentOptionsCardView
+            android:id="@+id/cardview_netbanking"
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            card_view:cardCornerRadius="4dp"
+            card_view:cardUseCompatPadding="true"
+            />
+
+    </LinearLayout>
+</ScrollView>
+
+    <!--<TextView-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="100dp"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:background="#F05E5E"-->
+    <!--android:gravity="center_vertical"-->
+    <!--android:paddingLeft="20dp"-->
+    <!--android:paddingRight="20dp"-->
+    <!--android:textColor="@android:color/white"-->
+    <!--android:visibility="gone"-->
+    <!--android:text="Our system is seeing an increased failure rate with this bank. Tread with caution..."-->
+    <!--android:textSize="18sp"-->
+    <!--android:textStyle="bold"/>-->
+
+    <!--</RelativeLayout>-->

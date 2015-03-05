@@ -1,18 +1,23 @@
 package com.citrus.sdkui;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
+
+import com.citruspay.citruslibrary.R;
 
 /**
  * Created by salil on 13/2/15.
  */
 public abstract class CardOption extends PaymentOption {
 
-    private String cardHolderName = null;
-    private String cardNumber = null;
-    private String cardCVV = null;
-    private String cardExpiry = null;
-    private String cardExpiryMonth = null;
-    private String cardExpiryYear = null;
+    protected String cardHolderName = null;
+    protected String cardNumber = null;
+    protected String cardCVV = null;
+    protected String cardExpiry = null;
+    protected String cardExpiryMonth = null;
+    protected String cardExpiryYear = null;
+    protected String cardScheme = null;
 
     /**
      * @param cardHolderName - Name of the card holder.
@@ -42,13 +47,15 @@ public abstract class CardOption extends PaymentOption {
      * @param token          - Stored token for Card payment.
      * @param cardHolderName - Name of the card holder.
      * @param cardNumber     - Card number
+     * @param cardScheme     - Card scheme e.g. VISA, MASTER etc.
      * @param cardExpiry     - Card expiry date. In MMYYYY format.
      */
-    CardOption(String name, String token, String cardHolderName, String cardNumber, String cardExpiry) {
+    public CardOption(String name, String token, String cardHolderName, String cardNumber, String cardScheme, String cardExpiry) {
         super(name, token);
         this.cardHolderName = cardHolderName;
         this.cardNumber = cardNumber;
         this.cardExpiry = cardExpiry;
+        this.cardScheme = cardScheme;
 
         // The received expiry date is in MMYYYY format so take out expiry month and year which will be required for display purpose.
         if (!TextUtils.isEmpty(cardExpiry)) {
@@ -83,6 +90,39 @@ public abstract class CardOption extends PaymentOption {
 
     public String getCardNumber() {
         return cardNumber;
+    }
+
+    @Override
+    public Drawable getOptionIcon(Context context) {
+        // Return the icon depending upon the scheme of the card.
+        Drawable drawable = null;
+
+        int resourceId = 0;
+        if ("visa".equalsIgnoreCase(cardScheme)) {
+            resourceId = context.getResources().getIdentifier("visa", "drawable", context.getPackageName());
+        } else if ("mcrd".equalsIgnoreCase(cardScheme)) {
+            resourceId = context.getResources().getIdentifier("mcrd", "drawable", context.getPackageName());
+        } else if ("maestro".equalsIgnoreCase(cardScheme)) {
+            resourceId = context.getResources().getIdentifier("maestro", "drawable", context.getPackageName());
+        } else if ("DINERCLUB".equalsIgnoreCase(cardScheme)) {
+            resourceId = context.getResources().getIdentifier("dinerclub", "drawable", context.getPackageName());
+        } else if ("jcb".equalsIgnoreCase(cardScheme)) {
+            resourceId = context.getResources().getIdentifier("jcb", "drawable", context.getPackageName());
+        } else if ("amex".equalsIgnoreCase(cardScheme)) {
+            resourceId = context.getResources().getIdentifier("amex", "drawable", context.getPackageName());
+        } else if ("DISCOVER".equalsIgnoreCase(cardScheme)) {
+            resourceId = context.getResources().getIdentifier("discover", "drawable", context.getPackageName());
+        }
+
+        if (resourceId == 0) {
+            if ((resourceId = context.getResources().getIdentifier("default_card", "drawable", context.getPackageName())) != 0) {
+                drawable = context.getResources().getDrawable(resourceId);
+            }
+        }  else {
+            drawable = context.getResources().getDrawable(resourceId);
+        }
+
+        return drawable;
     }
 
     /**

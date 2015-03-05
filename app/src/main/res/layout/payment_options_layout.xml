@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp">
+
+    <!-- Image view for payment option logo. -->
+    <ImageView
+        android:id="@+id/img_payment_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:paddingLeft="8dp"
+        />
+
+    <TextView
+        android:id="@+id/txt_payment_name"
+        style="@android:style/TextAppearance.Medium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/img_payment_logo"
+        android:paddingLeft="8dp"
+        />
+
+    <TextView
+        android:id="@+id/txt_bank_name"
+        style="@android:style/TextAppearance.Small"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_payment_name"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/img_payment_logo"
+        android:paddingLeft="8dp"
+        />
+
+    <TextView
+        android:id="@+id/txt_offer"
+        style="@android:style/TextAppearance.Small"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_bank_name"
+        android:paddingLeft="8dp"
+        android:visibility="gone"
+        />
+
+</RelativeLayout>

@@ -12,10 +12,11 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import static com.citruspay.sdkui.CardOption.CardType.DEBIT;
-import static com.citruspay.sdkui.CardOption.CardType.CREDIT;
-
-
+import com.citrus.sdkui.CardOption;
+import com.citrus.sdkui.CreditCardOption;
+import com.citrus.sdkui.DebitCardOption;
+import static com.citrus.sdkui.CardOption.CardType.DEBIT;
+import static com.citrus.sdkui.CardOption.CardType.CREDIT;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -34,6 +35,10 @@ public class CardPaymentFragment extends Fragment implements View.OnClickListene
     private EditText mEditExpiry = null;
     private CardOption.CardType mCardType = null;
 
+    public CardPaymentFragment() {
+        // Required empty public constructor
+    }
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -43,10 +48,6 @@ public class CardPaymentFragment extends Fragment implements View.OnClickListene
     // TODO: Rename and change types and number of parameters
     public static CardPaymentFragment newInstance() {
         return new CardPaymentFragment();
-    }
-
-    public CardPaymentFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -104,12 +105,12 @@ public class CardPaymentFragment extends Fragment implements View.OnClickListene
 
         switch (mCardType) {
             case DEBIT:
-            cardOption = new DebitCardOption(cardName,cardNumber, cardCVV, cardExpiry);
-            break;
+                cardOption = new DebitCardOption(cardName, cardNumber, cardCVV, cardExpiry);
+                break;
 
             case CREDIT:
-            cardOption = new CreditCardOption(cardName,cardNumber, cardCVV, cardExpiry);
-            break;
+                cardOption = new CreditCardOption(cardName, cardNumber, cardCVV, cardExpiry);
+                break;
         }
 
         mListener.onOptionSelected(cardOption);

@@ -5,7 +5,7 @@ import com.android.volley.VolleyError;
 /**
  * Created by MANGESH KADAM on 2/17/2015.
  */
-public abstract class InitListener {
+public abstract interface InitListener {
     public abstract void onSuccess(String response);
     public abstract void onBindFailed(String response);
     public abstract void onWalletLoadFailed(String response);

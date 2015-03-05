@@ -22,64 +22,14 @@ import com.citrus.sdkui.PaymentOption;
 import java.util.List;
 
 public class Config {
+    //private static Context context;
+
+    static List<PaymentOption> citrusWallet = null;
     private static String env, signinId, signinSecret, signupId, signupSecret;
-
-    public static void setVanity(String vanity) {
-        Config.vanity = vanity;
-    }
-
     private static String vanity;
     private static String emailID;
     private static String mobileNo;
-
-
-    public static void setMobileNo(String mobileNo) {
-        Config.mobileNo = mobileNo;
-    }
-
-    public static void setEmailID(String emailID) {
-        Config.emailID = emailID;
-    }
-
-
-
-    //private static Context context;
-
-    public static List<NetbankingOption> getBankList() {
-        return bankList;
-    }
-
-    public static void setBankList(List<NetbankingOption> bankList) {
-        Config.bankList = bankList;
-    }
-
     private static List<NetbankingOption> bankList;
-
-    public static String getVanity() {
-        return vanity;
-    }
-
-    public static String getEmailID() {
-        return emailID;
-    }
-
-    public static String getMobileNo() {
-        return mobileNo;
-    }
-
-
-
-    public static void setEnv(String sip) {
-        env = sip;
-    }
-
-    public static void setSigninId(String id) {
-        signinId = id;
-    }
-
-    public static void setSigninSecret(String secret) {
-        signinSecret = secret;
-    }
 
     public static void setupSignupId(String id) {
         signupId = id;
@@ -93,12 +43,24 @@ public class Config {
         return env;
     }
 
+    public static void setEnv(String sip) {
+        env = sip;
+    }
+
     public static String getSigninId() {
         return signinId;
     }
 
+    public static void setSigninId(String id) {
+        signinId = id;
+    }
+
     public static String getSigninSecret() {
         return signinSecret;
+    }
+
+    public static void setSigninSecret(String secret) {
+        signinSecret = secret;
     }
 
     public static String getSignupId() {
@@ -110,20 +72,78 @@ public class Config {
     }
 
 
-    public static void setCitrusWallet(List<PaymentOption> citrusWallet) {
-        Config.citrusWallet = citrusWallet;
+    /*
+     * These methods are added for single screen ui.
+     */
+
+
+    public static List<NetbankingOption> getBankList() {
+        return bankList;
+    }
+
+    public static void setBankList(List<NetbankingOption> bankList) {
+        Config.bankList = bankList;
+    }
+
+    public static String getVanity() {
+        return vanity;
+    }
+
+    public static void setVanity(String vanity) {
+        Config.vanity = vanity;
+    }
+
+    public static String getEmailID() {
+        return emailID;
+    }
+
+    public static void setEmailID(String emailID) {
+        Config.emailID = emailID;
+    }
+
+    public static String getMobileNo() {
+        return mobileNo;
+    }
+
+    public static void setMobileNo(String mobileNo) {
+        Config.mobileNo = mobileNo;
     }
 
     public static List<PaymentOption> getCitrusWallet() {
         return citrusWallet;
     }
 
-    static List<PaymentOption> citrusWallet = null;
-
-
-    public static void initUser(Context context,InitListener initListener) {
-
-        new InitSDK(context,initListener);
-
+    public static void setCitrusWallet(List<PaymentOption> citrusWallet) {
+        Config.citrusWallet = citrusWallet;
     }
+
+    public static void initUser(Context context, InitListener initListener) {
+        new InitSDK(context, initListener, null, null);
+    }
+
+    public static void setEnvironment(Environment environment) {
+        setEnv(environment.getEnvironment());
+    }
+
+    public enum Environment {
+        PRODUCTION {
+            String getEnvironment() {
+                return "production";
+            }
+        }, SANDBOX {
+            String getEnvironment() {
+                return "production";
+            }
+        };
+
+        abstract String getEnvironment();
+    }
+
+    public static final String INTENT_EXTRA_USER_EMAIL = "INTENT_EXTRA_USER_EMAIL";
+    public static final String INTENT_EXTRA_USER_MOBILE = "INTENT_EXTRA_USER_MOBILE";
+    public static final String INTENT_EXTRA_MERCHANT_VANITY = "INTENT_EXTRA_MERCHANT_VANITY";
+    public static final String INTENT_EXTRA_MERCHANT_BILL_URL = "INTENT_EXTRA_MERCHANT_BILL_URL";
+    public static final String INTENT_EXTRA_TRANSACTION_AMOUNT = "INTENT_EXTRA_TRANSACTION_AMOUNT";
+    public static final String INTENT_EXTRA_MERCHANT_NAME = "INTENT_EXTRA_MERCHANT_NAME";
+
 }

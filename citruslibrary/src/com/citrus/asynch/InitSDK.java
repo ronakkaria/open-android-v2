@@ -30,17 +30,21 @@ public class InitSDK {
     Callback walletCallBack;
     Response.Listener successListener;
     Response.ErrorListener errorListener;
+    String emailId = null;
+    String mobileNo = null;
 
-    public InitSDK(Context context, InitListener initListener) {
+    public InitSDK(Context context, InitListener initListener, String emailId, String mobileNo) {
         this.context = context;
         this.initListener = initListener;
+        this.emailId = emailId;
+        this.mobileNo = mobileNo;
         initListeners();
         bindUser();
     }
 
     private void bindUser() {
 
-        new Binduser(context, bindCallBack).execute();
+        new Binduser(context, bindCallBack).execute(emailId, mobileNo);
     }
 
     private void initListeners() {
@@ -61,23 +65,27 @@ public class InitSDK {
             public void onTaskexecuted(String response, String error) {
                 if (TextUtils.isEmpty(response)){
                     initListener.onWalletLoadFailed(error);
-                }
-                else {
+                } else {
                     List<PaymentOption> walletList = new ArrayList<PaymentOption>();
                     try {
 
                         JSONObject jsonObject = new JSONObject(response);
-                        JSONArray paymentOptions = jsonObject.getJSONArray("paymentOptions");
-                        for(int i=0; i<paymentOptions.length(); i++) {
-                            PaymentOption option = PaymentOption.fromJSONObject(paymentOptions.getJSONObject(i));
-                            walletList.add(option);
+                        JSONArray paymentOptions = jsonObject.optJSONArray("paymentOptions");
+
+
+                        if (paymentOptions != null) {
+                            for (int i = 0; i < paymentOptions.length(); i++) {
+                                PaymentOption option = PaymentOption.fromJSONObject(paymentOptions.getJSONObject(i));
+                                walletList.add(option);
+                            }
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                     Config.setCitrusWallet(walletList);
-                    new GetNetBankingList(context, successListener, errorListener).getBankList();
                 }
+
+                new GetNetBankingList(context, successListener, errorListener).getBankList();
             }
         };
 

@@ -1,19 +1,18 @@
 package com.citruspay.sdkui;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
 import com.citrus.card.Card;
+import com.citrus.interfaces.InitListener;
 import com.citrus.mobile.Callback;
 import com.citrus.mobile.Config;
 import com.citrus.netbank.Bank;
@@ -28,88 +27,45 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
-import java.util.Locale;
 
 
-public class MainActivity extends ActionBarActivity implements ActionBar.TabListener, OnPaymentOptionSelectedListener {
+public class MainActivity extends ActionBarActivity implements OnPaymentOptionSelectedListener, InitListener {
 
-    private static final String BILL_URL = "http://192.168.1.5:8080/billGenerator.orig.jsp";// host your bill url here
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
-    SectionsPagerAdapter mSectionsPagerAdapter;
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
-    ViewPager mViewPager;
+    private String mUserEmail = null;
+    private String mUserMobile = null;
+    private String mMerchantVanity = null;
+    private String mMerchantName = null;
+    private String mMerchantBillUrl = null;
     private double mTransactionAmount = 0.0;
-
+    private ProgressDialog mProgressDialog = null;
+    private FragmentManager mFragmentManager = null;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
 
+        // Get required details from intent.
+        mTransactionAmount = getIntent().getDoubleExtra(Config.INTENT_EXTRA_TRANSACTION_AMOUNT, 2.0);
+        mUserEmail = getIntent().getStringExtra(Config.INTENT_EXTRA_USER_EMAIL);
+        mUserMobile = getIntent().getStringExtra(Config.INTENT_EXTRA_USER_MOBILE);
+        mMerchantVanity = getIntent().getStringExtra(Config.INTENT_EXTRA_MERCHANT_VANITY);
+        mMerchantBillUrl = getIntent().getStringExtra(Config.INTENT_EXTRA_MERCHANT_BILL_URL);
+        mMerchantName = getIntent().getStringExtra(Config.INTENT_EXTRA_MERCHANT_NAME);
 
-        mTransactionAmount = getIntent().getDoubleExtra("MERCHANT_TRANSACTION_AMOUNT", 2.0);
+        Config.setVanity(mMerchantVanity);
 
+        mProgressDialog = new ProgressDialog(this);
+        mFragmentManager = getSupportFragmentManager();
 
-        // Set up the action bar.
-        final ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        // When swiping between different sections, select the corresponding
-        // tab. We can also use ActionBar.Tab#select() to do this if we have
-        // a reference to the Tab.
-        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                actionBar.setSelectedNavigationItem(position);
-            }
-        });
-
-        // For each of the sections in the app, add a tab to the action bar.
-        for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-            // Create a tab with text corresponding to the page title defined by
-            // the adapter. Also specify this Activity object, which implements
-            // the TabListener interface, as the callback (listener) for when
-            // this tab is selected.
-            actionBar.addTab(
-                    actionBar.newTab()
-                            .setText(mSectionsPagerAdapter.getPageTitle(i))
-                            .setTabListener(this));
+        if (savedInstanceState == null) {
+            mFragmentManager.beginTransaction()
+                    .add(R.id.container, new PaymentOptionsFragment())
+                    .commit();
         }
-    }
 
 
-
-    @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        // When the given tab is selected, switch to the corresponding page in
-        // the ViewPager.
-        mViewPager.setCurrentItem(tab.getPosition());
-    }
-
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
     }
 
     @Override
@@ -118,19 +74,25 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         if (paymentOption instanceof CardOption) {
             final CardOption cardOption = (CardOption) paymentOption;
 
-            new GetBill(BILL_URL, mTransactionAmount, new Callback() {
+            new GetBill(mMerchantBillUrl, mTransactionAmount, new Callback() {
                 @Override
                 public void onTaskexecuted(String billString, String error) {
                     if (TextUtils.isEmpty(error)) {
                         Bill bill = new Bill(billString);
+                        Card card = null;
 
-                        Card card = new Card(cardOption.getCardNumber(), cardOption.getCardExpiryMonth(), cardOption.getCardExpiryYear(), cardOption.getCardCVV(), cardOption.getCardHolderName(), cardOption.getCardType());
+                        if (!TextUtils.isEmpty(cardOption.getToken())) {
+                            // TODO Take the CVV instead of hardcoded value.
+                            card = new Card(cardOption.getToken(), "123");
+                        } else {
+                            card = new Card(cardOption.getCardNumber(), cardOption.getCardExpiryMonth(), cardOption.getCardExpiryYear(), cardOption.getCardCVV(), cardOption.getCardHolderName(), cardOption.getCardType());
+                        }
 
                         UserDetails userDetails = new UserDetails(getCustomer());
 
-                        PG paymentgateway = new PG(card, bill, userDetails);
+                        PG paymentGateway = new PG(card, bill, userDetails);
 
-                        paymentgateway.charge(new Callback() {
+                        paymentGateway.charge(new Callback() {
                             @Override
                             public void onTaskexecuted(String success, String error) {
                                 processresponse(success, error);
@@ -140,12 +102,14 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 }
             }).execute();
         } else if (paymentOption instanceof NetbankingOption) {
-            new GetBill(BILL_URL, mTransactionAmount, new Callback() {
+            new GetBill(mMerchantBillUrl, mTransactionAmount, new Callback() {
                 @Override
                 public void onTaskexecuted(String billString, String error) {
                     Bill bill = new Bill(billString);
 
                     Bank netbank = new Bank(((NetbankingOption) paymentOption).getBankCID());
+
+                    // TODO Make token payment for bank
 
                     UserDetails userDetails = new UserDetails(getCustomer());
 
@@ -214,7 +178,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     }
 
 
-
     private List<PaymentOption> getCitrusWalletForUser() {
         List<PaymentOption> citrusWallet = Config.getCitrusWallet();
 
@@ -250,48 +213,47 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         return customer;
     }
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    @Override
+    public void onSuccess(String response) {
 
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
+        Log.i("citrus", " success callback ::: " + response);
+
+        dismissDialog();
+
+        setTitle(mMerchantName);
+    }
+
+    @Override
+    public void onBindFailed(String response) {
+        Log.i("citrus", "onBindFailed");
+    }
+
+    @Override
+    public void onWalletLoadFailed(String response) {
+        Log.i("citrus", "onWalletLoadFailed");
+    }
+
+    @Override
+    public void onNetBankingListFailed(VolleyError error) {
+        Log.i("citrus", "onNetBankingListFailed");
+    }
+
+    @Override
+    public void onError(Exception e) {
+        Log.i("citrus", "onError");
+    }
+
+    private void showDialog(String message, boolean cancelable) {
+        if (mProgressDialog != null) {
+            mProgressDialog.setCancelable(cancelable);
+            mProgressDialog.setMessage(message);
+            mProgressDialog.show();
         }
+    }
 
-        @Override
-        public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return CitrusWalletFragment.newInstance(getCitrusWalletForUser());
-                case 1:
-                    return CardPaymentFragment.newInstance();
-                case 2:
-                    return NetbankingPaymentFragment.newInstance(Config.getBankList());
-            }
-
-            return null;
-        }
-
-        @Override
-        public int getCount() {
-            return 3;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            Locale l = Locale.getDefault();
-
-            switch (position) {
-                case 0:
-                    return getString(R.string.title_section1).toUpperCase(l);
-                case 1:
-                    return getString(R.string.title_section2).toUpperCase(l);
-                case 2:
-                    return getString(R.string.title_section3).toUpperCase(l);
-            }
-            return null;
+    private void dismissDialog() {
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
         }
     }
 }

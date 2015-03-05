@@ -11,69 +11,70 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:orientation="horizontal"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
+        android:orientation="horizontal"
         >
 
         <RadioButton
             android:id="@+id/radioDebitCard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left|center_horizontal"
+            android:layout_gravity="center_horizontal"
+            android:buttonTint="#ff33a24e"
             android:padding="@dimen/activity_vertical_margin"
             android:text="Debit"
-            android:buttonTint="#ff33a24e"/>
+            />
 
         <RadioButton
             android:id="@+id/radioCreditCard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:buttonTint="#ff33a24e"
             android:padding="@dimen/activity_vertical_margin"
-            android:text="Credit"
-            android:buttonTint="#ff33a24e"/>
+            android:text="Credit"/>
     </RadioGroup>
 
-    <EditText
+    <com.citrus.widgets.CardNumberEditText
         android:id="@+id/editCardNo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
         android:layout_below="@id/radioGroupCardType"
         android:layout_gravity="left|center_vertical"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:backgroundTint="#ff33a24e"
         android:hint="Card Number"
-        android:inputType="number"
-        android:padding="@dimen/activity_vertical_margin"
-        android:backgroundTint="#ff33a24e"/>
+        android:inputType="number|none"
+        android:padding="@dimen/activity_vertical_margin"/>
 
     <EditText
         android:id="@+id/editNameOnCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
         android:layout_below="@id/editCardNo"
         android:layout_gravity="left|center_vertical"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:backgroundTint="#ff33a24e"
         android:ems="10"
         android:hint="Name On The Card"
         android:inputType="textPersonName"
-        android:padding="@dimen/activity_vertical_margin"
-        android:backgroundTint="#ff33a24e"/>
+        android:padding="@dimen/activity_vertical_margin"/>
 
-    <EditText
+    <com.citrus.widgets.ExpiryDate
         android:id="@+id/editExpiryDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/editNameOnCard"
+        android:layout_gravity="left|center_vertical"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_gravity="left|center_vertical"
+        android:backgroundTint="#ff33a24e"
         android:ems="10"
         android:hint="MM/YY"
-        android:inputType="text"
-        android:padding="@dimen/activity_vertical_margin"
-        android:backgroundTint="#ff33a24e"/>
+        android:inputType="number|none"
+        android:padding="@dimen/activity_vertical_margin"/>
 
     <EditText
         android:id="@+id/editCVV"
@@ -84,21 +85,21 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_toRightOf="@id/editExpiryDate"
+        android:backgroundTint="#ff33a24e"
         android:ems="10"
         android:hint="CVV"
         android:inputType="numberPassword"
-        android:padding="@dimen/activity_vertical_margin"
-        android:backgroundTint="#ff33a24e"/>
+        android:padding="@dimen/activity_vertical_margin"/>
 
     <Button
+        android:id="@+id/buttonPay"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/text_button_pay"
-        android:id="@+id/buttonPay"
-        android:layout_marginBottom="-3dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:background="#ff33a24e"/>
+        android:layout_marginBottom="-3dp"
+        android:background="#ff33a24e"
+        android:text="@string/text_button_pay"/>
 
 </RelativeLayout>

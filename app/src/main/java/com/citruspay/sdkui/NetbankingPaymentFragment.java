@@ -71,7 +71,6 @@ public class NetbankingPaymentFragment extends Fragment implements View.OnClickL
 
         ArrayAdapter<NetbankingOption> adapter = new ArrayAdapter<NetbankingOption>(getActivity(), android.R.layout.simple_spinner_dropdown_item, mListBanks);
         mSpinnerBankList.setAdapter(adapter);
-
         mSpinnerBankList.setOnItemSelectedListener(this);
 
         return rootView;
@@ -97,7 +96,6 @@ public class NetbankingPaymentFragment extends Fragment implements View.OnClickL
         } else {
             Toast.makeText(getActivity(), "Please choose the bank for payment!", Toast.LENGTH_SHORT).show();
         }
-
     }
 
     @Override
@@ -118,5 +116,4 @@ public class NetbankingPaymentFragment extends Fragment implements View.OnClickL
         }
         return netbankingOption;
     }
-
 }

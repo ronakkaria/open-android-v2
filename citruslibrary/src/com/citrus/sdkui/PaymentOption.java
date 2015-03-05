@@ -1,5 +1,7 @@
 package com.citrus.sdkui;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 
 import org.json.JSONObject;
@@ -23,7 +25,7 @@ public abstract class PaymentOption {
      * @param name  - User friendly name of the payment option. e.g. Debit Card (4242) or Net Banking - ICICI Bank
      * @param token - Token for payment option, used for tokenized payment.
      */
-    PaymentOption(String name, String token) {
+    protected PaymentOption(String name, String token) {
         this.name = name;
         this.token = token;
     }
@@ -45,12 +47,13 @@ public abstract class PaymentOption {
         String cardHolderName = walletObject.optString("owner");
         String expiry = walletObject.optString("expiryDate");
         String cardNumber = walletObject.optString("number");
+        String cardScheme = walletObject.optString("scheme");
 
         if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(token)) {
             if (android.text.TextUtils.equals("credit", type)) {
-                paymentOption = new CreditCardOption(name, token, cardHolderName, cardNumber, expiry);
+                paymentOption = new CreditCardOption(name, token, cardHolderName, cardNumber, cardScheme, expiry);
             } else if (android.text.TextUtils.equals("debit", type)) {
-                paymentOption = new DebitCardOption(name, token, cardHolderName, cardNumber, expiry);
+                paymentOption = new DebitCardOption(name, token, cardHolderName, cardNumber, cardScheme, expiry);
             } else {
                 String bankName = walletObject.optString("bank");
                 paymentOption = new NetbankingOption(name, token, bankName);
@@ -59,4 +62,7 @@ public abstract class PaymentOption {
 
         return paymentOption;
     }
+
+    public abstract Drawable getOptionIcon(Context context);
+
 }
