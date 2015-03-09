@@ -18,12 +18,15 @@ import android.content.BroadcastReceiver;
 import android.os.Build;
 import android.os.Bundle;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.citrus.mobile.Callback;
+import com.citrus.mobile.CitrusClient;
 
 public class WebPage extends Activity {
     WebView webView;
@@ -35,15 +38,35 @@ public class WebPage extends Activity {
     String js, otp;
     
     TextView otpview;
+	Callback loadmoneycb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_page);
         
+        initReceiver();
+        
+        initwebview();
+        
         String url = getIntent().getStringExtra("url");
+        
+        webView.loadUrl(url);
 
-        webView = (WebView) this.findViewById(R.id.webview);
+    }
+        
+    @TargetApi(Build.VERSION_CODES.L)
+	private void initwebview() {
+    	
+    	loadmoneycb = new Callback() {
+			
+			@Override
+			public void onTaskexecuted(String success, String error) {
+				Toast.makeText(getApplicationContext(), success + " : " + error, Toast.LENGTH_LONG).show();
+			}
+		};
+    	
+    	webView = (WebView) this.findViewById(R.id.webview);
         
         submit = (Button) this.findViewById(R.id.submitButton);
         
@@ -57,19 +80,11 @@ public class WebPage extends Activity {
         
         webView.addJavascriptInterface(new JsInterface(), "CitrusResponse");
 
-        webView.setWebViewClient(new WebViewClient(){
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return false;
-            }
-        });
-                
-        webView.loadUrl(url);
-
-    }
+        webView.setWebViewClient(new CitrusClient(loadmoneycb))   
+		
+		webView.setWebChromeClient(new WebChromeClient());
+	}
     
-   
     private class JsInterface {
 
         @JavascriptInterface
@@ -77,5 +92,4 @@ public class WebPage extends Activity {
             Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
         }
     }
-
 }

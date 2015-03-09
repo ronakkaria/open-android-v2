@@ -59,15 +59,15 @@ public class GetBill extends AsyncTask<Void, Void, Void> {
         if (response != null) {
         	JSONObject jsonObject = null;
             try {
-                jsonObject = new JSONObject(EntityUtils.toString(response.getEntity()));
-                callback.onTaskexecuted(jsonObject.toString(), "");
+            	jsonObject = new JSONObject(EntityUtils.toString(response.getEntity()));
+                callback.onTaskexecuted(jsonObject.toString(), "");  	
             } catch (JSONException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
                 callback.onTaskexecuted("", "Check your internet connection");
             } catch (Exception e) {
-                callback.onTaskexecuted("", "Is your billing url correct?");
+            	callback.onTaskexecuted("", "Is your billing url correct?");
             }
         }
         

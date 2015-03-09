@@ -144,9 +144,9 @@ public class PrepaidWallet extends Activity {
 			@Override
 			public void onClick(View v) {
 				
-				Card card = new Card("4111111111111111", "05", "24", "078", "Tester Citrus", "debit");
+				Card card = new Card("4111111111111111", "04", "21", "778", "Bruce Banner", "debit");
 				
-				LoadMoney load = new LoadMoney("100", "http://yourwebsite.com/return_url.php");
+				LoadMoney load = new LoadMoney("10", "http://yourwebsite.com/return_url.php");
 				
 				UserDetails userDetails = new UserDetails(customer);
 				
@@ -204,6 +204,7 @@ public class PrepaidWallet extends Activity {
 		                processresponse(success, error);
 		            }
 		        });
+				
 			}
 		});
 		
