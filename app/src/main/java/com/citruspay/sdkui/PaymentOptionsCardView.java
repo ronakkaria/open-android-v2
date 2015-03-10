@@ -9,7 +9,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -33,8 +32,6 @@ public class PaymentOptionsCardView extends CardView implements View.OnClickList
     private TextView mTxtHeader = null;
     private Button mBtnFooter = null;
     private LinearLayout mLayoutPaymentOptions = null;
-    ;
-    private PaymentOptionsCardType mPaymentOptionsCardType = null;
 
     public PaymentOptionsCardView(Context context) {
         super(context);
@@ -54,9 +51,12 @@ public class PaymentOptionsCardView extends CardView implements View.OnClickList
         mContext = context;
     }
 
-    public void init(PaymentOptionsCardType paymentOptionsCardType) {
+    public void init(PaymentOptionsType paymentOptionsCardType, CitrusPaymentParams paymentParams) {
 
-        mPaymentOptionsCardType = paymentOptionsCardType;
+        String colorPrimary = null;
+        if (paymentParams != null) {
+            colorPrimary = paymentParams.colorPrimary;
+        }
 
         inflate(mContext, R.layout.payment_option_cards_layout, this);  //correct way to inflate..
         mTxtHeader = (TextView) findViewById(R.id.txt_card_header);
@@ -65,19 +65,24 @@ public class PaymentOptionsCardView extends CardView implements View.OnClickList
         mLayoutPaymentOptions = (LinearLayout) findViewById(R.id.layout_payment_options);
 
         // Initialize the card view for the particular payment option.
-        if (mPaymentOptionsCardType != null) {
-            List<? extends PaymentOption> paymentOptionsList = null;
+        if (paymentOptionsCardType != null) {
+            List<? extends PaymentOption> paymentOptionsList;
 
-            mTxtHeader.setText(mPaymentOptionsCardType.getHeaderText());
-            mBtnFooter.setText(mPaymentOptionsCardType.getFooterText());
-            mBtnFooter.setTextColor(Color.parseColor("#F9A323"));
+            mTxtHeader.setText(paymentOptionsCardType.getHeaderText());
+            mBtnFooter.setText(paymentOptionsCardType.getFooterText());
+
+            // Set the app theme color.
+            if (colorPrimary != null) {
+                mBtnFooter.setTextColor(Color.parseColor(colorPrimary));
+            }
+
             mBtnFooter.setOnClickListener(this);
 
             // Initializing the list of payment options
-            switch (mPaymentOptionsCardType) {
+            switch (paymentOptionsCardType) {
 
                 case CITRUS_CASH:
-                    paymentOptionsList = mPaymentOptionsCardType.getPaymentOptionsList();
+                    paymentOptionsList = paymentOptionsCardType.getPaymentOptionsList();
                     if (paymentOptionsList != null && !paymentOptionsList.isEmpty()) {
                         CitrusCash citrusCash = (CitrusCash) paymentOptionsList.get(0);
 
@@ -94,6 +99,7 @@ public class PaymentOptionsCardView extends CardView implements View.OnClickList
                         mLayoutPaymentOptions.addView(relativeLayout);
                     } else {
                         TextView textView = new TextView(mContext);
+                        textView.setPadding(16, 8, 0, 0);
                         // TODO: Need to change the message.
                         textView.setText("Seems you do not have Citrus Cash account!");
                         mLayoutPaymentOptions.addView(textView);
@@ -101,7 +107,7 @@ public class PaymentOptionsCardView extends CardView implements View.OnClickList
                     break;
 
                 case SAVED_CARDS:
-                    paymentOptionsList = mPaymentOptionsCardType.getPaymentOptionsList();
+                    paymentOptionsList = paymentOptionsCardType.getPaymentOptionsList();
                     if (paymentOptionsList != null && !paymentOptionsList.isEmpty()) {
                         for (int i = 0; i < paymentOptionsList.size(); i++) {
 
@@ -125,6 +131,7 @@ public class PaymentOptionsCardView extends CardView implements View.OnClickList
                         }
                     } else {
                         TextView textView = new TextView(mContext);
+                        textView.setPadding(16, 8, 0, 0);
                         // TODO: Need to change the message.
                         textView.setText("You have not saved any card for faster checkout!");
                         mLayoutPaymentOptions.addView(textView);
@@ -138,7 +145,7 @@ public class PaymentOptionsCardView extends CardView implements View.OnClickList
                     break;
 
                 case NETBANKING:
-                    paymentOptionsList = mPaymentOptionsCardType.getPaymentOptionsList();
+                    paymentOptionsList = paymentOptionsCardType.getPaymentOptionsList();
                     if (paymentOptionsList != null && !paymentOptionsList.isEmpty()) {
                         for (int i = 0; i < paymentOptionsList.size(); i++) {
                             NetbankingOption netbankingOption = (NetbankingOption) paymentOptionsList.get(i);
@@ -153,6 +160,12 @@ public class PaymentOptionsCardView extends CardView implements View.OnClickList
                             relativeLayout.setOnClickListener(this);
                             mLayoutPaymentOptions.addView(relativeLayout);
                         }
+                    } else {
+                        TextView textView = new TextView(mContext);
+                        textView.setPadding(16, 8, 0, 0);
+                        // TODO: Need to change the message.
+                        textView.setText("Merchant does not support netbanking payment.");
+                        mLayoutPaymentOptions.addView(textView);
                     }
                     break;
             }
@@ -160,7 +173,7 @@ public class PaymentOptionsCardView extends CardView implements View.OnClickList
     }
 
     private void setBackgroundImage(View view, Drawable drawable) {
-        if (view != null && drawable != null){
+        if (view != null && drawable != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 view.setBackground(drawable);
             } else {
@@ -184,7 +197,13 @@ public class PaymentOptionsCardView extends CardView implements View.OnClickList
         Toast.makeText(mContext, "Clicked,,,," + v.getId(), Toast.LENGTH_SHORT).show();
     }
 
-    public static enum PaymentOptionsCardType {
+    /**
+     * PaymentOptionType such as Citrus Cash, Debit Card, Credit Card, Netbanking etc.
+     * EMI may be in future.
+     * <p/>
+     * Set specific header and footer text and payment options list for every type.
+     */
+    public static enum PaymentOptionsType {
 
         CITRUS_CASH {
             public String getHeaderText() {

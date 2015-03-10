@@ -19,17 +19,18 @@ import com.citrus.interfaces.InitListener;
 import com.citrus.sdkui.NetbankingOption;
 import com.citrus.sdkui.PaymentOption;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Config {
     //private static Context context;
 
-    static List<PaymentOption> citrusWallet = null;
+    static ArrayList<PaymentOption> citrusWallet = null;
     private static String env, signinId, signinSecret, signupId, signupSecret;
     private static String vanity;
     private static String emailID;
     private static String mobileNo;
-    private static List<NetbankingOption> bankList;
+    private static ArrayList<NetbankingOption> bankList;
 
     public static void setupSignupId(String id) {
         signupId = id;
@@ -75,13 +76,11 @@ public class Config {
     /*
      * These methods are added for single screen ui.
      */
-
-
-    public static List<NetbankingOption> getBankList() {
+    public static ArrayList<NetbankingOption> getBankList() {
         return bankList;
     }
 
-    public static void setBankList(List<NetbankingOption> bankList) {
+    public static void setBankList(ArrayList<NetbankingOption> bankList) {
         Config.bankList = bankList;
     }
 
@@ -109,11 +108,11 @@ public class Config {
         Config.mobileNo = mobileNo;
     }
 
-    public static List<PaymentOption> getCitrusWallet() {
+    public static ArrayList<PaymentOption> getCitrusWallet() {
         return citrusWallet;
     }
 
-    public static void setCitrusWallet(List<PaymentOption> citrusWallet) {
+    public static void setCitrusWallet(ArrayList<PaymentOption> citrusWallet) {
         Config.citrusWallet = citrusWallet;
     }
 

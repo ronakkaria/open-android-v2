@@ -8,21 +8,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.citrus.sdkui.CardOption;
 import com.citrus.sdkui.CitrusCash;
-import com.citrus.sdkui.CreditCardOption;
-import com.citrus.sdkui.DebitCardOption;
 import com.citrus.sdkui.NetbankingOption;
 import com.citrus.sdkui.PaymentOption;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-import static com.citruspay.sdkui.PaymentOptionsCardView.PaymentOptionsCardType;
+import static com.citruspay.sdkui.PaymentOptionsCardView.PaymentOptionsType;
 
 
 /**
+ * This fragment will handle displaying of all the available payment options.
+ * <p/>
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
  * {@link PaymentOptionsFragment.OnFragmentInteractionListener} interface
@@ -32,18 +30,11 @@ import static com.citruspay.sdkui.PaymentOptionsCardView.PaymentOptionsCardType;
  */
 public class PaymentOptionsFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
     private PaymentOptionsCardView mCardViewCitrusCash = null;
     private PaymentOptionsCardView mCardViewSavedCards = null;
     private PaymentOptionsCardView mCardViewDebitCreditCards = null;
     private PaymentOptionsCardView mCardViewNetbanking = null;
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+    private CitrusPaymentParams mPaymentParams = null;
     private OnPaymentOptionSelectedListener mListener;
 
     public PaymentOptionsFragment() {
@@ -54,16 +45,13 @@ public class PaymentOptionsFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment PaymentOptionsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PaymentOptionsFragment newInstance(String param1, String param2) {
+    public static PaymentOptionsFragment newInstance(CitrusPaymentParams paymentParams) {
         PaymentOptionsFragment fragment = new PaymentOptionsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putParcelable(Constants.INTENT_EXTRA_PAYMENT_PARAMS, paymentParams);
         fragment.setArguments(args);
         return fragment;
     }
@@ -72,10 +60,8 @@ public class PaymentOptionsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mPaymentParams = getArguments().getParcelable(Constants.INTENT_EXTRA_PAYMENT_PARAMS);
         }
-
     }
 
     @Override
@@ -88,51 +74,40 @@ public class PaymentOptionsFragment extends Fragment {
         mCardViewDebitCreditCards = (PaymentOptionsCardView) view.findViewById(R.id.cardview_debit_credit_cards);
         mCardViewNetbanking = (PaymentOptionsCardView) view.findViewById(R.id.cardview_netbanking);
 
-        Random random = new Random();
-
-        PaymentOptionsCardType savedCardsType = PaymentOptionsCardType.SAVED_CARDS;
-        List<PaymentOption> cardOptionList = new ArrayList<>();
-        cardOptionList.add(new DebitCardOption("VISA Card", null, null, "XXXX XXXX XXXX " + random.nextInt(9999), "visa", null));
-        cardOptionList.add(new CreditCardOption("MCRD Card", null, null, "XXXX XXXX XXXX " + random.nextInt(9999), "mcrd", null));
-        cardOptionList.add(new CreditCardOption("AMEX Card", null, null, "XXXX XXXX XXXX " + random.nextInt(9999), "amex", null));
-        cardOptionList.add(new DebitCardOption("JCB Card", null, null, "XXXX XXXX XXXX " + random.nextInt(9999), "jcb", null));
-        cardOptionList.add(new CreditCardOption("Discover Card", null, null, "XXXX XXXX XXXX " + random.nextInt(9999), "discover", null));
-        cardOptionList.add(new DebitCardOption("Diner Club Card", null, null, "XXXX XXXX XXXX " + random.nextInt(9999), "dinerclub", null));
-        cardOptionList.add(new CreditCardOption("Default Card", null, null, "XXXX XXXX XXXX " + random.nextInt(9999), "", null));
-        cardOptionList.add(new NetbankingOption("Net Banking - AXIS BANK", "sfsfscsasassccss", "AXIS Bank"));
-
-        savedCardsType.setHeaderText("Saved Cards");
-        savedCardsType.setFooterText("Add card");
-        savedCardsType.setPaymentOptionList(cardOptionList);
-        mCardViewSavedCards.init(savedCardsType);
-
-        PaymentOptionsCardType debitCreditCardsType = PaymentOptionsCardType.DEBIT_CREDIT_CARDS;
+        PaymentOptionsType debitCreditCardsType = PaymentOptionsType.DEBIT_CREDIT_CARDS;
         debitCreditCardsType.setHeaderText("Credit/Debit Cards");
         debitCreditCardsType.setFooterText("Pay with credit or debit card");
         debitCreditCardsType.setPaymentOptionList(null); //Debit credit card does not have list.
-        mCardViewDebitCreditCards.init(debitCreditCardsType);
+        mCardViewDebitCreditCards.init(debitCreditCardsType, mPaymentParams);
 
-        PaymentOptionsCardType netbankingCardType = PaymentOptionsCardType.NETBANKING;
-        List<NetbankingOption> netbankingOptionList = new ArrayList<>();
-        netbankingOptionList.add(new NetbankingOption("ICICI Bank", null));
-        netbankingOptionList.add(new NetbankingOption("AXIS Bank", null));
-        netbankingOptionList.add(new NetbankingOption("IDBI Bank", null));
-        netbankingOptionList.add(new NetbankingOption("HDFC Bank", null));
-        netbankingOptionList.add(new NetbankingOption("My Bank", null));
+        PaymentOptionsType savedCardsType = PaymentOptionsType.SAVED_CARDS;
+        List<PaymentOption> userSavedOptionList = mPaymentParams.userSavedOptionList;
+        savedCardsType.setHeaderText("Saved Cards");
+        savedCardsType.setFooterText("Add card");
+        if (userSavedOptionList != null) {
+            savedCardsType.setPaymentOptionList(userSavedOptionList);
+        }
+        mCardViewSavedCards.init(savedCardsType, mPaymentParams);
 
-        netbankingCardType.setHeaderText("Netbanking");
-        netbankingCardType.setFooterText("Select Other Bank");
-        netbankingCardType.setPaymentOptionList(netbankingOptionList);
-        mCardViewNetbanking.init(netbankingCardType);
+        List<NetbankingOption> netbankingOptionList = mPaymentParams.netbankingOptionList;
+        if (netbankingOptionList != null && !netbankingOptionList.isEmpty()) {
+            PaymentOptionsType netbankingCardType = PaymentOptionsType.NETBANKING;
+            netbankingCardType.setHeaderText("Netbanking");
+            netbankingCardType.setFooterText("Select Other Bank");
+            netbankingCardType.setPaymentOptionList(netbankingOptionList);
+            mCardViewNetbanking.init(netbankingCardType, mPaymentParams);
+        } else {
+            mCardViewNetbanking.setVisibility(View.GONE);
+        }
 
-        PaymentOptionsCardType citrusCashCardsType = PaymentOptionsCardType.CITRUS_CASH;
+        PaymentOptionsType citrusCashCardsType = PaymentOptionsType.CITRUS_CASH;
         List<CitrusCash> citrusCashList = new ArrayList<>();
         citrusCashList.add(new CitrusCash("1400.00"));
         citrusCashCardsType.setHeaderText("Citrus Cash");
         citrusCashCardsType.setFooterText("Pay Now");
         // TODO: Need to add button for add and pay now.
         citrusCashCardsType.setPaymentOptionList(citrusCashList);
-        mCardViewCitrusCash.init(citrusCashCardsType);
+        mCardViewCitrusCash.init(citrusCashCardsType, mPaymentParams);
 
         return view;
     }
