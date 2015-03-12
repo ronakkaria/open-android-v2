@@ -1,16 +1,23 @@
 package com.citruspay.sdkui;
 
+import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.citrus.asynch.InitSDK;
 import com.citrus.card.Card;
 import com.citrus.interfaces.InitListener;
 import com.citrus.mobile.Callback;
@@ -39,33 +46,79 @@ public class MainActivity extends ActionBarActivity implements OnPaymentOptionSe
     private double mTransactionAmount = 0.0;
     private ProgressDialog mProgressDialog = null;
     private FragmentManager mFragmentManager = null;
+    private CitrusPaymentParams mPaymentParams = null;
+    private String mColorPrimary = null;
+    private String mColorPrimaryDark = null;
+    private ActionBar mActionBar = null;
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
-    protected void onCreate(Bundle savedInstanceState)  {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
 
+        mActionBar = getSupportActionBar();
+        mPaymentParams = getIntent().getParcelableExtra(Constants.INTENT_EXTRA_PAYMENT_PARAMS);
+
         // Get required details from intent.
-        mTransactionAmount = getIntent().getDoubleExtra(Config.INTENT_EXTRA_TRANSACTION_AMOUNT, 2.0);
-        mUserEmail = getIntent().getStringExtra(Config.INTENT_EXTRA_USER_EMAIL);
-        mUserMobile = getIntent().getStringExtra(Config.INTENT_EXTRA_USER_MOBILE);
-        mMerchantVanity = getIntent().getStringExtra(Config.INTENT_EXTRA_MERCHANT_VANITY);
-        mMerchantBillUrl = getIntent().getStringExtra(Config.INTENT_EXTRA_MERCHANT_BILL_URL);
-        mMerchantName = getIntent().getStringExtra(Config.INTENT_EXTRA_MERCHANT_NAME);
+        if (mPaymentParams != null) {
+            mTransactionAmount = mPaymentParams.transactionAmount;
+
+            CitrusUser user = mPaymentParams.user;
+            if (user != null) {
+                mUserEmail = user.getEmailId();
+                mUserMobile = user.getMobileNo();
+            }
+
+            mMerchantVanity = mPaymentParams.vanity;
+            mMerchantBillUrl = mPaymentParams.billUrl;
+            mMerchantName = mPaymentParams.merchantName;
+
+            mColorPrimary = mPaymentParams.colorPrimary;
+            mColorPrimaryDark = mPaymentParams.colorPrimaryDark;
+
+            // Set primary color
+            if (mColorPrimary != null && mActionBar != null) {
+                mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor(mColorPrimary)));
+            }
+
+            // Set action bar color. Available only on android version Lollipop or higher.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && mColorPrimaryDark != null) {
+                Window window = getWindow();
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.setStatusBarColor(Color.parseColor(mColorPrimaryDark));
+            }
+
+            if (mMerchantName != null) {
+                setTitle(mMerchantName + "\t \t " + mTransactionAmount);
+            }
+        }
 
         Config.setVanity(mMerchantVanity);
 
         mProgressDialog = new ProgressDialog(this);
         mFragmentManager = getSupportFragmentManager();
 
-        if (savedInstanceState == null) {
-            mFragmentManager.beginTransaction()
-                    .add(R.id.container, new PaymentOptionsFragment())
-                    .commit();
-        }
+        new InitSDK(this, this, mUserEmail, mUserMobile);
 
+        showDialog("Initializing....", true);
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        dismissDialog();
+        mProgressDialog = null;
+        mFragmentManager = null;
+        mUserEmail = null;
+        mUserMobile = null;
+        mColorPrimaryDark= null;
+        mColorPrimary = null;
+        mMerchantVanity = null;
+        mMerchantBillUrl = null;
+        mPaymentParams = null;
     }
 
     @Override
@@ -220,7 +273,16 @@ public class MainActivity extends ActionBarActivity implements OnPaymentOptionSe
 
         dismissDialog();
 
-        setTitle(mMerchantName);
+//        setTitle(mMerchantName);
+
+        mPaymentParams.netbankingOptionList = Config.getBankList();
+        mPaymentParams.userSavedOptionList = Config.getCitrusWallet();
+
+        mFragmentManager.beginTransaction()
+                .add(R.id.container, PaymentOptionsFragment.newInstance(mPaymentParams))
+                .commit();
+
+        dismissDialog();
     }
 
     @Override

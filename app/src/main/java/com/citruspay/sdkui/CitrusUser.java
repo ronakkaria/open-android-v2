@@ -1,11 +1,14 @@
 package com.citruspay.sdkui;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONObject;
 
 /**
  * Created by salil on 16/2/15.
  */
-public class CitrusUser {
+public class CitrusUser implements Parcelable {
 
     private String firstName = null;
     private String lastName = null;
@@ -68,7 +71,7 @@ public class CitrusUser {
                 '}';
     }
 
-    public static class Address {
+    public static class Address implements Parcelable {
 
         private String street1 = null;
         private String street2 = null;
@@ -138,6 +141,73 @@ public class CitrusUser {
                     ", zip='" + zip + '\'' +
                     '}';
         }
+
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(this.street1);
+            dest.writeString(this.street2);
+            dest.writeString(this.city);
+            dest.writeString(this.state);
+            dest.writeString(this.country);
+            dest.writeString(this.zip);
+        }
+
+        private Address(Parcel in) {
+            this.street1 = in.readString();
+            this.street2 = in.readString();
+            this.city = in.readString();
+            this.state = in.readString();
+            this.country = in.readString();
+            this.zip = in.readString();
+        }
+
+        public static final Creator<Address> CREATOR = new Creator<Address>() {
+            public Address createFromParcel(Parcel source) {
+                return new Address(source);
+            }
+
+            public Address[] newArray(int size) {
+                return new Address[size];
+            }
+        };
     }
 
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.firstName);
+        dest.writeString(this.lastName);
+        dest.writeString(this.emailId);
+        dest.writeString(this.mobileNo);
+        dest.writeParcelable(this.address, flags);
+    }
+
+    private CitrusUser(Parcel in) {
+        this.firstName = in.readString();
+        this.lastName = in.readString();
+        this.emailId = in.readString();
+        this.mobileNo = in.readString();
+        this.address = in.readParcelable(Address.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<CitrusUser> CREATOR = new Parcelable.Creator<CitrusUser>() {
+        public CitrusUser createFromParcel(Parcel source) {
+            return new CitrusUser(source);
+        }
+
+        public CitrusUser[] newArray(int size) {
+            return new CitrusUser[size];
+        }
+    };
 }

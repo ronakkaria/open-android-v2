@@ -4,8 +4,6 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 
-import com.citruspay.citruslibrary.R;
-
 /**
  * Created by salil on 13/2/15.
  */
@@ -18,6 +16,8 @@ public abstract class CardOption extends PaymentOption {
     protected String cardExpiryMonth = null;
     protected String cardExpiryYear = null;
     protected String cardScheme = null;
+
+    CardOption() {}
 
     /**
      * @param cardHolderName - Name of the card holder.
@@ -118,7 +118,7 @@ public abstract class CardOption extends PaymentOption {
             if ((resourceId = context.getResources().getIdentifier("default_card", "drawable", context.getPackageName())) != 0) {
                 drawable = context.getResources().getDrawable(resourceId);
             }
-        }  else {
+        } else {
             drawable = context.getResources().getDrawable(resourceId);
         }
 

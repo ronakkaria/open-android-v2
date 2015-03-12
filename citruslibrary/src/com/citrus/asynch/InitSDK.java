@@ -66,7 +66,7 @@ public class InitSDK {
                 if (TextUtils.isEmpty(response)){
                     initListener.onWalletLoadFailed(error);
                 } else {
-                    List<PaymentOption> walletList = new ArrayList<PaymentOption>();
+                    ArrayList<PaymentOption> walletList = new ArrayList<PaymentOption>();
                     try {
 
                         JSONObject jsonObject = new JSONObject(response);

@@ -2,11 +2,13 @@ package com.citrus.sdkui;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Created by salil on 13/2/15.
  */
-public class NetbankingOption extends PaymentOption {
+public class NetbankingOption extends PaymentOption implements Parcelable {
 
     private String bankName = null;
     private String bankCID = null;
@@ -122,4 +124,35 @@ public class NetbankingOption extends PaymentOption {
     public String toString() {
         return bankName;
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.bankName);
+        dest.writeString(this.bankCID);
+        dest.writeString(this.name);
+        dest.writeString(this.token);
+    }
+
+    private NetbankingOption(Parcel in) {
+        this.bankName = in.readString();
+        this.bankCID = in.readString();
+        this.name = in.readString();
+        this.token = in.readString();
+    }
+
+    public static final Parcelable.Creator<NetbankingOption> CREATOR = new Parcelable.Creator<NetbankingOption>() {
+        public NetbankingOption createFromParcel(Parcel source) {
+            return new NetbankingOption(source);
+        }
+
+        public NetbankingOption[] newArray(int size) {
+            return new NetbankingOption[size];
+        }
+    };
 }
