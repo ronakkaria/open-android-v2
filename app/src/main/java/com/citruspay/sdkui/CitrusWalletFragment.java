@@ -43,7 +43,7 @@ public class CitrusWalletFragment extends Fragment implements View.OnClickListen
      * @return A new instance of fragment CitrusWalletFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static CitrusWalletFragment newInstance(List<PaymentOption> citrusWallet) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       public static CitrusWalletFragment newInstance(List<PaymentOption> citrusWallet) {
         CitrusWalletFragment fragment = new CitrusWalletFragment();
         fragment.setCitrusWallet(citrusWallet);
         return fragment;

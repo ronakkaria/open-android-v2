@@ -26,11 +26,11 @@ public class TestActivity extends ActionBarActivity {
 //        paymentParams.colorPrimary = "#F9A323";
 //        paymentParams.colorPrimaryDark = "#E7961D";
 
-        paymentParams.colorPrimary = "#673AB7";
+        paymentParams.colorPrimary = "#F9A323";
         paymentParams.colorPrimaryDark = "#9575CD";
         paymentParams.accentColor = "#64FFDA";
 
-        CitrusUser user = new CitrusUser("developercitrus@gmail.com", "1234567890", "Developer", "Citrus", null);
+        CitrusUser user = new CitrusUser("shardullavekar@gmail.com", "1234567890", "Developer", "Citrus", null);
         paymentParams.user = user;
         intent.putExtra(Constants.INTENT_EXTRA_PAYMENT_PARAMS, paymentParams);
 
