@@ -20,7 +20,7 @@ public class TestActivity extends ActionBarActivity {
         Intent intent = new Intent(TestActivity.this, MainActivity.class);
         CitrusPaymentParams paymentParams = new CitrusPaymentParams();
         paymentParams.billUrl = BILL_URL;
-        paymentParams.merchantName = "Greenseer";
+        paymentParams.merchantName = "Shopstore";
         paymentParams.transactionAmount = 100.0;
         paymentParams.vanity = "NativeSDK";
 //        paymentParams.colorPrimary = "#F9A323";
@@ -30,7 +30,7 @@ public class TestActivity extends ActionBarActivity {
         paymentParams.colorPrimaryDark = "#9575CD";
         paymentParams.accentColor = "#64FFDA";
 
-        CitrusUser user = new CitrusUser("shardullavekar@gmail.com", "1234567890", "Developer", "Citrus", null);
+        CitrusUser user = new CitrusUser("testeremail@mailinator.com", "1234567890", "Developer", "Citrus", null);
         paymentParams.user = user;
         intent.putExtra(Constants.INTENT_EXTRA_PAYMENT_PARAMS, paymentParams);
 
@@ -45,7 +45,7 @@ public class TestActivity extends ActionBarActivity {
     }
 
     private void init() {
-        Config.setEnv("production"); // replace it with production when you are ready
+        Config.setEnv("sandbox"); // replace it with production when you are ready
 
         Config.setupSignupId("test-signup");
         Config.setupSignupSecret("c78ec84e389814a05d3ae46546d16d2e");
