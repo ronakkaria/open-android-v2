@@ -2,6 +2,8 @@ package com.citrus.sdkui;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.TextUtils;
 
 import org.json.JSONObject;
@@ -9,7 +11,7 @@ import org.json.JSONObject;
 /**
  * Created by salil on 13/2/15.
  */
-public abstract class PaymentOption {
+public abstract class PaymentOption implements Parcelable {
     /**
      * Following variables will be used in case of tokenized payments and mostly internally.
      * Hence no public constructor with these variables is required. If required create a constructor
@@ -65,4 +67,38 @@ public abstract class PaymentOption {
 
     public abstract Drawable getOptionIcon(Context context);
 
+    @Override
+    public String toString() {
+        return "PaymentOption{" +
+                "name='" + name + '\'' +
+                ", token='" + token + '\'' +
+                '}';
+    }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.name);
+        dest.writeString(this.token);
+    }
+
+    private PaymentOption(Parcel in) {
+        this.name = in.readString();
+        this.token = in.readString();
+    }
+
+    public static final Parcelable.Creator<PaymentOption> CREATOR = new Parcelable.Creator<PaymentOption>() {
+        public PaymentOption createFromParcel(Parcel source) {
+            return null;
+        }
+
+        public PaymentOption[] newArray(int size) {
+            return new PaymentOption[size];
+        }
+    };
 }

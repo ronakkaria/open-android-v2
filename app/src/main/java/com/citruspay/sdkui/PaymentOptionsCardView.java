@@ -32,6 +32,7 @@ public class PaymentOptionsCardView extends CardView implements View.OnClickList
     private TextView mTxtHeader = null;
     private Button mBtnFooter = null;
     private LinearLayout mLayoutPaymentOptions = null;
+    private OnPaymentOptionSelectedListener mListener = null;
 
     public PaymentOptionsCardView(Context context) {
         super(context);
@@ -51,7 +52,9 @@ public class PaymentOptionsCardView extends CardView implements View.OnClickList
         mContext = context;
     }
 
-    public void init(PaymentOptionsType paymentOptionsCardType, CitrusPaymentParams paymentParams) {
+    public void init(OnPaymentOptionSelectedListener listener, PaymentOptionsType paymentOptionsCardType, CitrusPaymentParams paymentParams) {
+
+        mListener = listener;
 
         String colorPrimary = null;
         if (paymentParams != null) {
@@ -75,7 +78,6 @@ public class PaymentOptionsCardView extends CardView implements View.OnClickList
             if (colorPrimary != null) {
                 mBtnFooter.setTextColor(Color.parseColor(colorPrimary));
             }
-
             mBtnFooter.setOnClickListener(this);
 
             // Initializing the list of payment options
@@ -96,6 +98,8 @@ public class PaymentOptionsCardView extends CardView implements View.OnClickList
                         setBackgroundImage(relativeLayout.findViewById(R.id.img_payment_logo), citrusCash.getOptionIcon(mContext));
                         // Set click listener
                         relativeLayout.setOnClickListener(this);
+                        // Set the tag
+                        relativeLayout.setTag(citrusCash);
                         mLayoutPaymentOptions.addView(relativeLayout);
                     } else {
                         TextView textView = new TextView(mContext);
@@ -127,6 +131,8 @@ public class PaymentOptionsCardView extends CardView implements View.OnClickList
                             setBackgroundImage(relativeLayout.findViewById(R.id.img_payment_logo), paymentOption.getOptionIcon(mContext));
                             // Set click listener
                             relativeLayout.setOnClickListener(this);
+                            // Set the tag
+                            relativeLayout.setTag(paymentOption);
                             mLayoutPaymentOptions.addView(relativeLayout);
                         }
                     } else {
@@ -158,6 +164,8 @@ public class PaymentOptionsCardView extends CardView implements View.OnClickList
                             setBackgroundImage(relativeLayout.findViewById(R.id.img_payment_logo), netbankingOption.getOptionIcon(mContext));
                             // Set click listener
                             relativeLayout.setOnClickListener(this);
+                            // Set the tag
+                            relativeLayout.setTag(netbankingOption);
                             mLayoutPaymentOptions.addView(relativeLayout);
                         }
                     } else {
@@ -194,7 +202,12 @@ public class PaymentOptionsCardView extends CardView implements View.OnClickList
      */
     @Override
     public void onClick(View v) {
-        Toast.makeText(mContext, "Clicked,,,," + v.getId(), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(mContext, "Clicked,,,," + v.getId(), Toast.LENGTH_SHORT).show();
+
+        if (v != null && v.getTag() != null && v.getTag() instanceof PaymentOption && mListener != null) {
+            PaymentOption paymentOption = (PaymentOption) v.getTag();
+            mListener.onOptionSelected(paymentOption);
+        }
     }
 
     /**

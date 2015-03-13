@@ -61,6 +61,7 @@ public final class CitrusPaymentParams implements Parcelable {
     public CitrusPaymentParams() {
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -77,8 +78,8 @@ public final class CitrusPaymentParams implements Parcelable {
         dest.writeDouble(this.transactionAmount);
         dest.writeString(this.vanity);
         dest.writeString(this.merchantName);
-        dest.writeSerializable(this.netbankingOptionList);
-        dest.writeSerializable(this.userSavedOptionList);
+        dest.writeTypedList(this.netbankingOptionList);
+        dest.writeTypedList(this.userSavedOptionList);
     }
 
     private CitrusPaymentParams(Parcel in) {
@@ -91,11 +92,13 @@ public final class CitrusPaymentParams implements Parcelable {
         this.transactionAmount = in.readDouble();
         this.vanity = in.readString();
         this.merchantName = in.readString();
-        this.netbankingOptionList = (ArrayList<NetbankingOption>) in.readSerializable();
-        this.userSavedOptionList = (ArrayList<PaymentOption>) in.readSerializable();
+        this.netbankingOptionList = new ArrayList<NetbankingOption>();
+        in.readTypedList(this.netbankingOptionList, NetbankingOption.CREATOR);
+        this.userSavedOptionList = new ArrayList<>();
+        in.readTypedList(this.userSavedOptionList, PaymentOption.CREATOR);
     }
 
-    public static final Creator<CitrusPaymentParams> CREATOR = new Creator<CitrusPaymentParams>() {
+    public static final Parcelable.Creator<CitrusPaymentParams> CREATOR = new Parcelable.Creator<CitrusPaymentParams>() {
         public CitrusPaymentParams createFromParcel(Parcel source) {
             return new CitrusPaymentParams(source);
         }

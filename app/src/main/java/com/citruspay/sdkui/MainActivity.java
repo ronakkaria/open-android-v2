@@ -95,6 +95,7 @@ public class MainActivity extends ActionBarActivity implements OnPaymentOptionSe
             }
         }
 
+        // TODO Do not use static fields.
         Config.setVanity(mMerchantVanity);
 
         mProgressDialog = new ProgressDialog(this);
@@ -124,6 +125,8 @@ public class MainActivity extends ActionBarActivity implements OnPaymentOptionSe
     @Override
     public void onOptionSelected(final PaymentOption paymentOption) {
 
+        Log.d("Citrus", paymentOption.toString());
+
         if (paymentOption instanceof CardOption) {
             final CardOption cardOption = (CardOption) paymentOption;
 
@@ -141,6 +144,7 @@ public class MainActivity extends ActionBarActivity implements OnPaymentOptionSe
                             card = new Card(cardOption.getCardNumber(), cardOption.getCardExpiryMonth(), cardOption.getCardExpiryYear(), cardOption.getCardCVV(), cardOption.getCardHolderName(), cardOption.getCardType());
                         }
 
+                        // TODO: Use customer data from User to fill the data in the getCustomer.
                         UserDetails userDetails = new UserDetails(getCustomer());
 
                         PG paymentGateway = new PG(card, bill, userDetails);
@@ -164,6 +168,7 @@ public class MainActivity extends ActionBarActivity implements OnPaymentOptionSe
 
                     // TODO Make token payment for bank
 
+                    // TODO: Use customer data from User to fill the data in the getCustomer.
                     UserDetails userDetails = new UserDetails(getCustomer());
 
                     PG paymentgateway = new PG(netbank, bill, userDetails);

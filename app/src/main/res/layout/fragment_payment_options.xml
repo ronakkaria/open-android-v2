@@ -2,7 +2,7 @@
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#dec1c0c0"
+            android:background="#E0E0E0"
             android:padding="8dp"
             tools:context="com.citruspay.sdkui.PaymentOptionsFragment">
 
@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:paddingBottom="16dp"
-            card_view:cardCornerRadius="4dp"
+            card_view:cardCornerRadius="2dp"
             card_view:cardUseCompatPadding="true"
             />
 
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:paddingBottom="16dp"
-            card_view:cardCornerRadius="4dp"
+            card_view:cardCornerRadius="2dp"
             card_view:cardUseCompatPadding="true"
             />
 
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:paddingBottom="16dp"
-            card_view:cardCornerRadius="4dp"
+            card_view:cardCornerRadius="2dp"
             card_view:cardUseCompatPadding="true"
             />
 
@@ -50,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            card_view:cardCornerRadius="4dp"
+            card_view:cardCornerRadius="2dp"
             card_view:cardUseCompatPadding="true"
             />
 

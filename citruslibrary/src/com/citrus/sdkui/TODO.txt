@@ -1,3 +1,4 @@
 - Get assets.
 - Get placeholder images for card and bank.
 - Get messages for every payment option if not available.
+-

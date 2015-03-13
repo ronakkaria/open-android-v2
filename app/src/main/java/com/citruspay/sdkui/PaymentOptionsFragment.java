@@ -1,7 +1,6 @@
 package com.citruspay.sdkui;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -23,12 +22,12 @@ import static com.citruspay.sdkui.PaymentOptionsCardView.PaymentOptionsType;
  * <p/>
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link PaymentOptionsFragment.OnFragmentInteractionListener} interface
+ * {@link com.citruspay.sdkui.OnPaymentOptionSelectedListener} interface
  * to handle interaction events.
  * Use the {@link PaymentOptionsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PaymentOptionsFragment extends Fragment {
+public class PaymentOptionsFragment extends Fragment implements OnPaymentOptionSelectedListener {
 
     private PaymentOptionsCardView mCardViewCitrusCash = null;
     private PaymentOptionsCardView mCardViewSavedCards = null;
@@ -74,32 +73,7 @@ public class PaymentOptionsFragment extends Fragment {
         mCardViewDebitCreditCards = (PaymentOptionsCardView) view.findViewById(R.id.cardview_debit_credit_cards);
         mCardViewNetbanking = (PaymentOptionsCardView) view.findViewById(R.id.cardview_netbanking);
 
-        PaymentOptionsType debitCreditCardsType = PaymentOptionsType.DEBIT_CREDIT_CARDS;
-        debitCreditCardsType.setHeaderText("Credit/Debit Cards");
-        debitCreditCardsType.setFooterText("Pay with credit or debit card");
-        debitCreditCardsType.setPaymentOptionList(null); //Debit credit card does not have list.
-        mCardViewDebitCreditCards.init(debitCreditCardsType, mPaymentParams);
-
-        PaymentOptionsType savedCardsType = PaymentOptionsType.SAVED_CARDS;
-        List<PaymentOption> userSavedOptionList = mPaymentParams.userSavedOptionList;
-        savedCardsType.setHeaderText("Saved Cards");
-        savedCardsType.setFooterText("Add card");
-        if (userSavedOptionList != null) {
-            savedCardsType.setPaymentOptionList(userSavedOptionList);
-        }
-        mCardViewSavedCards.init(savedCardsType, mPaymentParams);
-
-        List<NetbankingOption> netbankingOptionList = mPaymentParams.netbankingOptionList;
-        if (netbankingOptionList != null && !netbankingOptionList.isEmpty()) {
-            PaymentOptionsType netbankingCardType = PaymentOptionsType.NETBANKING;
-            netbankingCardType.setHeaderText("Netbanking");
-            netbankingCardType.setFooterText("Select Other Bank");
-            netbankingCardType.setPaymentOptionList(netbankingOptionList);
-            mCardViewNetbanking.init(netbankingCardType, mPaymentParams);
-        } else {
-            mCardViewNetbanking.setVisibility(View.GONE);
-        }
-
+        // Citrus Cash CardView
         PaymentOptionsType citrusCashCardsType = PaymentOptionsType.CITRUS_CASH;
         List<CitrusCash> citrusCashList = new ArrayList<>();
         citrusCashList.add(new CitrusCash("1400.00"));
@@ -107,16 +81,42 @@ public class PaymentOptionsFragment extends Fragment {
         citrusCashCardsType.setFooterText("Pay Now");
         // TODO: Need to add button for add and pay now.
         citrusCashCardsType.setPaymentOptionList(citrusCashList);
-        mCardViewCitrusCash.init(citrusCashCardsType, mPaymentParams);
+        mCardViewCitrusCash.init(this, citrusCashCardsType, mPaymentParams);
+
+        // Saved Cards
+        List<PaymentOption> userSavedOptionList = mPaymentParams.userSavedOptionList;
+        if (userSavedOptionList != null && !userSavedOptionList.isEmpty()) {
+            PaymentOptionsType savedCardsType = PaymentOptionsType.SAVED_CARDS;
+            savedCardsType.setHeaderText("Saved Cards");
+            savedCardsType.setFooterText("Add card");
+            savedCardsType.setPaymentOptionList(userSavedOptionList);
+            mCardViewSavedCards.init(this, savedCardsType, mPaymentParams);
+        } else {
+            //Hide the saved cards, as user has not saved any cards.
+            mCardViewSavedCards.setVisibility(View.GONE);
+        }
+
+        // Debit or Credit Card
+        PaymentOptionsType debitCreditCardsType = PaymentOptionsType.DEBIT_CREDIT_CARDS;
+        debitCreditCardsType.setHeaderText("Credit/Debit Cards");
+        debitCreditCardsType.setFooterText("Pay with credit or debit card");
+        debitCreditCardsType.setPaymentOptionList(null); //Debit credit card does not have list.
+        mCardViewDebitCreditCards.init(this, debitCreditCardsType, mPaymentParams);
+
+        // Netbanking
+        List<NetbankingOption> netbankingOptionList = mPaymentParams.netbankingOptionList;
+        if (netbankingOptionList != null && !netbankingOptionList.isEmpty()) {
+            PaymentOptionsType netbankingCardType = PaymentOptionsType.NETBANKING;
+            netbankingCardType.setHeaderText("Netbanking");
+            netbankingCardType.setFooterText("Select Other Bank");
+            netbankingCardType.setPaymentOptionList(netbankingOptionList);
+            mCardViewNetbanking.init(this, netbankingCardType, mPaymentParams);
+        } else {
+            //Hide the netbanking view as netbankings are not enabled for the merchant.
+            mCardViewNetbanking.setVisibility(View.GONE);
+        }
 
         return view;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onOptionSelected(null);
-        }
     }
 
     @Override
@@ -133,22 +133,17 @@ public class PaymentOptionsFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+
+        mCardViewCitrusCash = null;
+        mCardViewSavedCards = null;
+        mCardViewDebitCreditCards = null;
+        mCardViewNetbanking = null;
         mListener = null;
+        mPaymentParams = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+    @Override
+    public void onOptionSelected(PaymentOption paymentOption) {
+        mListener.onOptionSelected(paymentOption);
     }
-
 }

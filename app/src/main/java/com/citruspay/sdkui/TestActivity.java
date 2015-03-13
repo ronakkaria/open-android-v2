@@ -9,7 +9,7 @@ import com.citrus.mobile.Config;
 
 public class TestActivity extends ActionBarActivity {
 
-    private static final String BILL_URL = "http://192.168.1.5:8080/billGenerator.orig.jsp";// host your bill url here
+    private static final String BILL_URL = "http://192.168.42.185:8080/billGenerator.orig.jsp";// host your bill url here
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,11 +26,11 @@ public class TestActivity extends ActionBarActivity {
 //        paymentParams.colorPrimary = "#F9A323";
 //        paymentParams.colorPrimaryDark = "#E7961D";
 
-        paymentParams.colorPrimary = "#673AB7";
-        paymentParams.colorPrimaryDark = "#9575CD";
+        paymentParams.colorPrimary = "#F9A323";
+        paymentParams.colorPrimaryDark = "#FFA000";
         paymentParams.accentColor = "#64FFDA";
 
-        CitrusUser user = new CitrusUser("developercitrus@gmail.com", "1234567890", "Developer", "Citrus", null);
+        CitrusUser user = new CitrusUser("developercitrus@gmail.com", "1234567890", "Salil", "Godbole", null);
         paymentParams.user = user;
         intent.putExtra(Constants.INTENT_EXTRA_PAYMENT_PARAMS, paymentParams);
 
@@ -45,7 +45,7 @@ public class TestActivity extends ActionBarActivity {
     }
 
     private void init() {
-        Config.setEnv("production"); // replace it with production when you are ready
+        Config.setEnv("sandbox"); // replace it with production when you are ready
 
         Config.setupSignupId("test-signup");
         Config.setupSignupSecret("c78ec84e389814a05d3ae46546d16d2e");
