@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,6 +92,8 @@ public class PaymentStatusFragment extends Fragment implements View.OnClickListe
                 mTxtTitleText2.setText(getString(R.string.title_text2_success));
                 mTxtText2.setText(mTransactionResponse.getAmount());
 
+                setTitle(getString(R.string.fragment_title_transaction_success));
+
                 // Hide the retry and dismiss buttons.
                 mBtnRetryTransaction.setVisibility(View.GONE);
                 mBtnDismiss.setVisibility(View.GONE);
@@ -103,6 +107,8 @@ public class PaymentStatusFragment extends Fragment implements View.OnClickListe
                 if (mPaymentParams != null) {
                     mBtnRetryTransaction.setTextColor(Color.parseColor(mPaymentParams.colorPrimary));
                 }
+
+                setTitle(getString(R.string.fragment_title_transaction_error));
             }
         }
 
@@ -124,6 +130,14 @@ public class PaymentStatusFragment extends Fragment implements View.OnClickListe
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private void setTitle(String title) {
+        if (!TextUtils.isEmpty(title)) {
+            // TODO Do null checking
+//            getActivity().getActionBar().setTitle(title);
+        }
+//        ActionBar actionBar = getActivity().getActionBar();
     }
 
     /**

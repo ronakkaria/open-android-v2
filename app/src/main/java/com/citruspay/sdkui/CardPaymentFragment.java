@@ -15,6 +15,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.citrus.sdkui.CardOption;
+import com.citrus.sdkui.DebitCardOption;
 
 import static com.citrus.sdkui.CardOption.CardType.CREDIT;
 import static com.citrus.sdkui.CardOption.CardType.DEBIT;
@@ -27,7 +28,7 @@ import static com.citrus.sdkui.CardOption.CardType.DEBIT;
  * create an instance of this fragment.
  */
 public class CardPaymentFragment extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
-    private OnPaymentOptionSelectedListener mListener = null;
+    private OnCardPaymentListener mListener = null;
     private RadioGroup mRadioGroup = null;
     private Button mButtonPay = null;
     private EditText mEditNameOnCard = null;
@@ -79,15 +80,21 @@ public class CardPaymentFragment extends Fragment implements View.OnClickListene
         yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         year.setAdapter(yearAdapter);
-        /*mRadioGroup = (RadioGroup) rootView.findViewById(R.id.radioGroupCardType);
-        mEditCardNo = (EditText) rootView.findViewById(R.id.editCardNo);
+
+//        mRadioGroup = (RadioGroup) rootView.findViewById(R.id.radioGroupCardType);
+        /*mEditCardNo = (EditText) rootView.findViewById(R.id.editCardNo);
         mEditNameOnCard = (EditText) rootView.findViewById(R.id.editNameOnCard);
         mEditExpiry = (EditText) rootView.findViewById(R.id.editExpiryDate);
         mEditCVV = (EditText) rootView.findViewById(R.id.editCVV);
-        mButtonPay = (Button) rootView.findViewById(R.id.buttonPay);
 
         mRadioGroup.setOnCheckedChangeListener(this);
         mButtonPay.setOnClickListener(this);*/
+
+//        mButtonPay = (Button) rootView.findViewById(R.id.buttonPay);
+        mButtonPay = (Button) rootView.findViewById(R.id.button);
+
+//        mRadioGroup.setOnCheckedChangeListener(this);
+        mButtonPay.setOnClickListener(this);
 
         // Inflate the layout for this fragment
         return rootView;
@@ -97,7 +104,7 @@ public class CardPaymentFragment extends Fragment implements View.OnClickListene
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnPaymentOptionSelectedListener) activity;
+            mListener = (OnCardPaymentListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnPaymentOptionSelectedListener");
@@ -121,19 +128,20 @@ public class CardPaymentFragment extends Fragment implements View.OnClickListene
 
         CardOption cardOption = null;
 
-        switch (mCardType) {
-            case DEBIT:
-             //   cardOption = new DebitCardOption(cardName, cardNumber, cardCVV, cardExpiry);
-                break;
+//        switch (mCardType) {
+//            case DEBIT:
+//             //   cardOption = new DebitCardOption(cardName, cardNumber, cardCVV, cardExpiry);
+//                break;
+//
+//            case CREDIT:
+//             //   cardOption = new CreditCardOption(cardName, cardNumber, cardCVV, cardExpiry);
+//                break;
+//        }
 
-            case CREDIT:
-             //   cardOption = new CreditCardOption(cardName, cardNumber, cardCVV, cardExpiry);
-                break;
-        }
+        cardOption = new DebitCardOption("Salil Godbole", "4320906700001442", "179", "10/19");
+        mListener.onCardPaymentSelected(cardOption);
 
-        mListener.onOptionSelected(cardOption);
-
-        Log.i("Citrus", "Card No. " + mEditCardNo.getText() + "  Card Name : " + mEditNameOnCard.getText() + " Expiry : " + mEditExpiry.getText() + " CVV : " + mEditCVV.getText() + " Card Type : " + mCardType);
+//        Log.i("Citrus", "Card No. " + mEditCardNo.getText() + "  Card Name : " + mEditNameOnCard.getText() + " Expiry : " + mEditExpiry.getText() + " CVV : " + mEditCVV.getText() + " Card Type : " + mCardType);
     }
 
     @Override
@@ -146,5 +154,9 @@ public class CardPaymentFragment extends Fragment implements View.OnClickListene
                 mCardType = CREDIT;
                 break;
         }
+    }
+
+    public static interface OnCardPaymentListener {
+        public void onCardPaymentSelected(CardOption cardOption);
     }
 }

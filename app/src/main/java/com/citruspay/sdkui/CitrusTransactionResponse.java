@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Map;
@@ -61,14 +62,6 @@ public class CitrusTransactionResponse implements Parcelable {
         this.customParamsMap = customParamsMap;
     }
 
-    public TransactionStatus getTransactionStatus() {
-        return transactionStatus;
-    }
-
-    public CitrusUser getCitrusUser() {
-        return citrusUser;
-    }
-
     private CitrusTransactionResponse(Parcel in) {
         this.amount = in.readString();
         this.currency = in.readString();
@@ -90,34 +83,51 @@ public class CitrusTransactionResponse implements Parcelable {
         this.jsonResponse = in.readString();
     }
 
-    public static CitrusTransactionResponse fromJSONObject(JSONObject response) {
-        CitrusTransactionResponse citrusTransactionResponse = null;
+    public static CitrusTransactionResponse fromJSON(String response) {
+        CitrusTransactionResponse transactionResponse = null;
 
-        if (response != null) {
-            PaymentMode paymentMode = PaymentMode.getPaymentMode(response.optString("paymentMode"));
-            TransactionStatus transactionStatus = TransactionStatus.getTransactionStatus(response.optString("TxStatus"));
-            String currency = response.optString("currency");
-            String amount = response.optString("amount");
-            String responseCode = response.optString("pgRespCode");
-            String message = response.optString("TxMsg");
-            String isCOD = response.optString("isCOD");
-            String signature = response.optString("signature");
-            String issuerCode = response.optString("issuerCode");
-            String impsMmid = response.optString("impsMmid");
-            String impsMobileNumber = response.optString("impsMobileNumber");
-            String authIdCode = response.optString("authIdCode");
-            // TODO Need to parse custom parameters
-            Map<String, String> customParamsMap = null;
+        try {
+            if (response != null) {
+                JSONObject jsonObject = new JSONObject(response);
 
-            TransactionDetails transactionDetails = TransactionDetails.fromJSONObject(response);
-            CitrusUser citrusUser = CitrusUser.fromJSONObject(response);
-            boolean cod = "true".equalsIgnoreCase(isCOD) ? true : false;
+                PaymentMode paymentMode = PaymentMode.getPaymentMode(jsonObject.optString("paymentMode"));
+                TransactionStatus transactionStatus = TransactionStatus.getTransactionStatus(jsonObject.optString("TxStatus"));
+                String currency = jsonObject.optString("currency");
+                String amount = jsonObject.optString("amount");
+                String responseCode = jsonObject.optString("pgRespCode");
+                String message = jsonObject.optString("TxMsg");
+                String isCOD = jsonObject.optString("isCOD");
+                String signature = jsonObject.optString("signature");
+                String issuerCode = jsonObject.optString("issuerCode");
+                String impsMmid = jsonObject.optString("impsMmid");
+                String impsMobileNumber = jsonObject.optString("impsMobileNumber");
+                String authIdCode = jsonObject.optString("authIdCode");
+                // TODO Need to parse custom parameters
+                Map<String, String> customParamsMap = null;
 
-            citrusTransactionResponse = new CitrusTransactionResponse(amount, currency, message, responseCode, transactionStatus, transactionDetails, citrusUser, paymentMode, issuerCode, impsMobileNumber, impsMmid, authIdCode, signature, cod, customParamsMap);
-            citrusTransactionResponse.setJsonResponse(response.toString());
+                TransactionDetails transactionDetails = TransactionDetails.fromJSONObject(jsonObject);
+                CitrusUser citrusUser = CitrusUser.fromJSONObject(jsonObject);
+                boolean cod = "true".equalsIgnoreCase(isCOD) ? true : false;
 
+                transactionResponse = new CitrusTransactionResponse(amount, currency, message, responseCode, transactionStatus, transactionDetails, citrusUser, paymentMode, issuerCode, impsMobileNumber, impsMmid, authIdCode, signature, cod, customParamsMap);
+                transactionResponse.setJsonResponse(jsonObject.toString());
+
+            }
+        } catch (JSONException ex) {
+            ex.printStackTrace();
+            transactionResponse = new CitrusTransactionResponse();
+            transactionResponse.setJsonResponse(response);
         }
-        return citrusTransactionResponse;
+
+        return transactionResponse;
+    }
+
+    public TransactionStatus getTransactionStatus() {
+        return transactionStatus;
+    }
+
+    public CitrusUser getCitrusUser() {
+        return citrusUser;
     }
 
     public String getAmount() {

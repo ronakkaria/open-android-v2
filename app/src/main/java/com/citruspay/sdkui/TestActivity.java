@@ -21,7 +21,7 @@ public class TestActivity extends ActionBarActivity {
         CitrusPaymentParams paymentParams = new CitrusPaymentParams();
         paymentParams.billUrl = BILL_URL;
         paymentParams.merchantName = "Shopstore";
-        paymentParams.transactionAmount = 100.0;
+        paymentParams.transactionAmount = 5.0;
         paymentParams.vanity = "NativeSDK";
         paymentParams.colorPrimary = "#F9A323";
         paymentParams.colorPrimaryDark = "#E7961D";
