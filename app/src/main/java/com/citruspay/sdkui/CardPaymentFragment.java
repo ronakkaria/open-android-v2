@@ -3,7 +3,6 @@ package com.citruspay.sdkui;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,19 +80,14 @@ public class CardPaymentFragment extends Fragment implements View.OnClickListene
         // Apply the adapter to the spinner
         year.setAdapter(yearAdapter);
 
-//        mRadioGroup = (RadioGroup) rootView.findViewById(R.id.radioGroupCardType);
-        /*mEditCardNo = (EditText) rootView.findViewById(R.id.editCardNo);
+        mRadioGroup = (RadioGroup) rootView.findViewById(R.id.radioGroupCardType);
+        mEditCardNo = (EditText) rootView.findViewById(R.id.editCardNo);
         mEditNameOnCard = (EditText) rootView.findViewById(R.id.editNameOnCard);
-        mEditExpiry = (EditText) rootView.findViewById(R.id.editExpiryDate);
+        //mEditExpiry = (EditText) rootView.findViewById(R.id.editExpiryDate);
         mEditCVV = (EditText) rootView.findViewById(R.id.editCVV);
+        mButtonPay = (Button) rootView.findViewById(R.id.buttonPay);
 
         mRadioGroup.setOnCheckedChangeListener(this);
-        mButtonPay.setOnClickListener(this);*/
-
-//        mButtonPay = (Button) rootView.findViewById(R.id.buttonPay);
-        mButtonPay = (Button) rootView.findViewById(R.id.button);
-
-//        mRadioGroup.setOnCheckedChangeListener(this);
         mButtonPay.setOnClickListener(this);
 
         // Inflate the layout for this fragment
