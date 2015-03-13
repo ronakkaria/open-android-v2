@@ -9,6 +9,16 @@ import android.text.TextUtils;
  */
 public abstract class CardOption extends PaymentOption {
 
+    /**
+     * This card will be used to denote that it is the request to add new card or use new card.
+     */
+    public static final CardOption DEFAULT_CARD = new CardOption() {
+        @Override
+        public String getCardType() {
+            return null;
+        }
+    };
+
     protected String cardHolderName = null;
     protected String cardNumber = null;
     protected String cardCVV = null;
@@ -17,7 +27,8 @@ public abstract class CardOption extends PaymentOption {
     protected String cardExpiryYear = null;
     protected String cardScheme = null;
 
-    CardOption() {}
+    CardOption() {
+    }
 
     /**
      * @param cardHolderName - Name of the card holder.
@@ -125,6 +136,19 @@ public abstract class CardOption extends PaymentOption {
         return drawable;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + "CardOption{" +
+                "cardHolderName='" + cardHolderName + '\'' +
+                ", cardNumber='" + cardNumber + '\'' +
+                ", cardCVV='" + cardCVV + '\'' +
+                ", cardExpiry='" + cardExpiry + '\'' +
+                ", cardExpiryMonth='" + cardExpiryMonth + '\'' +
+                ", cardExpiryYear='" + cardExpiryYear + '\'' +
+                ", cardScheme='" + cardScheme + '\'' +
+                '}';
+    }
+
     /**
      * Denotes the type of the card. i.e. Credit or Debit.
      */
@@ -145,18 +169,5 @@ public abstract class CardOption extends PaymentOption {
          * @return
          */
         public abstract String getCardType();
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() + "CardOption{" +
-                "cardHolderName='" + cardHolderName + '\'' +
-                ", cardNumber='" + cardNumber + '\'' +
-                ", cardCVV='" + cardCVV + '\'' +
-                ", cardExpiry='" + cardExpiry + '\'' +
-                ", cardExpiryMonth='" + cardExpiryMonth + '\'' +
-                ", cardExpiryYear='" + cardExpiryYear + '\'' +
-                ", cardScheme='" + cardScheme + '\'' +
-                '}';
     }
 }

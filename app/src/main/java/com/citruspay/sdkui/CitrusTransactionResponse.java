@@ -1,5 +1,7 @@
 package com.citruspay.sdkui;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.TextUtils;
 
 import org.json.JSONObject;
@@ -9,8 +11,17 @@ import java.util.Map;
 /**
  * Created by salil on 16/2/15.
  */
-public class CitrusTransactionResponse {
+public class CitrusTransactionResponse implements Parcelable {
 
+    public static final Parcelable.Creator<CitrusTransactionResponse> CREATOR = new Parcelable.Creator<CitrusTransactionResponse>() {
+        public CitrusTransactionResponse createFromParcel(Parcel source) {
+            return new CitrusTransactionResponse(source);
+        }
+
+        public CitrusTransactionResponse[] newArray(int size) {
+            return new CitrusTransactionResponse[size];
+        }
+    };
     private String amount = null;
     private String currency = null;
     private String message = null;
@@ -48,6 +59,35 @@ public class CitrusTransactionResponse {
         this.signature = signature;
         this.COD = COD;
         this.customParamsMap = customParamsMap;
+    }
+
+    public TransactionStatus getTransactionStatus() {
+        return transactionStatus;
+    }
+
+    public CitrusUser getCitrusUser() {
+        return citrusUser;
+    }
+
+    private CitrusTransactionResponse(Parcel in) {
+        this.amount = in.readString();
+        this.currency = in.readString();
+        this.message = in.readString();
+        this.responseCode = in.readString();
+        int tmpTransactionStatus = in.readInt();
+        this.transactionStatus = tmpTransactionStatus == -1 ? null : TransactionStatus.values()[tmpTransactionStatus];
+        this.transactionDetails = in.readParcelable(TransactionDetails.class.getClassLoader());
+        this.citrusUser = in.readParcelable(CitrusUser.class.getClassLoader());
+        int tmpPaymentMode = in.readInt();
+        this.paymentMode = tmpPaymentMode == -1 ? null : PaymentMode.values()[tmpPaymentMode];
+        this.issuerCode = in.readString();
+        this.impsMobileNumber = in.readString();
+        this.impsMmid = in.readString();
+        this.authIdCode = in.readString();
+        this.signature = in.readString();
+        this.COD = in.readByte() != 0;
+//        this.customParamsMap = in.readParcelable(HashMap<String, String>.class.getClassLoader());
+        this.jsonResponse = in.readString();
     }
 
     public static CitrusTransactionResponse fromJSONObject(JSONObject response) {
@@ -136,6 +176,10 @@ public class CitrusTransactionResponse {
         return jsonResponse;
     }
 
+    public void setJsonResponse(String jsonResponse) {
+        this.jsonResponse = jsonResponse;
+    }
+
     @Override
     public String toString() {
         return "CitrusTransactionResponse{" +
@@ -157,8 +201,29 @@ public class CitrusTransactionResponse {
                 '}';
     }
 
-    public void setJsonResponse(String jsonResponse) {
-        this.jsonResponse = jsonResponse;
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.amount);
+        dest.writeString(this.currency);
+        dest.writeString(this.message);
+        dest.writeString(this.responseCode);
+        dest.writeInt(this.transactionStatus == null ? -1 : this.transactionStatus.ordinal());
+        dest.writeParcelable(this.transactionDetails, flags);
+        dest.writeParcelable(this.citrusUser, 0);
+        dest.writeInt(this.paymentMode == null ? -1 : this.paymentMode.ordinal());
+        dest.writeString(this.issuerCode);
+        dest.writeString(this.impsMobileNumber);
+        dest.writeString(this.impsMmid);
+        dest.writeString(this.authIdCode);
+        dest.writeString(this.signature);
+        dest.writeByte(COD ? (byte) 1 : (byte) 0);
+//        dest.writeParcelable(this.customParamsMap, flags);
+        dest.writeString(this.jsonResponse);
     }
 
     public static enum PaymentMode {
@@ -193,7 +258,16 @@ public class CitrusTransactionResponse {
         }
     }
 
-    public static class TransactionDetails {
+    public static class TransactionDetails implements Parcelable {
+        public static final Creator<TransactionDetails> CREATOR = new Creator<TransactionDetails>() {
+            public TransactionDetails createFromParcel(Parcel source) {
+                return new TransactionDetails(source);
+            }
+
+            public TransactionDetails[] newArray(int size) {
+                return new TransactionDetails[size];
+            }
+        };
         private String transactionId = null;
         private String txRefNo = null;
         private String pgTxnNo = null;
@@ -208,6 +282,15 @@ public class CitrusTransactionResponse {
             this.issuerRefNo = issuerRefNo;
             this.transactionGateway = transactionGateway;
             this.transactionDateTime = transactionDateTime;
+        }
+
+        private TransactionDetails(Parcel in) {
+            this.transactionId = in.readString();
+            this.txRefNo = in.readString();
+            this.pgTxnNo = in.readString();
+            this.issuerRefNo = in.readString();
+            this.transactionGateway = in.readString();
+            this.transactionDateTime = in.readString();
         }
 
         public static TransactionDetails fromJSONObject(JSONObject response) {
@@ -262,6 +345,20 @@ public class CitrusTransactionResponse {
                     ", transactionDateTime='" + transactionDateTime + '\'' +
                     '}';
         }
-    }
 
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(this.transactionId);
+            dest.writeString(this.txRefNo);
+            dest.writeString(this.pgTxnNo);
+            dest.writeString(this.issuerRefNo);
+            dest.writeString(this.transactionGateway);
+            dest.writeString(this.transactionDateTime);
+        }
+    }
 }

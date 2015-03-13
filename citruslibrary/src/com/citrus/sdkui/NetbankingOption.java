@@ -10,8 +10,19 @@ import android.os.Parcelable;
  */
 public class NetbankingOption extends PaymentOption implements Parcelable {
 
+    public static final NetbankingOption DEFAULT_BANK = new NetbankingOption(){
+        @Override
+        public String toString() {
+            return "DEFAULT_BANK";
+        }
+    };
+
     private String bankName = null;
     private String bankCID = null;
+
+    private NetbankingOption() {
+
+    }
 
     public NetbankingOption(String bankName, String bankCID) {
         this.bankName = bankName;

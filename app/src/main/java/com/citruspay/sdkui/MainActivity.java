@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
@@ -27,6 +28,7 @@ import com.citrus.payment.Bill;
 import com.citrus.payment.PG;
 import com.citrus.payment.UserDetails;
 import com.citrus.sdkui.CardOption;
+import com.citrus.sdkui.CitrusCash;
 import com.citrus.sdkui.NetbankingOption;
 import com.citrus.sdkui.PaymentOption;
 
@@ -36,7 +38,7 @@ import org.json.JSONObject;
 import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity implements OnPaymentOptionSelectedListener, InitListener {
+public class MainActivity extends ActionBarActivity implements OnPaymentOptionSelectedListener, PaymentStatusFragment.OnTransactionResponseListener, InitListener {
 
     private String mUserEmail = null;
     private String mUserMobile = null;
@@ -130,6 +132,18 @@ public class MainActivity extends ActionBarActivity implements OnPaymentOptionSe
         if (paymentOption instanceof CardOption) {
             final CardOption cardOption = (CardOption) paymentOption;
 
+            // If the Add Card button is clicked show the fragment to Add New Card.
+            if (cardOption == CardOption.DEFAULT_CARD) {
+                FragmentTransaction ft = mFragmentManager.beginTransaction();
+                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                ft.replace(
+                        R.id.container, CardPaymentFragment.newInstance());
+                ft.addToBackStack(null);
+                ft.commit();
+
+                return;
+            }
+
             new GetBill(mMerchantBillUrl, mTransactionAmount, new Callback() {
                 @Override
                 public void onTaskexecuted(String billString, String error) {
@@ -152,19 +166,34 @@ public class MainActivity extends ActionBarActivity implements OnPaymentOptionSe
                         paymentGateway.charge(new Callback() {
                             @Override
                             public void onTaskexecuted(String success, String error) {
-                                processresponse(success, error);
+                                processResponse(success, error);
                             }
                         });
                     }
                 }
             }).execute();
         } else if (paymentOption instanceof NetbankingOption) {
+
+            final NetbankingOption netbankingOption = (NetbankingOption) paymentOption;
+
+            if (netbankingOption == NetbankingOption.DEFAULT_BANK) {
+
+                FragmentTransaction ft = mFragmentManager.beginTransaction();
+                ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                ft.replace(
+                        R.id.container, PaymentStatusFragment.newInstance(null, mPaymentParams));
+                ft.addToBackStack(null);
+                ft.commit();
+
+                return;
+            }
+
             new GetBill(mMerchantBillUrl, mTransactionAmount, new Callback() {
                 @Override
                 public void onTaskexecuted(String billString, String error) {
                     Bill bill = new Bill(billString);
 
-                    Bank netbank = new Bank(((NetbankingOption) paymentOption).getBankCID());
+                    Bank netbank = new Bank(netbankingOption.getBankCID());
 
                     // TODO Make token payment for bank
 
@@ -176,11 +205,13 @@ public class MainActivity extends ActionBarActivity implements OnPaymentOptionSe
                     paymentgateway.charge(new Callback() {
                         @Override
                         public void onTaskexecuted(String success, String error) {
-                            processresponse(success, error);
+                            processResponse(success, error);
                         }
                     });
                 }
             }).execute();
+        } else if (paymentOption instanceof CitrusCash) {
+            Toast.makeText(this, "Citrus Cash", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -208,7 +239,7 @@ public class MainActivity extends ActionBarActivity implements OnPaymentOptionSe
         }
     }
 
-    private void processresponse(String response, String error) {
+    private void processResponse(String response, String error) {
 
         if (!TextUtils.isEmpty(response)) {
             try {
@@ -322,5 +353,18 @@ public class MainActivity extends ActionBarActivity implements OnPaymentOptionSe
         if (mProgressDialog != null) {
             mProgressDialog.dismiss();
         }
+    }
+
+    @Override
+    public void onRetryTransaction() {
+        FragmentTransaction ft = mFragmentManager.beginTransaction();
+        ft.setCustomAnimations(android.R.anim.fade_out, android.R.anim.fade_in);
+        ft.commit();
+        mFragmentManager.popBackStack();
+    }
+
+    @Override
+    public void onDismiss() {
+        Toast.makeText(this, "Dismiss....", Toast.LENGTH_SHORT).show();
     }
 }

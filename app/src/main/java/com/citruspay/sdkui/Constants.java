@@ -6,4 +6,5 @@ package com.citruspay.sdkui;
 public interface Constants {
 
     String INTENT_EXTRA_PAYMENT_PARAMS = "INTENT_EXTRA_PAYMENT_PARAMS";
+    String PARAM_TRANSACTION_RESPONSE = "PARAM_TRANSACTION_RESPONSE";
 }

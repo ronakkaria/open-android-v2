@@ -78,7 +78,6 @@ public class PaymentOptionsCardView extends CardView implements View.OnClickList
             if (colorPrimary != null) {
                 mBtnFooter.setTextColor(Color.parseColor(colorPrimary));
             }
-            mBtnFooter.setOnClickListener(this);
 
             // Initializing the list of payment options
             switch (paymentOptionsCardType) {
@@ -96,11 +95,11 @@ public class PaymentOptionsCardView extends CardView implements View.OnClickList
                         relativeLayout.findViewById(R.id.img_payment_logo).setBackgroundColor(Color.WHITE);
                         // Set the icon image
                         setBackgroundImage(relativeLayout.findViewById(R.id.img_payment_logo), citrusCash.getOptionIcon(mContext));
-                        // Set click listener
-                        relativeLayout.setOnClickListener(this);
-                        // Set the tag
-                        relativeLayout.setTag(citrusCash);
                         mLayoutPaymentOptions.addView(relativeLayout);
+
+                        // Set the listener and add tag for pay now button.
+                        mBtnFooter.setTag(citrusCash);
+                        mBtnFooter.setOnClickListener(this);
                     } else {
                         TextView textView = new TextView(mContext);
                         textView.setPadding(16, 8, 0, 0);
@@ -142,12 +141,20 @@ public class PaymentOptionsCardView extends CardView implements View.OnClickList
                         textView.setText("You have not saved any card for faster checkout!");
                         mLayoutPaymentOptions.addView(textView);
                     }
+
+                    // Set the listener for default and add card.
+                    mBtnFooter.setTag(CardOption.DEFAULT_CARD);
+                    mBtnFooter.setOnClickListener(this);
                     break;
 
                 case DEBIT_CREDIT_CARDS:
                     // In case of credit and debit card, there will be no elements in the list.
                     // Hide the layout
                     mLayoutPaymentOptions.setVisibility(View.GONE);
+
+                    // Set the listener for default and add card.
+                    mBtnFooter.setTag(CardOption.DEFAULT_CARD);
+                    mBtnFooter.setOnClickListener(this);
                     break;
 
                 case NETBANKING:
@@ -175,6 +182,10 @@ public class PaymentOptionsCardView extends CardView implements View.OnClickList
                         textView.setText("Merchant does not support netbanking payment.");
                         mLayoutPaymentOptions.addView(textView);
                     }
+
+                    // Set the listener for default and add card.
+                    mBtnFooter.setTag(NetbankingOption.DEFAULT_BANK);
+                    mBtnFooter.setOnClickListener(this);
                     break;
             }
         }
