@@ -213,6 +213,11 @@ public class MainActivity extends ActionBarActivity implements OnPaymentOptionSe
         } else if (paymentOption instanceof CitrusCash) {
             Toast.makeText(this, "Citrus Cash", Toast.LENGTH_SHORT).show();
         }
+        else {
+            mFragmentManager.beginTransaction()
+                    .replace(R.id.container, CardPaymentFragment.newInstance())
+                    .commit();
+        }
     }
 
     @Override
