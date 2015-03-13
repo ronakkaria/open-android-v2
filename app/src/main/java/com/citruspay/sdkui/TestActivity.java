@@ -20,17 +20,15 @@ public class TestActivity extends ActionBarActivity {
         Intent intent = new Intent(TestActivity.this, MainActivity.class);
         CitrusPaymentParams paymentParams = new CitrusPaymentParams();
         paymentParams.billUrl = BILL_URL;
-        paymentParams.merchantName = "Greenseer";
+        paymentParams.merchantName = "Shopstore";
         paymentParams.transactionAmount = 100.0;
         paymentParams.vanity = "NativeSDK";
-//        paymentParams.colorPrimary = "#F9A323";
-//        paymentParams.colorPrimaryDark = "#E7961D";
 
         paymentParams.colorPrimary = "#F9A323";
-        paymentParams.colorPrimaryDark = "#FFA000";
+        paymentParams.colorPrimaryDark = "#9575CD";
         paymentParams.accentColor = "#64FFDA";
 
-        CitrusUser user = new CitrusUser("developercitrus@gmail.com", "1234567890", "Salil", "Godbole", null);
+        CitrusUser user = new CitrusUser("testeremail@mailinator.com", "1234567890", "Developer", "Citrus", null);
         paymentParams.user = user;
         intent.putExtra(Constants.INTENT_EXTRA_PAYMENT_PARAMS, paymentParams);
 
