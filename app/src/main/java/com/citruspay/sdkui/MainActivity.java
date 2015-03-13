@@ -182,6 +182,11 @@ public class MainActivity extends ActionBarActivity implements OnPaymentOptionSe
                 }
             }).execute();
         }
+        else {
+            mFragmentManager.beginTransaction()
+                    .replace(R.id.container, CardPaymentFragment.newInstance())
+                    .commit();
+        }
     }
 
     @Override

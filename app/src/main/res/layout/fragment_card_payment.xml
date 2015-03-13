@@ -1,10 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal"
-                android:paddingTop="20dp"
-                tools:context="com.citruspay.sdkui.CardPaymentFragment">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:paddingTop="20dp"
+    tools:context="com.citruspay.sdkui.CardPaymentFragment">
 
     <RadioGroup
         android:id="@+id/radioGroupCardType"
@@ -13,8 +13,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
 
         <RadioButton
             android:id="@+id/radioDebitCard"
@@ -23,8 +22,7 @@
             android:layout_gravity="center_horizontal"
             android:buttonTint="#ff33a24e"
             android:padding="@dimen/activity_vertical_margin"
-            android:text="Debit"
-            />
+            android:text="Debit" />
 
         <RadioButton
             android:id="@+id/radioCreditCard"
@@ -32,7 +30,7 @@
             android:layout_height="wrap_content"
             android:buttonTint="#ff33a24e"
             android:padding="@dimen/activity_vertical_margin"
-            android:text="Credit"/>
+            android:text="Credit" />
     </RadioGroup>
 
     <com.citrus.widgets.CardNumberEditText
@@ -46,7 +44,7 @@
         android:backgroundTint="#ff33a24e"
         android:hint="Card Number"
         android:inputType="number|none"
-        android:padding="@dimen/activity_vertical_margin"/>
+        android:padding="@dimen/activity_vertical_margin" />
 
     <EditText
         android:id="@+id/editNameOnCard"
@@ -60,7 +58,7 @@
         android:ems="10"
         android:hint="Name On The Card"
         android:inputType="textPersonName"
-        android:padding="@dimen/activity_vertical_margin"/>
+        android:padding="@dimen/activity_vertical_margin" />
 
     <com.citrus.widgets.ExpiryDate
         android:id="@+id/editExpiryDate"
@@ -74,7 +72,7 @@
         android:ems="10"
         android:hint="MM/YY"
         android:inputType="number|none"
-        android:padding="@dimen/activity_vertical_margin"/>
+        android:padding="@dimen/activity_vertical_margin" />
 
     <EditText
         android:id="@+id/editCVV"
@@ -89,7 +87,7 @@
         android:ems="10"
         android:hint="CVV"
         android:inputType="numberPassword"
-        android:padding="@dimen/activity_vertical_margin"/>
+        android:padding="@dimen/activity_vertical_margin" />
 
     <Button
         android:id="@+id/buttonPay"
@@ -100,6 +98,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="-3dp"
         android:background="#ff33a24e"
-        android:text="@string/text_button_pay"/>
+        android:text="@string/text_button_pay" />
 
 </RelativeLayout>
