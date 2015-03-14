@@ -3,9 +3,11 @@ package com.citruspay.sdkui;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,7 +16,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.citrus.sdkui.CardOption;
-import com.citrus.sdkui.DebitCardOption;
 
 import static com.citrus.sdkui.CardOption.CardType.CREDIT;
 import static com.citrus.sdkui.CardOption.CardType.DEBIT;
@@ -26,7 +27,7 @@ import static com.citrus.sdkui.CardOption.CardType.DEBIT;
  * Use the {@link CardPaymentFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CardPaymentFragment extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
+public class CardPaymentFragment extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener, AdapterView.OnItemSelectedListener {
     private OnCardPaymentListener mListener = null;
     private RadioGroup mRadioGroup = null;
     private Button mButtonPay = null;
@@ -72,6 +73,7 @@ public class CardPaymentFragment extends Fragment implements View.OnClickListene
         monthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         month.setAdapter(monthAdapter);
+        month.setOnItemSelectedListener(this);
         year = (Spinner) rootView.findViewById(R.id.year);
         ArrayAdapter<CharSequence> yearAdapter = new ArrayAdapter<CharSequence>(
                 getActivity(),R.layout.customtextview,android.R.id.text1,getResources().getStringArray(R.array.years_array));
@@ -79,7 +81,7 @@ public class CardPaymentFragment extends Fragment implements View.OnClickListene
         yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         year.setAdapter(yearAdapter);
-
+        year.setOnItemSelectedListener(this);
         mRadioGroup = (RadioGroup) rootView.findViewById(R.id.radioGroupCardType);
         mEditCardNo = (EditText) rootView.findViewById(R.id.editCardNo);
         mEditNameOnCard = (EditText) rootView.findViewById(R.id.editNameOnCard);
@@ -132,10 +134,10 @@ public class CardPaymentFragment extends Fragment implements View.OnClickListene
 //                break;
 //        }
 
-        cardOption = new DebitCardOption("Salil Godbole", "4320906700001442", "179", "10/19");
-        mListener.onCardPaymentSelected(cardOption);
+        //cardOption = new DebitCardOption("Salil Godbole", "4320906700001442", "179", "10/19");
+        //mListener.onCardPaymentSelected(cardOption);
 
-//        Log.i("Citrus", "Card No. " + mEditCardNo.getText() + "  Card Name : " + mEditNameOnCard.getText() + " Expiry : " + mEditExpiry.getText() + " CVV : " + mEditCVV.getText() + " Card Type : " + mCardType);
+        Log.i("Citrus", "Card No. " + mEditCardNo.getText() + "  Card Name : " + mEditNameOnCard.getText() + " Expiry : " + (month.getSelectedItemPosition()+1) + "YEAR : " + year.getSelectedItem().toString() + " CVV : " + mEditCVV.getText() + " Card Type : " + mCardType);
     }
 
     @Override
@@ -148,6 +150,23 @@ public class CardPaymentFragment extends Fragment implements View.OnClickListene
                 mCardType = CREDIT;
                 break;
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+           switch(parent.getId()) {
+               case R.id.month:
+                    Log.d("SDK","month selected :" + (position+1));
+                   break;
+               case R.id.year:
+                   Log.d("SDK","year selected :" + parent.getItemAtPosition(position));
+                   break;
+           }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 
     public static interface OnCardPaymentListener {
