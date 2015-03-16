@@ -22,7 +22,15 @@
     <string name="title_text2_error">Error Message</string>
 
     <string name="title_activity_otpwait">OTPWaitActivity</string>
-
+    <string name="credit">Credit</string>
+    <string name="debit">Debit</string>
+    <string name="cardnumber">CARD NUMBER</string>
+    <string name="expiry">EXPIRY</string>
+    <string name="cvv">CVV</string>
+    <string name="name_on_card">NAME AS ON CARD</string>
+    <string name="save_card">SAVE THIS CARD</string>
+    <string name="save_card_message">Save this card and you won\'t have to enter these details again</string>
+    <string name="pay">PAY</string>
     <string-array name="months_array">
         <item>JAN</item>
         <item>FEB</item>

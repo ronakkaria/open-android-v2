@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@android:color/white"
-              android:orientation="vertical"
-              android:paddingTop="20dp">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    android:paddingTop="20dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,25 +15,27 @@
         android:paddingRight="15dp">
 
         <RadioGroup
+            android:id="@+id/radioGroupCardType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="@dimen/activity_vertical_margin">
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:orientation="horizontal">
 
             <RadioButton
-                android:id="@+id/radioButton2"
+                android:id="@+id/radioCreditCard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Credit"
-                android:textColor="@android:color/black"/>
+                android:text="@string/credit"
+                android:checked="true"
+                android:textColor="@android:color/black" />
 
             <RadioButton
-                android:id="@+id/radioButton"
+                android:id="@+id/radioDebitCard"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="25dp"
-                android:text="Debit"
-                android:textColor="@android:color/black"/>
+                android:text="@string/debit"
+                android:textColor="@android:color/black" />
         </RadioGroup>
 
         <TextView
@@ -42,55 +44,98 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
-            android:text="CARD NUMBER"
+            android:text="@string/cardnumber"
 
-            android:textColor="@color/grey"/>
+            android:textColor="@color/grey" />
 
         <com.citrus.widgets.CardNumberEditText
+            android:id="@+id/editCardNo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="7dp"
             android:backgroundTint="@color/lightblue"
-            android:textColor="@android:color/black"/>
+            android:textColor="@android:color/black" />
 
-        <TextView
-            android:id="@+id/expiry"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="10dp"
-            android:text="EXPIRY"
-            android:textColor="@color/grey"/>
-
-        <!-- <Spinner
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:id="@+id/month" />-->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingRight="15dp">
 
-            <Spinner
-                android:id="@+id/month"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_weight="0"
-                android:textColor="@android:color/black"/>
-
-            <Spinner
-                android:id="@+id/year"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="0"
+                android:orientation="vertical"
+                android:paddingRight="15dp">
+
+                <TextView
+                    android:id="@+id/expiry"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+
+                    android:text="@string/expiry"
+                    android:textColor="@color/grey" />
+
+                <!-- <Spinner
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:id="@+id/month" />-->
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <Spinner
+                        android:id="@+id/month"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:textColor="@android:color/black" />
+
+                    <Spinner
+                        android:id="@+id/year"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_toRightOf="@+id/month"
+                        android:textColor="@android:color/black" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:layout_weight="1"
-                android:textColor="@android:color/black"/>
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtCVV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cvv"
+                    android:textColor="@color/grey" />
+
+                <EditText
+                    android:id="@+id/editCVV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:digits="0123456789"
+                    android:ems="3"
+                    android:maxLength="4"
+                    android:inputType="number"
+                    android:singleLine="true"
+                    android:textSize="14dp" />
+            </LinearLayout>
+
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/lightblue"/>
+            android:background="@color/lightblue" />
 
         <TextView
             android:id="@+id/nameoncard"
@@ -98,17 +143,17 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="10dp"
-            android:text="NAME AS ON CARD"
-            android:textColor="@color/grey"/>
+            android:text="@string/name_on_card"
+            android:textColor="@color/grey" />
 
         <EditText
-            android:id="@+id/cardname"
+            android:id="@+id/editNameOnCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="7dp"
             android:backgroundTint="@color/lightblue"
             android:inputType="textPersonName"
-            android:textColor="@android:color/black"/>
+            android:textColor="@android:color/black" />
 
         <TextView
             android:id="@+id/savecard"
@@ -116,8 +161,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="10dp"
-            android:text="SAVE THIS CARD"
-            android:textColor="@color/grey"/>
+            android:text="@string/save_card"
+            android:textColor="@color/grey" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -135,8 +180,8 @@
                 android:layout_weight="1"
                 android:maxLines="2"
                 android:singleLine="false"
-                android:text="Save this card and you won't have to enter these details again"
-                android:textColor="@android:color/black"/>
+                android:text="@string/save_card_message"
+                android:textColor="@android:color/black" />
 
             <android.support.v7.widget.SwitchCompat
                 android:id="@+id/savecardtoggle"
@@ -146,20 +191,20 @@
                 android:layout_weight="0"
                 android:background="@android:color/white"
                 android:backgroundTintMode="multiply"
-                android:checked="true"/>
+                android:checked="true" />
 
         </LinearLayout>
     </LinearLayout>
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/buttonPay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_weight="0"
         android:background="@color/orange"
-        android:text="PAY"
-        android:textColor="@android:color/white"/>
+        android:text="@string/pay"
+        android:textColor="@android:color/white" />
 
 
 </LinearLayout>
