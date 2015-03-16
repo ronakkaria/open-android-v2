@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
@@ -92,6 +93,9 @@
                         android:layout_width="80dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
+                        style="@android:style/Widget.Holo.Light.Spinner"
+                        android:backgroundTint="@color/lightblue"
+                        tools:targetApi="11"
                         android:textColor="@android:color/black" />
 
                     <Spinner
@@ -100,6 +104,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:layout_toRightOf="@+id/month"
+                        style="@android:style/Widget.Holo.Light.Spinner"
+                        android:backgroundTint="@color/lightblue"
+                        tools:targetApi="11"
                         android:textColor="@android:color/black" />
                 </RelativeLayout>
             </LinearLayout>
@@ -125,8 +132,12 @@
                     android:digits="0123456789"
                     android:ems="3"
                     android:maxLength="4"
+                    android:layout_marginTop="3dp"
                     android:inputType="number"
                     android:singleLine="true"
+                    android:text="1234"
+                    android:gravity="bottom"
+
                     android:textSize="14dp" />
             </LinearLayout>
 
