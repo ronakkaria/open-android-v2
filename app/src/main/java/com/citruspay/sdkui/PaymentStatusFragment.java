@@ -95,7 +95,7 @@ public class PaymentStatusFragment extends Fragment implements View.OnClickListe
 
                 mTxtTransactionMessage.setText(getString(R.string.message_payment_successful));
                 mTxtTitleTransactionId.setText(getString(R.string.title_transaction_id_success));
-                mTxtTransactionId.setText(mTransactionResponse.getTransactionDetails().getPgTxnNo());
+                mTxtTransactionId.setText(mTransactionResponse.getTransactionDetails().getTransactionId());
                 mTxtTitleText2.setText(getString(R.string.title_text2_success));
                 mTxtText2.setText(mTransactionResponse.getAmount());
 
@@ -110,7 +110,7 @@ public class PaymentStatusFragment extends Fragment implements View.OnClickListe
 
                 mTxtTransactionMessage.setText(getString(R.string.message_payment_error));
                 mTxtTitleTransactionId.setText(getString(R.string.title_transaction_id_error));
-                mTxtTransactionId.setText(mTransactionResponse.getTransactionDetails().getPgTxnNo());
+                mTxtTransactionId.setText(mTransactionResponse.getTransactionDetails().getTransactionId());
                 mTxtTitleText2.setText(getString(R.string.title_text2_error));
                 mTxtText2.setText(mTransactionResponse.getMessage());
 

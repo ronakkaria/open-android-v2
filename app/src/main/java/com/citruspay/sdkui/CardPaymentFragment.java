@@ -16,6 +16,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.citrus.sdkui.CardOption;
+import com.citrus.sdkui.DebitCardOption;
 
 import static com.citrus.sdkui.CardOption.CardType.CREDIT;
 import static com.citrus.sdkui.CardOption.CardType.DEBIT;
@@ -134,8 +135,9 @@ public class CardPaymentFragment extends Fragment implements View.OnClickListene
 //                break;
 //        }
 
-        //cardOption = new DebitCardOption("Salil Godbole", "4320906700001442", "179", "10/19");
-        //mListener.onCardPaymentSelected(cardOption);
+        cardOption = new DebitCardOption("Salil Godbole", "4320906700001442", "179", "10/19");
+        cardOption.setSavePaymentOption(true);
+        mListener.onCardPaymentSelected(cardOption);
 
         Log.i("Citrus", "Card No. " + mEditCardNo.getText() + "  Card Name : " + mEditNameOnCard.getText() + " Expiry : " + (month.getSelectedItemPosition()+1) + "YEAR : " + year.getSelectedItem().toString() + " CVV : " + mEditCVV.getText() + " Card Type : " + mCardType);
     }

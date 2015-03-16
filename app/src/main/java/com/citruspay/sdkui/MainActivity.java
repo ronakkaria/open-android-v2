@@ -2,7 +2,6 @@ package com.citruspay.sdkui;
 
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -19,10 +18,12 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.citrus.asynch.InitSDK;
+import com.citrus.asynch.Savecard;
 import com.citrus.card.Card;
 import com.citrus.interfaces.InitListener;
 import com.citrus.mobile.Callback;
 import com.citrus.mobile.Config;
+import com.citrus.mobile.User;
 import com.citrus.netbank.Bank;
 import com.citrus.payment.Bill;
 import com.citrus.payment.PG;
@@ -128,13 +129,19 @@ public class MainActivity extends ActionBarActivity implements OnPaymentOptionSe
         mPaymentParams = null;
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        Toast.makeText(this, "BackButtonPressed.....", Toast.LENGTH_SHORT).show();
+    }
+
     private void processResponse(String response, String error) {
 
         if (!TextUtils.isEmpty(response)) {
             try {
 
                 JSONObject redirect = new JSONObject(response);
-                Intent i = new Intent(MainActivity.this, CitrusPaymentActivity.class);
 
                 if (!TextUtils.isEmpty(redirect.getString("redirectUrl"))) {
                     showPaymentFragment(redirect.getString("redirectUrl"));
@@ -185,6 +192,17 @@ public class MainActivity extends ActionBarActivity implements OnPaymentOptionSe
         return customer;
     }
 
+    private void showPaymentOptionsFragment() {
+        mPaymentParams.netbankingOptionList = Config.getBankList();
+        mPaymentParams.userSavedOptionList = Config.getCitrusWallet();
+
+        mFragmentManager.beginTransaction()
+                .add(R.id.container, PaymentOptionsFragment.newInstance(mPaymentParams))
+                .commit();
+
+        dismissDialog();
+    }
+
     private void showAddCardFragment() {
         FragmentTransaction ft = mFragmentManager.beginTransaction();
         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -192,6 +210,45 @@ public class MainActivity extends ActionBarActivity implements OnPaymentOptionSe
                 R.id.container, CardPaymentFragment.newInstance());
         ft.addToBackStack(null);
         ft.commit();
+    }
+
+    private void showSavedCardPaymentFragment(final CardOption cardOption) {
+        // TODO: Show saved card payment option.
+
+        FragmentTransaction ft = mFragmentManager.beginTransaction();
+        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        ft.replace(
+                R.id.container, SaveCardPaymentFragment.newInstance(cardOption));
+        ft.addToBackStack(null);
+        ft.commit();
+
+//        // The following code will move to the callback method of above fragment.
+//        new GetBill(mMerchantBillUrl, mTransactionAmount, new Callback() {
+//            @Override
+//            public void onTaskexecuted(String billString, String error) {
+//                if (TextUtils.isEmpty(error)) {
+//                    Bill bill = new Bill(billString);
+//                    Card card;
+//
+//                    if (!TextUtils.isEmpty(cardOption.getToken())) {
+//                        // TODO Take the CVV instead of hardcoded value.
+//                        card = new Card(cardOption.getToken(), "123");
+//                    } else {
+//                        card = new Card(cardOption.getCardNumber(), cardOption.getCardExpiryMonth(), cardOption.getCardExpiryYear(), cardOption.getCardCVV(), cardOption.getCardHolderName(), cardOption.getCardType());
+//                    }
+//
+//                    // TODO: Use customer data from User to fill the data in the getCustomer.
+//                    UserDetails userDetails = new UserDetails(getCustomer());
+//                    PG paymentGateway = new PG(card, bill, userDetails);
+//                    paymentGateway.charge(new Callback() {
+//                        @Override
+//                        public void onTaskexecuted(String success, String error) {
+//                            processResponse(success, error);
+//                        }
+//                    });
+//                }
+//            }
+//        }).execute();
     }
 
     private void showNetbankingFragment() {
@@ -216,6 +273,30 @@ public class MainActivity extends ActionBarActivity implements OnPaymentOptionSe
         ft.commit();
     }
 
+    private void processNebankingPayment(final NetbankingOption netbankingOption) {
+        new GetBill(mMerchantBillUrl, mTransactionAmount, new Callback() {
+            @Override
+            public void onTaskexecuted(String billString, String error) {
+                Bill bill = new Bill(billString);
+
+                Bank netbank = new Bank(netbankingOption.getBankCID());
+
+                // TODO Make token payment for bank
+
+                // TODO: Use customer data from User to fill the data in the getCustomer.
+                UserDetails userDetails = new UserDetails(getCustomer());
+
+                PG paymentgateway = new PG(netbank, bill, userDetails);
+
+                paymentgateway.charge(new Callback() {
+                    @Override
+                    public void onTaskexecuted(String success, String error) {
+                        processResponse(success, error);
+                    }
+                });
+            }
+        }).execute();
+    }
 
     private void showDialog(String message, boolean cancelable) {
         if (mProgressDialog != null) {
@@ -231,6 +312,20 @@ public class MainActivity extends ActionBarActivity implements OnPaymentOptionSe
         }
     }
 
+    private void saveCard(Card card) {
+        if (User.isUserLoggedIn(MainActivity.this))
+            new Savecard(MainActivity.this, new Callback() {
+                @Override
+                public void onTaskexecuted(String success, String error) {
+                    if (!TextUtils.isEmpty(success)) {
+                        Utils.showToast(getApplicationContext(), "Card Saved Successfully.");
+                    } else {
+                        Utils.showToast(getApplicationContext(), "Error Occurred while saving the card.");
+                    }
+                }
+            }).execute(card);
+    }
+
     // Listeners
 
     @Override
@@ -244,107 +339,51 @@ public class MainActivity extends ActionBarActivity implements OnPaymentOptionSe
             // If the Add Card button is clicked show the fragment to Add New Card.
             if (cardOption == CardOption.DEFAULT_CARD) {
                 showAddCardFragment();
-
-                return;
+            } else {
+                showSavedCardPaymentFragment(cardOption);
             }
-
-            new GetBill(mMerchantBillUrl, mTransactionAmount, new Callback() {
-                @Override
-                public void onTaskexecuted(String billString, String error) {
-                    if (TextUtils.isEmpty(error)) {
-                        Bill bill = new Bill(billString);
-                        Card card = null;
-
-                        if (!TextUtils.isEmpty(cardOption.getToken())) {
-                            // TODO Take the CVV instead of hardcoded value.
-                            card = new Card(cardOption.getToken(), "123");
-                        } else {
-                            card = new Card(cardOption.getCardNumber(), cardOption.getCardExpiryMonth(), cardOption.getCardExpiryYear(), cardOption.getCardCVV(), cardOption.getCardHolderName(), cardOption.getCardType());
-                        }
-
-                        // TODO: Use customer data from User to fill the data in the getCustomer.
-                        UserDetails userDetails = new UserDetails(getCustomer());
-
-                        PG paymentGateway = new PG(card, bill, userDetails);
-
-                        paymentGateway.charge(new Callback() {
-                            @Override
-                            public void onTaskexecuted(String success, String error) {
-                                processResponse(success, error);
-                            }
-                        });
-                    }
-                }
-            }).execute();
         } else if (paymentOption instanceof NetbankingOption) {
 
             final NetbankingOption netbankingOption = (NetbankingOption) paymentOption;
 
+            // If the bank is selected other than the top 4 banks, show the list of available banks.
             if (netbankingOption == NetbankingOption.DEFAULT_BANK) {
-
                 showNetbankingFragment();
-
-                return;
+            } else {
+                processNebankingPayment(netbankingOption);
             }
-
-            new GetBill(mMerchantBillUrl, mTransactionAmount, new Callback() {
-                @Override
-                public void onTaskexecuted(String billString, String error) {
-                    Bill bill = new Bill(billString);
-
-                    Bank netbank = new Bank(netbankingOption.getBankCID());
-
-                    // TODO Make token payment for bank
-
-                    // TODO: Use customer data from User to fill the data in the getCustomer.
-                    UserDetails userDetails = new UserDetails(getCustomer());
-
-                    PG paymentgateway = new PG(netbank, bill, userDetails);
-
-                    paymentgateway.charge(new Callback() {
-                        @Override
-                        public void onTaskexecuted(String success, String error) {
-                            processResponse(success, error);
-                        }
-                    });
-                }
-            }).execute();
         } else if (paymentOption instanceof CitrusCash) {
+            // TODO: Make payment using citrus cash
             Toast.makeText(this, "Citrus Cash", Toast.LENGTH_SHORT).show();
-        } else {
-            mFragmentManager.beginTransaction()
-                    .replace(R.id.container, CardPaymentFragment.newInstance())
-                    .commit();
         }
     }
 
 
     @Override
     public void onSuccess(String response) {
-
-        mPaymentParams.netbankingOptionList = Config.getBankList();
-        mPaymentParams.userSavedOptionList = Config.getCitrusWallet();
-
-        mFragmentManager.beginTransaction()
-                .add(R.id.container, PaymentOptionsFragment.newInstance(mPaymentParams))
-                .commit();
-
-        dismissDialog();
+        // Since the loading is complete display the payment options fragment
+        showPaymentOptionsFragment();
     }
 
     @Override
     public void onBindFailed(String response) {
         Log.i("citrus", "onBindFailed");
+        // Since the loading is complete display the payment options fragment
+        showPaymentOptionsFragment();
     }
 
     @Override
     public void onWalletLoadFailed(String response) {
         Log.i("citrus", "onWalletLoadFailed");
+        // Since the loading is complete display the payment options fragment
+        showPaymentOptionsFragment();
     }
 
     @Override
     public void onNetBankingListFailed(VolleyError error) {
         Log.i("citrus", "onNetBankingListFailed");
+        // Since the loading is complete display the payment options fragment
+        showPaymentOptionsFragment();
     }
 
     @Override
@@ -378,30 +417,39 @@ public class MainActivity extends ActionBarActivity implements OnPaymentOptionSe
     @Override
     public void onCardPaymentSelected(final CardOption cardOption) {
         mFragmentManager.popBackStack();
+        final Card card;
+
+        if (cardOption != null) {
+            card = new Card(cardOption.getCardNumber(), cardOption.getCardExpiryMonth(), cardOption.getCardExpiryYear(), cardOption.getCardCVV(), cardOption.getCardHolderName(), cardOption.getCardType());
+        } else {
+            card = null;
+        }
 
         new GetBill(mMerchantBillUrl, mTransactionAmount, new Callback() {
             @Override
             public void onTaskexecuted(String billString, String error) {
-                Card card = null;
                 Bill bill = null;
                 if (TextUtils.isEmpty(error)) {
                     bill = new Bill(billString);
-                    card = new Card(cardOption.getCardNumber(), cardOption.getCardExpiryMonth(), cardOption.getCardExpiryYear(), cardOption.getCardCVV(), cardOption.getCardHolderName(), cardOption.getCardType());
+                    // TODO: Use customer data from User to fill the data in the getCustomer.
+                    UserDetails userDetails = new UserDetails(getCustomer());
+
+                    PG paymentGateway = new PG(card, bill, userDetails);
+
+                    paymentGateway.charge(new Callback() {
+                        @Override
+                        public void onTaskexecuted(String success, String error) {
+                            processResponse(success, error);
+                        }
+                    });
                 }
-
-                // TODO: Use customer data from User to fill the data in the getCustomer.
-                UserDetails userDetails = new UserDetails(getCustomer());
-
-                PG paymentGateway = new PG(card, bill, userDetails);
-
-                paymentGateway.charge(new Callback() {
-                    @Override
-                    public void onTaskexecuted(String success, String error) {
-                        processResponse(success, error);
-                    }
-                });
             }
         }).execute();
 
+
+        // Save the card if the user has opted to save the card.
+        if (cardOption.isSavePaymentOption()) {
+            saveCard(card);
+        }
     }
 }

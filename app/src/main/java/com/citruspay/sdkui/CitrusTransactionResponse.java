@@ -312,7 +312,7 @@ public class CitrusTransactionResponse implements Parcelable {
                 String issuerRefNo = response.optString("issuerRefNo");
                 String txGateway = response.optString("TxGateway");
                 String txnDateTime = response.optString("txnDateTime");
-                String txId = response.optString("txId");
+                String txId = response.optString("TxId");
 
                 transactionDetails = new TransactionDetails(txId, txRefNo, pgTxnNo, issuerRefNo, txGateway, txnDateTime);
             }

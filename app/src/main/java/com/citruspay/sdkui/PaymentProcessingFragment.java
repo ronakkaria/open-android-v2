@@ -88,6 +88,7 @@ public class PaymentProcessingFragment extends Fragment {
 
     private void showDialog(String message, boolean cancelable) {
         if (mProgressDialog != null) {
+            mProgressDialog.setCanceledOnTouchOutside(false);
             mProgressDialog.setCancelable(cancelable);
             mProgressDialog.setMessage(message);
             mProgressDialog.show();
@@ -155,7 +156,7 @@ public class PaymentProcessingFragment extends Fragment {
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
             // Display the message.
-            showDialog("Processing your payment. Please do not refresh the page.", false);
+            showDialog("Processing your payment. Please do not refresh the page.", true);
         }
 
         @Override

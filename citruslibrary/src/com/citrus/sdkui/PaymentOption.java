@@ -19,6 +19,7 @@ public abstract class PaymentOption implements Parcelable {
      */
     protected String name = null; // Denotes the friendly name for the payment option.
     protected String token = null; // Denotes the token for the payment option.
+    protected boolean savePaymentOption = false;
 
     protected PaymentOption() {
     }
@@ -63,6 +64,14 @@ public abstract class PaymentOption implements Parcelable {
         }
 
         return paymentOption;
+    }
+
+    public void setSavePaymentOption(boolean savePaymentOption) {
+        this.savePaymentOption = savePaymentOption;
+    }
+
+    public boolean isSavePaymentOption() {
+        return savePaymentOption;
     }
 
     public abstract Drawable getOptionIcon(Context context);
