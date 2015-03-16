@@ -258,7 +258,7 @@ public class CitrusTransactionResponse implements Parcelable {
 
         public static TransactionStatus getTransactionStatus(String transactionStatus) {
             TransactionStatus status = null;
-            if (TextUtils.equals(transactionStatus, "STATUS")) {
+            if (TextUtils.equals(transactionStatus, "SUCCESS")) {
                 status = SUCCESS;
             } else if (TextUtils.equals(transactionStatus, "FAIL")) {
                 status = FAIL;

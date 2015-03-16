@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,6 +73,7 @@ public class PaymentStatusFragment extends Fragment implements View.OnClickListe
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_payment_status, container, false);
 
+        mImgTransactionStatus = (ImageView) view.findViewById(R.id.img_transaction_status);
         mTxtTransactionMessage = (TextView) view.findViewById(R.id.txt_transaction_message);
         mTxtTitleTransactionId = (TextView) view.findViewById(R.id.txt_title_transaction_id);
         mTxtTransactionId = (TextView) view.findViewById(R.id.txt_transaction_id);
@@ -85,10 +87,15 @@ public class PaymentStatusFragment extends Fragment implements View.OnClickListe
 
         if (mTransactionResponse != null && mTransactionResponse.getTransactionDetails() != null) {
 
+            Log.i("Citrus", "Transaction Response :: " + mTransactionResponse);
+
             if (mTransactionResponse.getTransactionStatus() == CitrusTransactionResponse.TransactionStatus.SUCCESS) {
+                // Set the icon for transaction status.
+                mImgTransactionStatus.setBackgroundResource(R.drawable.checkmark_green);
+
                 mTxtTransactionMessage.setText(getString(R.string.message_payment_successful));
                 mTxtTitleTransactionId.setText(getString(R.string.title_transaction_id_success));
-                mTxtTransactionId.setText(mTransactionResponse.getTransactionDetails().getTransactionId());
+                mTxtTransactionId.setText(mTransactionResponse.getTransactionDetails().getPgTxnNo());
                 mTxtTitleText2.setText(getString(R.string.title_text2_success));
                 mTxtText2.setText(mTransactionResponse.getAmount());
 
@@ -98,9 +105,12 @@ public class PaymentStatusFragment extends Fragment implements View.OnClickListe
                 mBtnRetryTransaction.setVisibility(View.GONE);
                 mBtnDismiss.setVisibility(View.GONE);
             } else {
+                // Set the icon for transaction status
+                mImgTransactionStatus.setBackgroundResource(R.drawable.cross_red);
+
                 mTxtTransactionMessage.setText(getString(R.string.message_payment_error));
                 mTxtTitleTransactionId.setText(getString(R.string.title_transaction_id_error));
-                mTxtTransactionId.setText(mTransactionResponse.getTransactionDetails().getTransactionId());
+                mTxtTransactionId.setText(mTransactionResponse.getTransactionDetails().getPgTxnNo());
                 mTxtTitleText2.setText(getString(R.string.title_text2_error));
                 mTxtText2.setText(mTransactionResponse.getMessage());
 
