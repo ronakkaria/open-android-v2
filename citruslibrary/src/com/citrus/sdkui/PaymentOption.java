@@ -12,6 +12,7 @@ import org.json.JSONObject;
  * Created by salil on 13/2/15.
  */
 public abstract class PaymentOption implements Parcelable {
+
     /**
      * Following variables will be used in case of tokenized payments and mostly internally.
      * Hence no public constructor with these variables is required. If required create a constructor
@@ -33,12 +34,10 @@ public abstract class PaymentOption implements Parcelable {
         this.token = token;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getToken() {
-        return token;
+    private PaymentOption(Parcel in) {
+        this.name = in.readString();
+        this.token = in.readString();
+        this.savePaymentOption = in.readByte() != 0;
     }
 
     public static PaymentOption fromJSONObject(JSONObject walletObject) {
@@ -66,12 +65,20 @@ public abstract class PaymentOption implements Parcelable {
         return paymentOption;
     }
 
-    public void setSavePaymentOption(boolean savePaymentOption) {
-        this.savePaymentOption = savePaymentOption;
+    public String getName() {
+        return name;
+    }
+
+    public String getToken() {
+        return token;
     }
 
     public boolean isSavePaymentOption() {
         return savePaymentOption;
+    }
+
+    public void setSavePaymentOption(boolean savePaymentOption) {
+        this.savePaymentOption = savePaymentOption;
     }
 
     public abstract Drawable getOptionIcon(Context context);
@@ -84,6 +91,15 @@ public abstract class PaymentOption implements Parcelable {
                 '}';
     }
 
+    public static final Creator<PaymentOption> CREATOR = new Creator<PaymentOption>() {
+        public PaymentOption createFromParcel(Parcel source) {
+            return null;
+        }
+
+        public PaymentOption[] newArray(int size) {
+            return new PaymentOption[size];
+        }
+    };
 
     @Override
     public int describeContents() {
@@ -94,20 +110,6 @@ public abstract class PaymentOption implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.name);
         dest.writeString(this.token);
+        dest.writeByte(savePaymentOption ? (byte) 1 : (byte) 0);
     }
-
-    private PaymentOption(Parcel in) {
-        this.name = in.readString();
-        this.token = in.readString();
-    }
-
-    public static final Parcelable.Creator<PaymentOption> CREATOR = new Parcelable.Creator<PaymentOption>() {
-        public PaymentOption createFromParcel(Parcel source) {
-            return null;
-        }
-
-        public PaymentOption[] newArray(int size) {
-            return new PaymentOption[size];
-        }
-    };
 }

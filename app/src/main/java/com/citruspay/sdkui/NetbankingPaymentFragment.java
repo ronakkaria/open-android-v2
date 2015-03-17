@@ -64,7 +64,7 @@ public class NetbankingPaymentFragment extends Fragment implements View.OnClickL
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_netbanking_payment, container, false);
 
-        mButtonPay = (Button) rootView.findViewById(R.id.buttonPay);
+        mButtonPay = (Button) rootView.findViewById(R.id.button_pay);
         mButtonPay.setOnClickListener(this);
 
         mSpinnerBankList = (Spinner) rootView.findViewById(R.id.spinnerBankList);

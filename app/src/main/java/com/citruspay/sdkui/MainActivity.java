@@ -2,6 +2,7 @@ package com.citruspay.sdkui;
 
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -30,6 +31,7 @@ import com.citrus.payment.PG;
 import com.citrus.payment.UserDetails;
 import com.citrus.sdkui.CardOption;
 import com.citrus.sdkui.CitrusCash;
+import com.citrus.sdkui.DebitCardOption;
 import com.citrus.sdkui.NetbankingOption;
 import com.citrus.sdkui.PaymentOption;
 
@@ -57,6 +59,7 @@ public class MainActivity extends ActionBarActivity implements OnPaymentOptionSe
     private String mColorPrimary = null;
     private String mColorPrimaryDark = null;
     private ActionBar mActionBar = null;
+    private CitrusTransactionResponse mTransactionResponse;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -393,6 +396,7 @@ public class MainActivity extends ActionBarActivity implements OnPaymentOptionSe
 
     @Override
     public void onTransactionComplete(CitrusTransactionResponse transactionResponse) {
+        mTransactionResponse = transactionResponse;
         showPaymentStatusFragment(transactionResponse, mPaymentParams);
     }
 
@@ -411,12 +415,17 @@ public class MainActivity extends ActionBarActivity implements OnPaymentOptionSe
         Toast.makeText(this, "Dismiss....", Toast.LENGTH_SHORT).show();
 
         // TODO: Set the result and return the transaction response.
+        Intent intent = new Intent();
+        intent.putExtra(Utils.INTENT_EXTRA_PAYMENT_RESPONSE ,mTransactionResponse);
+        setResult(Utils.REQUEST_CODE_PAYMENT_ACTIVITY, intent);
         finish();
     }
 
     @Override
     public void onCardPaymentSelected(final CardOption cardOption) {
         mFragmentManager.popBackStack();
+        Log.i("Citrus", cardOption.toString() + " :::: " + cardOption.getCardType());
+
         final Card card;
 
         if (cardOption != null) {

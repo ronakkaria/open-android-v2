@@ -8,11 +8,22 @@ import android.os.Parcelable;
  */
 public class DebitCardOption extends CardOption implements Parcelable {
 
-    DebitCardOption() {}
+    public static final Creator<DebitCardOption> CREATOR = new Creator<DebitCardOption>() {
+        public DebitCardOption createFromParcel(Parcel source) {
+            return new DebitCardOption(source);
+        }
+
+        public DebitCardOption[] newArray(int size) {
+            return new DebitCardOption[size];
+        }
+    };
+
+    public DebitCardOption() {
+    }
 
     /**
      * @param cardHolderName - Name of the card holder.
-     * @param cardNumber     - Card number
+     * @param cardNumber     - Card number.
      * @param cardCVV        - CVV of the card. We do not store CVV at our end.
      * @param cardExpiry     - Expiry date in MM/YY format.
      */
@@ -21,7 +32,18 @@ public class DebitCardOption extends CardOption implements Parcelable {
     }
 
     /**
-     * This constructor will be used internally, mostly for the cases of tokenized payments.
+     * @param cardHolderName  - Name of the card holder.
+     * @param cardNumber      - Card number.
+     * @param cardCVV         - CVV of the card. We do not store CVV at our end.
+     * @param cardExpiryMonth - Card Expiry Month 01 to 12 e.g. 01 for January.
+     * @param cardExpiryYear  - Card Expiry Year in the form of YYYY e.g. 2015.
+     */
+    public DebitCardOption(String cardHolderName, String cardNumber, String cardCVV, String cardExpiryMonth, String cardExpiryYear) {
+        super(cardHolderName, cardNumber, cardCVV, cardExpiryMonth, cardExpiryYear);
+    }
+
+    /**
+     * This constructor will be used internally, mostly to display the saved card details.
      *
      * @param name           - User friendly name of the card. e.g. Debit Card (4242) or Credit Card (1234)
      * @param token          - Stored token for Card payment.
@@ -34,11 +56,24 @@ public class DebitCardOption extends CardOption implements Parcelable {
         super(name, token, cardHolderName, cardNumber, cardScheme, cardExpiry);
     }
 
+
+    private DebitCardOption(Parcel in) {
+        this.cardHolderName = in.readString();
+        this.cardNumber = in.readString();
+        this.cardCVV = in.readString();
+        this.cardExpiry = in.readString();
+        this.cardExpiryMonth = in.readString();
+        this.cardExpiryYear = in.readString();
+        this.cardScheme = in.readString();
+        this.name = in.readString();
+        this.token = in.readString();
+        this.savePaymentOption = in.readByte() != 0;
+    }
+
     @Override
     public String getCardType() {
         return CardType.DEBIT.getCardType();
     }
-
 
     @Override
     public int describeContents() {
@@ -56,27 +91,6 @@ public class DebitCardOption extends CardOption implements Parcelable {
         dest.writeString(this.cardScheme);
         dest.writeString(this.name);
         dest.writeString(this.token);
+        dest.writeByte(savePaymentOption ? (byte) 1 : (byte) 0);
     }
-
-    private DebitCardOption(Parcel in) {
-        this.cardHolderName = in.readString();
-        this.cardNumber = in.readString();
-        this.cardCVV = in.readString();
-        this.cardExpiry = in.readString();
-        this.cardExpiryMonth = in.readString();
-        this.cardExpiryYear = in.readString();
-        this.cardScheme = in.readString();
-        this.name = in.readString();
-        this.token = in.readString();
-    }
-
-    public static final Parcelable.Creator<DebitCardOption> CREATOR = new Parcelable.Creator<DebitCardOption>() {
-        public DebitCardOption createFromParcel(Parcel source) {
-            return new DebitCardOption(source);
-        }
-
-        public DebitCardOption[] newArray(int size) {
-            return new DebitCardOption[size];
-        }
-    };
 }

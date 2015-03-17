@@ -3,6 +3,7 @@ package com.citruspay.sdkui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 
 import com.citrus.mobile.Config;
 
@@ -32,13 +33,21 @@ public class TestActivity extends ActionBarActivity {
         intent.putExtra(Constants.INTENT_EXTRA_PAYMENT_PARAMS, paymentParams);
 
         startActivity(intent);
-        finish();
+        //finish();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        CitrusTransactionResponse transactionResponse = data.getParcelableExtra(Utils.INTENT_EXTRA_PAYMENT_RESPONSE);
+        Log.e("Citrus", transactionResponse.toString());
     }
 
     private void init() {

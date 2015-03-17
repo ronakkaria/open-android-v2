@@ -32,7 +32,7 @@ public abstract class CardOption extends PaymentOption {
 
     /**
      * @param cardHolderName - Name of the card holder.
-     * @param cardNumber     - Card number
+     * @param cardNumber     - Card number.
      * @param cardCVV        - CVV of the card. We do not store CVV at our end.
      * @param cardExpiry     - Expiry date in MM/YY format.
      */
@@ -52,7 +52,28 @@ public abstract class CardOption extends PaymentOption {
     }
 
     /**
-     * This constructor will be used internally, mostly for the cases of tokenized payments.
+     *
+     * @param cardHolderName - Name of the card holder.
+     * @param cardNumber     - Card number.
+     * @param cardCVV        - CVV of the card. We do not store CVV at our end.
+     * @param cardExpiryMonth - Card Expiry Month 01 to 12 e.g. 01 for January.
+     * @param cardExpiryYear - Card Expiry Year in the form of YYYY e.g. 2015.
+     */
+    public CardOption(String cardHolderName, String cardNumber, String cardCVV, String cardExpiryMonth, String cardExpiryYear) {
+        this.cardHolderName = cardHolderName;
+        this.cardNumber = cardNumber;
+        this.cardCVV = cardCVV;
+        this.cardExpiryMonth = cardExpiryMonth;
+        this.cardExpiryYear = cardExpiryYear;
+
+        if (!TextUtils.isEmpty(cardExpiryMonth) &&TextUtils.isEmpty(cardExpiryYear)) {
+            this.cardExpiry = cardExpiryMonth + "/" + cardExpiryYear;
+        }
+    }
+
+
+    /**
+     * This constructor will be used internally, mostly to display the saved card details.
      *
      * @param name           - User friendly name of the card. e.g. Debit Card (4242) or Credit Card (1234)
      * @param token          - Stored token for Card payment.
