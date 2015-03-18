@@ -234,6 +234,9 @@ public class RESTclient {
         } catch (IOException e) {
             e.printStackTrace();
             return formError(600, "ioexception");
+        } catch (Exception e) {
+        	e.printStackTrace();
+        	return formError(600, "__exception");
         }
 
     }
