@@ -1,7 +1,7 @@
 <?php
 $access_key = "MERCHANT_ACCESS_KEY"; //put your own access_key - found in admin panel
 $secret_key = "MERCHANT_SECRET_KEY"; //put your own secret_key - found in admin panel
-$return_url = "http://www.yourwebsite.com/returnData.php"; //put your own return_url.php here.
+$return_url = "http://www.yourwebsite.com/redirectURL.php"; //put your own return_url.php here.
 
 $txn_id = time() . rand(10000,99999);
 
