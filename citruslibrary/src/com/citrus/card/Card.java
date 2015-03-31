@@ -114,18 +114,13 @@ public class Card {
 			return false;
 		}
 
-		if (!"MAESTRO".equals(cardType) && !"AMEX".equals(cardType) && rawNumber.length() != 16) {
+		if (!"AMEX".equals(cardType) && rawNumber.length() != 16) {
 			return false;
 		}
 
 		if ("AMEX".equals(cardType) && rawNumber.length() != 15) {
 			return false;
 		}
-		
-		if ("MAESTRO".equals(cardType) && (rawNumber.length() != 16 && rawNumber.length() != 19)) {
-			return false;
-		}
-
 
 		return true;
 	}
