@@ -24,14 +24,16 @@ public class Card {
 	private String expYear;
 	private String crdr;
 	private String token;
+	private String name;
 
-	public Card(String cardNum, String month, String year, String cvv, String name, String crdr) {
+	public Card(String cardNum, String nickname, String month, String year, String cvv, String name, String crdr) {
 		this.cardnumber = normalizeCardNumber(cardNum);
 		this.cardCVV = cvv;
 		this.nameOnCard = name;
 		this.expMonth = month;
 		this.expYear = year;
 		this.crdr = crdr;
+		this.name = nickname;
 	}
 
 	public Card(String token, String cvv) {
@@ -52,6 +54,10 @@ public class Card {
 		return this.cardnumber;
 	}
 
+	public String getName() {
+		return this.name;
+	}
+	
 	public String getCardHolderName() {
 		return this.nameOnCard;
 	}
