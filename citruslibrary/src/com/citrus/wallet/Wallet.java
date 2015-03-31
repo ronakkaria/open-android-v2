@@ -14,16 +14,16 @@ package com.citrus.wallet;
 
 import android.app.Activity;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.citrus.card.Card;
 import com.citrus.card.CardType;
 import com.citrus.mobile.Config;
 import com.citrus.mobile.OauthToken;
 import com.citrus.mobile.RESTclient;
 import com.citrus.netbank.Bank;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Created by shardul on 19/11/14.
@@ -134,6 +134,7 @@ public class Wallet {
         try {
             cardJson.put("type", "payment");
             cardDetails.put("owner", card.getCardHolderName());
+            cardDetails.put("name", card.getName());
             cardDetails.put("number", card.getCardNumber());
             cardDetails.put("scheme", CardType.getScheme(card.getCardType()));
             cardDetails.put("type", card.getCrdr().toLowerCase());
