@@ -103,7 +103,9 @@ public class Card {
 	}
 
 	public boolean validateNumber() {
-		cardType = getCardType().toString();
+		if (getCardType() != null) {
+			cardType = getCardType().toString();
+		}
 		if (TextUtils.isBlank(cardnumber)) {
 			return false;
 		}
