@@ -95,7 +95,9 @@ public class Card {
 	}
 
 	public boolean validateCard() {
-		if (cardCVV == null) {
+		if (cardCVV == null && expMonth == null && expYear == null) {
+			return validateNumber();
+		} else if (cardCVV == null) {
 			return validateNumber() && validateExpiryDate();
 		} else {
 			return validateNumber() && validateExpiryDate() && validateCVC();
@@ -109,6 +111,11 @@ public class Card {
 		}
 
 		String rawNumber = cardnumber.trim().replaceAll("\\s+|-", "");
+		
+		if (android.text.TextUtils.equals(cardType, "MTRO")) {
+			return isValidLuhnNumber(rawNumber);
+		}
+		
 		if (TextUtils.isBlank(rawNumber) || !TextUtils.isWholePositiveNumber(rawNumber)
 				|| !isValidLuhnNumber(rawNumber)) {
 			return false;
