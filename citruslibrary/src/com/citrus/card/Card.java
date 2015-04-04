@@ -95,9 +95,7 @@ public class Card {
 	}
 
 	public boolean validateCard() {
-		if (cardCVV == null && expMonth == null && expYear == null) {
-			return validateNumber();
-		} else if (cardCVV == null) {
+		if (cardCVV == null) {
 			return validateNumber() && validateExpiryDate();
 		} else {
 			return validateNumber() && validateExpiryDate() && validateCVC();
