@@ -109,6 +109,11 @@ public class Card {
 		}
 
 		String rawNumber = cardnumber.trim().replaceAll("\\s+|-", "");
+		
+		if (android.text.TextUtils.equals(cardType, "MTRO")) {
+			return isValidLuhnNumber(rawNumber);
+		}
+		
 		if (TextUtils.isBlank(rawNumber) || !TextUtils.isWholePositiveNumber(rawNumber)
 				|| !isValidLuhnNumber(rawNumber)) {
 			return false;
