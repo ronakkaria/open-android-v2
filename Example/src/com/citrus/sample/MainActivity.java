@@ -1,3 +1,15 @@
+/*
+   Copyright 2014 Citrus Payment Solutions Pvt. Ltd.
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+     http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
 package com.citrus.sample;
 
 import android.app.Activity;
@@ -10,18 +22,16 @@ import android.widget.Toast;
 
 import com.citrus.asynch.Binduser;
 import com.citrus.asynch.GetWallet;
-import com.citrus.asynch.SaveBank;
 import com.citrus.asynch.Savecard;
 import com.citrus.card.Card;
 import com.citrus.mobile.Callback;
 import com.citrus.mobile.Config;
 import com.citrus.mobile.User;
-import com.citrus.netbank.Bank;
 import com.citruspay.sample.R;
 
 public class MainActivity extends Activity {
 
-	Button bind, savecard, savebank, getWallet, paybutton, logoutButton, widgetButton;
+	Button bind, savecard, getWallet, paybutton, logoutButton, widgetButton;
 
 	Callback callback;
 
@@ -43,9 +53,7 @@ public class MainActivity extends Activity {
 
 		savecard = (Button) this.findViewById(R.id.savecard);
 
-        savebank = (Button) this.findViewById(R.id.savebank);
-
-		getWallet = (Button) this.findViewById(R.id.getWallet);
+        getWallet = (Button) this.findViewById(R.id.getWallet);
 
 		paybutton = (Button) this.findViewById(R.id.paybutton);
 		
@@ -73,18 +81,6 @@ public class MainActivity extends Activity {
 
 			}
 		});
-
-        savebank.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               Bank bank = new Bank("ICICI Bank", "CID001");
-                if(User.isUserLoggedIn(MainActivity.this))
-                    new SaveBank(MainActivity.this, callback).execute(bank);
-                else
-                    Toast.makeText(getApplicationContext(), "Bind the user before saving bank details.", Toast.LENGTH_LONG).show();
-
-            }
-        });
 
 		getWallet.setOnClickListener(new View.OnClickListener() {
 			@Override
