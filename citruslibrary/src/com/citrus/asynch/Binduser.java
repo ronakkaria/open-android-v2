@@ -16,7 +16,6 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.os.AsyncTask;
-import android.text.TextUtils;
 
 import com.citrus.mobile.Callback;
 import com.citrus.mobile.User;
