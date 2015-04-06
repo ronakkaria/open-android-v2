@@ -19,13 +19,15 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 
-/**
- * Created by shardul on 18/11/14.
- */
 public class User {
-    private Activity activity;
 
-    //private SharedPreferences sharedPreferences;
+	public static final String SIGNIN_TOKEN = "signin_token";
+	
+	public static final String SIGNUP_TOKEN = "signup_token";
+	
+	public static final String PREPAID_TOKEN = "prepaid_token";
+	
+    private Activity activity;
 
     private String base_url;
 
@@ -34,53 +36,27 @@ public class User {
         base_url = Config.getEnv();
     }
 
-    private boolean getSignupToken(final String email, final String mobile) {
+    private JSONObject getSignupToken(final String email, final String mobile) {
         JSONObject response = new JSONObject();
-
-
-        JSONObject userJson = new JSONObject();
-
-        try {
-            userJson.put("client_id", Config.getSignupId());
-
-            userJson.put("client_secret", Config.getSignupSecret());
-
-            userJson.put("grant_type", "implicit");
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        JSONObject headers = new JSONObject();
-
-        try {
-            headers.put("Content-Type", "application/x-www-form-urlencoded");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        RESTclient restclient = new RESTclient("signup",base_url, userJson, headers);
-
-        try {
-            response = restclient.makePostrequest();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        
+        response = fetchSignupToken();
+        
         if (response.has("access_token")) {
+        	OauthToken signuptoken = new OauthToken(activity, SIGNUP_TOKEN);
+        	signuptoken.createToken(response);
             return signupuser(email, mobile, response);
         }
         else {
-            return false;
+            return response;
         }
 
     }
 
-    public boolean binduser(final String email, final String mobile) {
+    public JSONObject binduser(final String email, final String mobile) {
         return getSignupToken(email, mobile);
     }
 
-    private boolean signupuser(final String email, String mobile, JSONObject token) {
+    private JSONObject signupuser(final String email, String mobile, JSONObject token) {
 
         JSONObject signupJson = new JSONObject();
 
@@ -116,11 +92,11 @@ public class User {
             return signinUser(email);
         }
         else {
-            return false;
+            return response;
         }
     }
 
-    private boolean signinUser(String email) {
+    public JSONObject signinUser(String email) {
         JSONObject response = new JSONObject();
 
         JSONObject userJson = new JSONObject();
@@ -155,28 +131,122 @@ public class User {
         }
 
         if (response.has("access_token")) {
-            OauthToken token = new OauthToken(activity);
-            return token.createToken(response);
+            OauthToken token = new OauthToken(activity, SIGNIN_TOKEN);
+            token.createToken(response);
+            
+            return SuccessCall.successMessage("user bound", null);
         }
         else {
-            return false;
+            return response;
         }
 
     }
     
+    public JSONObject getuserProfile(String mobile) {
+    	
+    	OauthToken token = new OauthToken(activity, SIGNUP_TOKEN);
+    	    	
+    	if (token.getuserToken() == null) {
+    		JSONObject response = new JSONObject();
+            
+            response = fetchSignupToken();
+            
+            if (response.has("access_token")) {
+            	OauthToken signuptoken = new OauthToken(activity, SIGNUP_TOKEN);
+            	signuptoken.createToken(response);
+            	
+            	return fetchuserProfile(mobile, signuptoken);
+            }
+            else {
+                return response;
+            }
+            
+    	}
+    	else {
+    		return fetchuserProfile(mobile, token);
+    	}
+    	
+    }
     
-    public final static boolean logoutUser(Activity activity) {
-		OauthToken token = new OauthToken(activity);
+    private JSONObject fetchSignupToken() {
+    	JSONObject response = new JSONObject();
+
+
+        JSONObject userJson = new JSONObject();
+
+        try {
+            userJson.put("client_id", Config.getSignupId());
+
+            userJson.put("client_secret", Config.getSignupSecret());
+
+            userJson.put("grant_type", "implicit");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject headers = new JSONObject();
+
+        try {
+            headers.put("Content-Type", "application/x-www-form-urlencoded");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RESTclient restclient = new RESTclient("signup",base_url, userJson, headers);
+
+        try {
+            response = restclient.makePostrequest();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return response;
+    }
+    
+	public final static boolean logoutUser(Activity activity) {
+		OauthToken token = new OauthToken(activity, "");
 		return token.clearToken();
 	}
 	
 	public final static boolean isUserLoggedIn(Activity activity) {
-		OauthToken token = new OauthToken(activity);
+		OauthToken token = new OauthToken(activity, SIGNIN_TOKEN);
 		if(token.getuserToken() == null)
 			return false;
 		else
 			return true;
 	}
-    
-    
+	
+	
+    private JSONObject fetchuserProfile(String mobile, OauthToken signuptoken) {
+    	JSONObject response = new JSONObject();
+
+
+        JSONObject userJson = new JSONObject();
+
+        try {
+            userJson.put("mobile", mobile);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject headers = new JSONObject();
+
+        try {
+            headers.put("Content-Type", "application/json");
+            headers.put("Authorization", "Bearer " + signuptoken.getuserToken().getString("access_token"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RESTclient restclient = new RESTclient("umdetails",base_url, null, headers);
+
+        try {
+            response = restclient.makePostrequest(userJson);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return response;
+    }
 }

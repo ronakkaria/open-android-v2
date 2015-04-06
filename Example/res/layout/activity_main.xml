@@ -16,21 +16,13 @@
             android:layout_height="50dp"
             android:layout_marginBottom="20dp"
             android:text="Bind User"/>
-
-
+        
         <Button
             android:id="@+id/savecard"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginBottom="20dp"
             android:text="Save Card"/>
-
-        <Button
-            android:id="@+id/savebank"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginBottom="20dp"
-            android:text="Save Bank"/>
 
         <Button
             android:id="@+id/getWallet"
