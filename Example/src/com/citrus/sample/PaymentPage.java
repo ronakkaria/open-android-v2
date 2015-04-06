@@ -32,7 +32,7 @@ import com.citrus.payment.UserDetails;
 import com.citruspay.sample.R;
 
 public class PaymentPage extends Activity {
-    public static final String BILL_URL = "http://yourwebsite.com/bill.php";
+    public static final String BILL_URL = "http://103.13.97.20/citrus/sandbox/sign.php";
 
     Button cardpayment, tokenpayment, bankpay;
 
