@@ -27,7 +27,7 @@ public class GetOtp {
 		}
 		
 		if (bankname.toLowerCase(Locale.ENGLISH).contains("sbi")) {
-			String js = "javascript:document.passwdForm.pin1.value='"+otp+ "'; OnSubmitHandler1();;";
+			String js = "javascript:document.passwdForm.pin1.value='"+otp+ "'; OnSubmitHandler1();";
 			return js;
 		}
 		
