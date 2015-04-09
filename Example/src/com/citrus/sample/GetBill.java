@@ -49,7 +49,6 @@ public class GetBill extends AsyncTask<Void, Void, Void> {
         try {
             httpResponse = httpClient.execute(httpGet);
             response = new JSONObject(EntityUtils.toString(httpResponse.getEntity()));
-            Log.d("GetBill", "doInBackground (line 49): response :: " + response);
 
         } catch (IOException e) {
             e.printStackTrace();
