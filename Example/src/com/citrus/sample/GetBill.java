@@ -12,7 +12,10 @@
 */
 package com.citrus.sample;
 
-import java.io.IOException;
+import android.os.AsyncTask;
+import android.util.Log;
+
+import com.citrus.mobile.Callback;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -22,19 +25,18 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.AsyncTask;
-
-import com.citrus.mobile.Callback;
+import java.io.IOException;
 
 public class GetBill extends AsyncTask<Void, Void, Void> {
     String billurl;
 
-    HttpResponse response;
-
+    JSONObject response;
     Callback callback;
 
-    public GetBill(String url, Callback callback) {
+    public GetBill(String url, double amount, Callback callback) {
         billurl = url;
+
+        this.billurl = this.billurl + "?amount=" + amount;
         this.callback = callback;
     }
 
@@ -42,10 +44,16 @@ public class GetBill extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... params) {
         HttpClient httpClient = new DefaultHttpClient();
         HttpGet httpGet = new HttpGet(billurl);
+        HttpResponse httpResponse;
 
         try {
-            response = httpClient.execute(httpGet);
+            httpResponse = httpClient.execute(httpGet);
+            response = new JSONObject(EntityUtils.toString(httpResponse.getEntity()));
+            Log.d("GetBill", "doInBackground (line 49): response :: " + response);
+
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 
@@ -57,21 +65,8 @@ public class GetBill extends AsyncTask<Void, Void, Void> {
         super.onPostExecute(aVoid);
 
         if (response != null) {
-        	JSONObject jsonObject = null;
-            try {
-            	jsonObject = new JSONObject(EntityUtils.toString(response.getEntity()));
-                callback.onTaskexecuted(jsonObject.toString(), "");  	
-            } catch (JSONException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-                callback.onTaskexecuted("", "Check your internet connection");
-            } catch (Exception e) {
-            	callback.onTaskexecuted("", "Is your billing url correct?");
-            }
-        }
-        
-        else {
+            callback.onTaskexecuted(response.toString(), "");
+        } else {
             callback.onTaskexecuted("", "Is your billing url correct?");
         }
     }
