@@ -99,14 +99,14 @@ public class MainActivity extends Activity {
     }
 
     private void init() {
-        Config.setEnv("sandbox"); //replace it with "production" when you are ready
+        Config.setEnv("production"); //replace it with "production" when you are ready
         
         /*Replace following details with oauth details provided to you*/
-        Config.setupSignupId("test-signup");
-        Config.setupSignupSecret("c78ec84e389814a05d3ae46546d16d2e");
+        Config.setupSignupId("xu86orijrw-signup");
+        Config.setupSignupSecret("9552eba0d78c38a77544e5c891a47838");
 
-        Config.setSigninId("test-signin");
-        Config.setSigninSecret("52f7e15efd4208cf5345dd554443fd99");
+        Config.setSigninId("xu86orijrw-signin");
+        Config.setSigninSecret("6c7e48168c5e7ed96fecdd3bb98f7ad7");
     }
 
     private void showToast(String message, String error) {

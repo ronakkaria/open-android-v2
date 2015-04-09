@@ -45,7 +45,7 @@ public class WebPage extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_page);
         
-        initReceiver();
+//        initReceiver();
         
         initwebview();
         
@@ -55,7 +55,7 @@ public class WebPage extends Activity {
 
     }
         
-    @TargetApi(Build.VERSION_CODES.L)
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 	private void initwebview() {
     	
     	loadmoneycb = new Callback() {
@@ -80,7 +80,7 @@ public class WebPage extends Activity {
         
         webView.addJavascriptInterface(new JsInterface(), "CitrusResponse");
 
-        webView.setWebViewClient(new CitrusClient(loadmoneycb))   
+        webView.setWebViewClient(new CitrusClient(loadmoneycb));
 		
 		webView.setWebChromeClient(new WebChromeClient());
 	}
