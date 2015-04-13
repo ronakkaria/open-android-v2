@@ -313,7 +313,6 @@ public class PG {
             	payment.put("customParameters", customParameters);
             }
     
-            
             payment.put("paymentToken", paymentToken);
             payment.put("merchantTxnId", bill.getTxnId());
             payment.put("requestSignature", bill.getSignature());

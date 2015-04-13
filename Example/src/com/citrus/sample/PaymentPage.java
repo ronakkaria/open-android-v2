@@ -32,7 +32,7 @@ import com.citrus.payment.UserDetails;
 import com.citruspay.sample.R;
 
 public class PaymentPage extends Activity {
-    public static final String BILL_URL = "http://103.13.97.20/citrus/sandbox/sign.php";
+    public static final String BILL_URL = "https://salty-plateau-1529.herokuapp.com/billGenerator.production.php";
 
     Button cardpayment, tokenpayment, bankpay;
 
@@ -55,7 +55,7 @@ public class PaymentPage extends Activity {
         cardpayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new GetBill(BILL_URL, new Callback() {
+                new GetBill(BILL_URL, 3.0, new Callback() {
                     @Override
                     public void onTaskexecuted(String bill, String error) {
                         if (TextUtils.isEmpty(error)) {
@@ -69,7 +69,7 @@ public class PaymentPage extends Activity {
         tokenpayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new GetBill(BILL_URL, new Callback() {
+                new GetBill(BILL_URL, 2.0, new Callback() {
                     @Override
                     public void onTaskexecuted(String bill, String error) {
                           tokenpay(bill);
@@ -81,7 +81,7 @@ public class PaymentPage extends Activity {
         bankpay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new GetBill(BILL_URL, new Callback() {
+                new GetBill(BILL_URL, 4.0, new Callback() {
                     @Override
                     public void onTaskexecuted(String bill, String error) {
                           bankpay(bill);
