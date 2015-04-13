@@ -32,7 +32,7 @@ import com.citrus.payment.UserDetails;
 import com.citruspay.sample.R;
 
 public class PaymentPage extends Activity {
-    public static final String BILL_URL = "https://salty-plateau-1529.herokuapp.com/billGenerator.production.php";
+    public static final String BILL_URL = "https://salty-plateau-1529.herokuapp.com/billGenerator.sandbox.php";
 
     Button cardpayment, tokenpayment, bankpay;
 
