@@ -34,6 +34,8 @@ import com.citrus.mobile.OauthToken;
 import com.citrus.mobile.RESTclient;
 import com.citrus.mobile.User;
 import com.citrus.netbank.Bank;
+import com.citrus.netbank.BankPaymentType;
+
 
 public class PG {
 	
@@ -76,7 +78,10 @@ public class PG {
         this.bank = bank;
         this.bill = bill;
         this.userDetails = userDetails;
-        paymenttype = "netbank";
+        if(this.bank.getPaymentType()!=null)
+        	paymenttype = this.bank.getPaymentType().toString();
+        else
+        	paymenttype = "netbank";
     }
     
     public PG(Prepaid prepaid, Bill bill, UserDetails userDetails) {
@@ -105,7 +110,10 @@ public class PG {
     	this.bank = bank;
     	this.userDetails = userDetails;
     	this.loadmoney = load;
-    	paymenttype = "netbank";
+    	if(this.bank.getPaymentType()!=null)
+        	paymenttype = this.bank.getPaymentType().toString();
+        else
+        	paymenttype = "netbank";
     }
     
     public void charge(Callback callback) {
@@ -255,11 +263,17 @@ public class PG {
         }
         else {
             try {
-                paymentmode = new JSONObject();
-                paymentmode.put("type", "netbanking");
-                paymentmode.put("code", bank.getCidnumber());
-                paymentToken.put("type", "paymentOptionToken");
-                paymentToken.put("paymentMode", paymentmode);
+                if(paymenttype!=null && paymenttype.equalsIgnoreCase(BankPaymentType.TOKEN.toString())) { //tokenized bank payment
+ 	                paymentToken.put("id", bank.getBankToken());
+ 	                paymentToken.put("type", bank.getPaymentType().toString()); 
+                }
+                else { //bank payment with CID
+	                paymentmode = new JSONObject();
+	                paymentmode.put("type", "netbanking");
+	                paymentmode.put("code", bank.getCidnumber());
+	                paymentToken.put("type", "paymentOptionToken");
+	                paymentToken.put("paymentMode", paymentmode);
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }

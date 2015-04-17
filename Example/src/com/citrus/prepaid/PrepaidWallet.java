@@ -24,9 +24,11 @@ import com.citrus.cash.PrepaidPg;
 import com.citrus.mobile.Callback;
 import com.citrus.mobile.Config;
 import com.citrus.netbank.Bank;
+import com.citrus.netbank.BankPaymentType;
 import com.citrus.payment.Bill;
 import com.citrus.payment.PG;
 import com.citrus.payment.UserDetails;
+import com.citrus.sample.DebugLogConfig;
 import com.citrus.sample.GetBill;
 import com.citrus.sample.R;
 import com.citrus.sample.WebPage;
@@ -36,7 +38,7 @@ public class PrepaidWallet extends Activity {
 	private static final String bill_url = "http://yourwebsite.com/bill.php";
 	
 	Button isSignedin, linkuser, setpass, forgot, signin, getbalance
-	,card_load, token_load, bank_load, citrus_cashpay, get_prepaidToken;
+	,card_load, token_load, bank_load, token_bank_Load, citrus_cashpay, get_prepaidToken;
 
 	Callback callback;
 	
@@ -66,6 +68,8 @@ public class PrepaidWallet extends Activity {
 		token_load = (Button) this.findViewById(R.id.tokenload);
 		
 		bank_load = (Button) this.findViewById(R.id.bankload);
+		
+		token_bank_Load = (Button) this.findViewById(R.id.tokenbankload);
 		
 		citrus_cashpay = (Button) this.findViewById(R.id.citruscash);
 		
@@ -208,6 +212,31 @@ public class PrepaidWallet extends Activity {
 			}
 		});
 		
+		token_bank_Load.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				
+				Bank netbank = new Bank("48ec899d5dd14be93dce01038a8af60d", BankPaymentType.TOKEN);
+
+				
+				LoadMoney load = new LoadMoney("1", "http://yourwebsite.com/return_url.php");
+				
+				UserDetails userDetails = new UserDetails(customer);
+				
+				PG paymentgateway = new PG(netbank, load, userDetails);
+				
+				paymentgateway.load(PrepaidWallet.this, new Callback() {
+		            @Override
+		            public void onTaskexecuted(String success, String error) {
+		                processresponse(success, error);
+		            }
+		        });
+				
+			}
+		});
+		
 		citrus_cashpay.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -266,6 +295,7 @@ public class PrepaidWallet extends Activity {
 
         Config.setSigninId("gogo-pre-wallet");
         Config.setSigninSecret("e6f1b840c652d2ffc46530faaac8b771");
+        
 	}
 	
 	private void initcustdetails() {

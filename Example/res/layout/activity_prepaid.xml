@@ -1,95 +1,107 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:scrollbars="vertical"
     >
     
-      <ScrollView
-        android:id="@+id/scrollview"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
-        
-          <RelativeLayout
-            android:id="@+id/form_layout"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/background_light" >
-	
-    <Button android:id="@+id/issignedin"
-        	android:layout_width="match_parent"
-        	android:layout_height="50dp"
-        	android:layout_margin="10dp"
-        	android:text="Is User Signed In"
-        	android:layout_alignParentTop="true"/>          
-              
-    <Button android:id="@+id/linkuser"
-        	android:layout_width="match_parent"
-        	android:layout_height="50dp"
-        	android:layout_margin="10dp"
-        	android:text="Link User"
-        	android:layout_below="@+id/issignedin"/>
-    
-    <Button android:id="@+id/setpassword"
-        	android:layout_width="match_parent"
-        	android:layout_height="50dp"
-        	android:layout_margin="10dp"
-        	android:text="Set Password"
-        	android:layout_below="@+id/linkuser"/>
-    
-    <Button android:id="@+id/forgot"
-        	android:layout_width="match_parent"
-        	android:layout_height="50dp"
-        	android:layout_margin="10dp"
-        	android:text="Forgot Password?"
-        	android:layout_below="@+id/setpassword"/>
-    
-    <Button android:id="@+id/signin"
-        	android:layout_width="match_parent"
-        	android:layout_height="50dp"
-        	android:layout_margin="10dp"
-        	android:text="Sign In"
-        	android:layout_below="@+id/forgot"/>
-    
-    <Button android:id="@+id/getbalance"
-        	android:layout_width="match_parent"
-        	android:layout_height="50dp"
-        	android:layout_margin="10dp"
-        	android:text="Get Balance"
-        	android:layout_below="@+id/signin"/>
-        
-
-    
-    <Button android:id="@+id/cardload"
-        	android:layout_width="match_parent"
-        	android:layout_height="50dp"
-        	android:layout_margin="10dp"
-        	android:text="Load Using Card"
-        	android:layout_below="@+id/getbalance"/>
-    
-    <Button android:id="@+id/tokenload"
-        	android:layout_width="match_parent"
-        	android:layout_height="50dp"
-        	android:layout_margin="10dp"
-        	android:text="Load Using Card Token"
-        	android:layout_below="@+id/cardload"/>
-    
-    <Button android:id="@+id/bankload"
-        	android:layout_width="match_parent"
-        	android:layout_height="50dp"
-        	android:layout_margin="10dp"
-        	android:text="Load Using Netbank"
-        	android:layout_below="@+id/tokenload"/>
-    
-     <Button android:id="@+id/citruscash"
-        	android:layout_width="match_parent"
-        	android:layout_height="50dp"
-        	android:layout_margin="10dp"
-        	android:text="Pay Using Citrus Cash"
-        	android:layout_below="@+id/bankload"/>
      
-    </RelativeLayout>
 
-    </ScrollView>
+      <RelativeLayout
+          android:id="@+id/form_layout"
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content"
+          android:layout_alignParentLeft="true"
+          android:layout_alignParentTop="true"
+          android:background="@android:color/background_light" >
+
+          <Button
+              android:id="@+id/issignedin"
+              android:layout_width="match_parent"
+              android:layout_height="50dp"
+              android:layout_alignParentTop="true"
+              android:layout_margin="10dp"
+              android:text="Is User Signed In" />
+
+          <Button
+              android:id="@+id/linkuser"
+              android:layout_width="match_parent"
+              android:layout_height="50dp"
+              android:layout_below="@+id/issignedin"
+              android:layout_margin="10dp"
+              android:text="Link User" />
+
+          <Button
+              android:id="@+id/setpassword"
+              android:layout_width="match_parent"
+              android:layout_height="50dp"
+              android:layout_below="@+id/linkuser"
+              android:layout_margin="10dp"
+              android:text="Set Password" />
+
+          <Button
+              android:id="@+id/forgot"
+              android:layout_width="match_parent"
+              android:layout_height="50dp"
+              android:layout_below="@+id/setpassword"
+              android:layout_margin="10dp"
+              android:text="Forgot Password?" />
+
+          <Button
+              android:id="@+id/signin"
+              android:layout_width="match_parent"
+              android:layout_height="50dp"
+              android:layout_below="@+id/forgot"
+              android:layout_margin="10dp"
+              android:text="Sign In" />
+
+          <Button
+              android:id="@+id/getbalance"
+              android:layout_width="match_parent"
+              android:layout_height="50dp"
+              android:layout_below="@+id/signin"
+              android:layout_margin="10dp"
+              android:text="Get Balance" />
+
+          <Button
+              android:id="@+id/cardload"
+              android:layout_width="match_parent"
+              android:layout_height="50dp"
+              android:layout_below="@+id/getbalance"
+              android:layout_margin="10dp"
+              android:text="Load Using Card" />
+
+          <Button
+              android:id="@+id/tokenload"
+              android:layout_width="match_parent"
+              android:layout_height="50dp"
+              android:layout_below="@+id/cardload"
+              android:layout_margin="10dp"
+              android:text="Load Using Card Token" />
+
+          <Button
+              android:id="@+id/bankload"
+              android:layout_width="match_parent"
+              android:layout_height="50dp"
+              android:layout_below="@+id/tokenload"
+              android:layout_margin="10dp"
+              android:text="Load Using Netbank" />
+
+          <Button
+              android:id="@+id/tokenbankload"
+              android:layout_width="match_parent"
+              android:layout_height="50dp"
+              android:layout_below="@+id/bankload"
+              android:layout_margin="10dp"
+              android:text="Load Using Tokenized Netbank" />
+
+          <Button
+              android:id="@+id/citruscash"
+              android:layout_width="match_parent"
+              android:layout_height="50dp"
+              android:layout_below="@+id/tokenbankload"
+              android:layout_margin="10dp"
+              android:text="Pay Using Citrus Cash" />
+      </RelativeLayout>
     
-</RelativeLayout>
+</ScrollView>
