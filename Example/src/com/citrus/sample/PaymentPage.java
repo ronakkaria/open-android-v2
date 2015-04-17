@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.citrus.card.Card;
 import com.citrus.mobile.Callback;
 import com.citrus.netbank.Bank;
+import com.citrus.netbank.BankPaymentType;
 import com.citrus.payment.Bill;
 import com.citrus.payment.PG;
 import com.citrus.payment.UserDetails;
@@ -34,7 +35,7 @@ import com.citruspay.sample.R;
 public class PaymentPage extends Activity {
     public static final String BILL_URL = "https://salty-plateau-1529.herokuapp.com/billGenerator.sandbox.php";
 
-    Button cardpayment, tokenpayment, bankpay;
+    Button cardpayment, tokenpayment, bankpay, tokenBankPay;
 
     JSONObject customer;
 
@@ -49,6 +50,8 @@ public class PaymentPage extends Activity {
         tokenpayment = (Button) this.findViewById(R.id.tokenpayment);
 
         bankpay = (Button) this.findViewById(R.id.bankpay);
+        
+        tokenBankPay = (Button) this.findViewById(R.id.tokenbankpay);
                                 
         customer = new JSONObject();
 
@@ -90,6 +93,19 @@ public class PaymentPage extends Activity {
             }
         });
                
+        
+        tokenBankPay.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				new GetBill(BILL_URL, 3, new Callback() {
+					@Override
+					public void onTaskexecuted(String bill, String error) {
+						tokenbankpay(bill);
+					}
+				}).execute();
+			}
+		});
+
         filluserDetails();
     }
 
@@ -143,6 +159,25 @@ public class PaymentPage extends Activity {
             }
         });
     }
+    
+    
+	private void tokenbankpay(String bill_string) {
+		Bill bill = new Bill(bill_string);
+
+		Bank netbank = new Bank("48ec899d5dd14be93dce01038a8af60d", BankPaymentType.TOKEN);
+
+		UserDetails userDetails = new UserDetails(customer);
+
+		PG paymentgateway = new PG(netbank, bill, userDetails);
+
+		paymentgateway.charge(new Callback() {
+			@Override
+			public void onTaskexecuted(String success, String error) {
+				processresponse(success, error);
+			}
+		});
+	}
+
     
     private void filluserDetails() {
         /*All the below mentioned parameters are mandatory - missing anyone of them may create errors
