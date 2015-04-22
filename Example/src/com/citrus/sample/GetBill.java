@@ -23,13 +23,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.citrus.mobile.Callback;
 
 public class GetBill extends AsyncTask<Void, Void, Void> {
     String billurl;
 
-    HttpResponse response;
+    JSONObject response;
+    String error;
 
     Callback callback;
 
@@ -42,11 +44,18 @@ public class GetBill extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... params) {
         HttpClient httpClient = new DefaultHttpClient();
         HttpGet httpGet = new HttpGet(billurl);
+        HttpResponse httpResponse;
 
         try {
-            response = httpClient.execute(httpGet);
+            httpResponse = httpClient.execute(httpGet);
+            response = new JSONObject(EntityUtils.toString(httpResponse.getEntity()));
+
         } catch (IOException e) {
             e.printStackTrace();
+            error = "Is your internet working?";
+        } catch (JSONException e) {
+            e.printStackTrace();
+            error = "Is your billing url correct?";
         }
 
         return null;
@@ -56,23 +65,10 @@ public class GetBill extends AsyncTask<Void, Void, Void> {
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
 
-        if (response != null) {
-        	JSONObject jsonObject = null;
-            try {
-            	jsonObject = new JSONObject(EntityUtils.toString(response.getEntity()));
-                callback.onTaskexecuted(jsonObject.toString(), "");  	
-            } catch (JSONException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-                callback.onTaskexecuted("", "Check your internet connection");
-            } catch (Exception e) {
-            	callback.onTaskexecuted("", "Is your billing url correct?");
-            }
-        }
-        
-        else {
-            callback.onTaskexecuted("", "Is your billing url correct?");
+        if (error != null) {
+            callback.onTaskexecuted(null, error);
+        } else {
+            callback.onTaskexecuted(response.toString(), null);
         }
     }
 }
