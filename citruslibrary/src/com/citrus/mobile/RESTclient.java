@@ -12,8 +12,13 @@
 */
 package com.citrus.mobile;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +42,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
+
+import javax.net.ssl.HttpsURLConnection;
 
 
 public class RESTclient {
@@ -74,12 +81,85 @@ public class RESTclient {
             urls.put("resetpassword", "service/v2/identity/passwords/reset");
             urls.put("prepaidbill", "service/v2/prepayment/load");
             urls.put("paymentoptions", "service/v1/merchant/pgsetting");
+            urls.put("cashout", "service/v2/prepayment/cashout");
         } catch (JSONException e) {
             return;
         }
         this.base_url = base_url;
      }
 
+
+    public JSONObject makeWithdrawRequest(String accessToken, double amount, String currency, String owner, String accountNumber, String ifscCode) {
+        HttpsURLConnection conn = null;
+        DataOutputStream wr = null;
+        JSONObject txnDetails = null;
+
+        try {
+            String url = urls.getString(base_url) + urls.getString(type);
+
+            conn = (HttpsURLConnection) new URL(url).openConnection();
+
+            //add reuqest header
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Authorization", "Bearer " + accessToken);
+
+
+            StringBuffer buff = new StringBuffer("amount=");
+            buff.append(amount);
+
+            buff.append("&currency=");
+            buff.append(currency);
+
+            buff.append("&owner=");
+            buff.append(owner);
+
+            buff.append("&account=");
+            buff.append(accountNumber);
+
+            buff.append("&ifsc=");
+            buff.append(ifscCode);
+
+            conn.setDoOutput(true);
+            wr = new DataOutputStream(conn.getOutputStream());
+
+            wr.writeBytes(buff.toString());
+            wr.flush();
+
+            int responseCode = conn.getResponseCode();
+            System.out.println("\nSending 'POST' request to URL : " + url);
+            System.out.println("Post parameters : " + buff.toString());
+            System.out.println("Response Code : " + responseCode);
+
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            txnDetails = new JSONObject(response.toString());
+
+        }catch (JSONException exception) {
+            exception.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (wr != null) {
+                    wr.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return txnDetails;
+    }
 
      public JSONObject makePostrequest() throws IOException {
     	 HttpParams redirectparams = new BasicHttpParams();

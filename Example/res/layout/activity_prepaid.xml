@@ -75,7 +75,7 @@
               android:id="@+id/tokenload"
               android:layout_width="match_parent"
               android:layout_height="50dp"
-              android:layout_below="@+id/cardload"
+              android:layout_below="@id/cardload"
               android:layout_margin="10dp"
               android:text="Load Using Card Token" />
 
@@ -83,7 +83,7 @@
               android:id="@+id/bankload"
               android:layout_width="match_parent"
               android:layout_height="50dp"
-              android:layout_below="@+id/tokenload"
+              android:layout_below="@id/tokenload"
               android:layout_margin="10dp"
               android:text="Load Using Netbank" />
 
@@ -91,7 +91,7 @@
               android:id="@+id/tokenbankload"
               android:layout_width="match_parent"
               android:layout_height="50dp"
-              android:layout_below="@+id/bankload"
+              android:layout_below="@id/bankload"
               android:layout_margin="10dp"
               android:text="Load Using Tokenized Netbank" />
 
@@ -99,9 +99,17 @@
               android:id="@+id/citruscash"
               android:layout_width="match_parent"
               android:layout_height="50dp"
-              android:layout_below="@+id/tokenbankload"
+              android:layout_below="@id/tokenbankload"
               android:layout_margin="10dp"
               android:text="Pay Using Citrus Cash" />
+
+          <Button
+              android:id="@+id/withdraw_money"
+              android:layout_width="match_parent"
+              android:layout_height="50dp"
+              android:layout_below="@id/citruscash"
+              android:layout_margin="10dp"
+              android:text="Withdraw Rs. 10" />
       </RelativeLayout>
     
 </ScrollView>

@@ -12,6 +12,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.citrus.asynch.CashOutAsynch;
 import com.citrus.asynch.ForgotPass;
 import com.citrus.asynch.LinkUser;
 import com.citrus.asynch.SetPassword;
@@ -35,10 +36,10 @@ import com.citrus.sample.WebPage;
 
 public class PrepaidWallet extends Activity {
 	
-	private static final String bill_url = "http://yourwebsite.com/bill.php";
+	private static final String bill_url = "https://salty-plateau-1529.herokuapp.com/billGenerator.sandbox.php?amount=3.0";
 	
 	Button isSignedin, linkuser, setpass, forgot, signin, getbalance
-	,card_load, token_load, bank_load, token_bank_Load, citrus_cashpay, get_prepaidToken;
+	,card_load, token_load, bank_load, token_bank_Load, citrus_cashpay, get_prepaidToken, withdrawMoney;
 
 	Callback callback;
 	
@@ -72,6 +73,7 @@ public class PrepaidWallet extends Activity {
 		token_bank_Load = (Button) this.findViewById(R.id.tokenbankload);
 		
 		citrus_cashpay = (Button) this.findViewById(R.id.citruscash);
+		withdrawMoney = (Button) this.findViewById(R.id.withdraw_money);
 		
 		callback = new Callback() {
 			
@@ -157,11 +159,11 @@ public class PrepaidWallet extends Activity {
 				PG paymentgateway = new PG(card, load, userDetails);
 				
 				paymentgateway.load(PrepaidWallet.this, new Callback() {
-		            @Override
-		            public void onTaskexecuted(String success, String error) {
-		                processresponse(success, error);
-		            }
-		        });
+					@Override
+					public void onTaskexecuted(String success, String error) {
+						processresponse(success, error);
+					}
+				});
 						
 			}
 		});
@@ -252,6 +254,14 @@ public class PrepaidWallet extends Activity {
 					}
 				})
 				.execute();				
+			}
+		});
+
+		withdrawMoney.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				new CashOutAsynch(PrepaidWallet.this, 10, "Salil Godbole", "042401523201", "ICIC0000424", callback).execute();
+
 			}
 		});
 		
