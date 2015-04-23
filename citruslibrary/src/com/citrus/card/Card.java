@@ -13,6 +13,9 @@
 package com.citrus.card;
 
 
+import com.citrus.mobile.Month;
+import com.citrus.mobile.Year;
+
 public class Card {
 	private String cardnumber;
 	private String cardCVV;
@@ -31,6 +34,15 @@ public class Card {
 		this.expYear = year;
 		this.crdr = crdr;
 	}
+
+    public Card(String cardNum, Month month, Year year, String cvv, String name, String crdr) {
+        this.cardnumber = normalizeCardNumber(cardNum);
+        this.cardCVV = cvv;
+        this.nameOnCard = name;
+        this.expMonth = month.toString();
+        this.expYear = year.toString();
+        this.crdr = crdr;
+    }
 	
 	public Card(String token, String cvv) {
 		this.token = token;
@@ -55,7 +67,10 @@ public class Card {
 	}
 
 	public String getExpiryYear() {
-		return ("20" + String.valueOf(expYear));
+        if(expYear.substring(0,2).equalsIgnoreCase("20"))
+            return String.valueOf(expYear);
+        else
+		    return ("20" + String.valueOf(expYear));
 	}
 
 	public String getExpiryMonth() {
