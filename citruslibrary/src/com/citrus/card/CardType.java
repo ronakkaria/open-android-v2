@@ -14,7 +14,7 @@ package com.citrus.card;
 
 public enum CardType {
     VISA("4"),
-    MAESTRO("502260", "504433",
+    MTRO("502260", "504433",
             "504434", "504435", "504437", "504645", "504681",
             "504753", "504775", "504809", "504817", "504834",
             "504848", "504884", "504973", "504993", "508125",
@@ -23,7 +23,7 @@ public enum CardType {
             "67"),
             
     MCRD("5"),
-    DINERCLUB("30", "36", "38", "39"),
+    DINERS("30", "36", "38", "39"),
     JCB("35"),
     AMEX("34", "37"),
     DISCOVER("60", "62", "64", "65"),
@@ -50,10 +50,10 @@ public enum CardType {
 			return "VISA";
 		case MCRD:
 			return "MCRD";
-		case MAESTRO:
-			return "MAESTRO";
-		case DINERCLUB:
-			return "DINERCLUB";
+		case MTRO:
+			return "MTRO";
+		case DINERS:
+			return "DINERS";
 		case JCB:
 			return "JCB";
 		case AMEX:

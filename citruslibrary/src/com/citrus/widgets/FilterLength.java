@@ -15,8 +15,8 @@ package com.citrus.widgets;
 public enum FilterLength {
 	VISA("19"),
 	MCRD("19"),
-	MAESTRO("19"),
-	DINERCLUB("19"),
+	MTRO("23"),
+	DINERS("19"),
 	JCB("19"),
 	AMEX("18"),
 	DISCOVER("19");

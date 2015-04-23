@@ -31,7 +31,7 @@ public class Card {
 		this.expYear = year;
 		this.crdr = crdr;
 	}
-
+	
 	public Card(String token, String cvv) {
 		this.token = token;
 		this.cardCVV = cvv;
@@ -104,8 +104,14 @@ public class Card {
 		if (TextUtils.isBlank(cardnumber)) {
 			return false;
 		}
-
+		
 		String rawNumber = cardnumber.trim().replaceAll("\\s+|-", "");
+		
+		if (android.text.TextUtils.equals(cardType, "MTRO")) {
+			return isValidLuhnNumber(rawNumber);
+		}
+		
+		
 		if (TextUtils.isBlank(rawNumber) || !TextUtils.isWholePositiveNumber(rawNumber)
 				|| !isValidLuhnNumber(rawNumber)) {
 			return false;
