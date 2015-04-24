@@ -13,6 +13,7 @@
 package com.citrus.card;
 
 
+import com.citrus.mobile.CType;
 import com.citrus.mobile.Month;
 import com.citrus.mobile.Year;
 
@@ -26,6 +27,16 @@ public class Card {
 	private String crdr;
 	private String token;
 
+    /**
+     * @deprecated use {@link #Card(String, com.citrus.mobile.Month, com.citrus.mobile.Year, String, String, com.citrus.mobile.CType)} ()} instead.
+     * @param cardNum
+     * @param month
+     * @param year
+     * @param cvv
+     * @param name
+     * @param crdr
+     */
+    @Deprecated
 	public Card(String cardNum, String month, String year, String cvv, String name, String crdr) {
 		this.cardnumber = normalizeCardNumber(cardNum);
 		this.cardCVV = cvv;
@@ -35,13 +46,13 @@ public class Card {
 		this.crdr = crdr;
 	}
 
-    public Card(String cardNum, Month month, Year year, String cvv, String name, String crdr) {
+    public Card(String cardNum, Month month, Year year, String cvv, String name, CType cardType) {
         this.cardnumber = normalizeCardNumber(cardNum);
         this.cardCVV = cvv;
         this.nameOnCard = name;
         this.expMonth = month.toString();
         this.expYear = year.toString();
-        this.crdr = crdr;
+        this.crdr = cardType.toString();
     }
 	
 	public Card(String token, String cvv) {
