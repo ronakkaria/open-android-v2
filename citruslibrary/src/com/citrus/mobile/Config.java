@@ -13,7 +13,7 @@
 package com.citrus.mobile;
 
 public class Config {
-    private static String env, signinId, signinSecret, signupId, signupSecret, prepaid_cookie = "";
+    private static String env, signinId, signinSecret, signupId, signupSecret, prepaid_cookie = "", vanity;
 
     public static void setEnv(String sip) {
         env = sip;
@@ -61,5 +61,13 @@ public class Config {
     
     public static String getPrepaidCookie() {
     	return prepaid_cookie;
+    }
+
+    public static String getVanity() {
+        return vanity;
+    }
+
+    public static void setVanity(String vanity) {
+        Config.vanity = vanity;
     }
 }
