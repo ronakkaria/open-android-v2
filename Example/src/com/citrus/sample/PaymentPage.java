@@ -19,19 +19,30 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.citrus.card.Card;
 import com.citrus.mobile.Callback;
+import com.citrus.mobile.Month;
+import com.citrus.mobile.Year;
 import com.citrus.netbank.Bank;
 import com.citrus.payment.Bill;
 import com.citrus.payment.PG;
 import com.citrus.payment.UserDetails;
+import com.citrus.sdk.CitrusActivity;
+import com.citrus.sdk.Constants;
+import com.citrus.sdk.PaymentParams;
+import com.citrus.sdk.TransactionResponse;
+import com.citrus.sdk.classes.Amount;
+import com.citrus.sdk.payment.DebitCardOption;
+import com.citrus.sdk.payment.PaymentOption;
+import com.citrus.sdk.payment.PaymentType;
 
 public class PaymentPage extends Activity {
-    public static final String BILL_URL = "https://salty-plateau-1529.herokuapp.com/billGenerator.sandbox.php";
+    public static final String BILL_URL = "https://salty-plateau-1529.herokuapp.com/billGenerator.sandbox.php?amount=2.3";
 
     Button cardpayment, tokenpayment, bankpay, walletpay, signin, getbalance;
 
@@ -60,14 +71,26 @@ public class PaymentPage extends Activity {
         cardpayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new GetBill(BILL_URL, new Callback() {
-                    @Override
-                    public void onTaskexecuted(String bill, String error) {
-                        if (TextUtils.isEmpty(error)) {
-                            cardpay(bill);
-                        }
-                    }
-                }).execute();
+//                new GetBill(BILL_URL, new Callback() {
+//                    @Override
+//                    public void onTaskexecuted(String bill, String error) {
+//                        if (TextUtils.isEmpty(error)) {
+//                            cardpay(bill);
+//                        }
+//                    }
+//                }).execute();
+
+                Amount amount =new Amount(2.5);
+                PaymentType paymentType =new PaymentType.PGPayment(amount, BILL_URL);
+                DebitCardOption debitCardOption = new DebitCardOption("My Debit Card", "4111111111111111", "123", Month.APR, Year._2016);
+
+                PaymentParams paymentParams = PaymentParams.builder(amount, paymentType, debitCardOption);
+
+                Intent intent = new Intent(PaymentPage.this, CitrusActivity.class);
+                intent.putExtra(Constants.INTENT_EXTRA_PAYMENT_PARAMS, paymentParams);
+                startActivityForResult(intent, Constants.RESULT_CODE_PAYMENT);
+
+
             }
         });
 
@@ -197,5 +220,13 @@ public class PaymentPage extends Activity {
         }
 
     }
-    
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        TransactionResponse transactionResponse = data.getParcelableExtra(Constants.INTENT_EXTRA_TRANSACTION_RESPONSE);
+        Log.d("Citrus", "transactionResponse :: " + transactionResponse.toString());
+    }
 }
