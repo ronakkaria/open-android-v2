@@ -86,16 +86,15 @@ public class CitrusActivity extends Activity {
     }
 
     private void fetchBill() {
-        showDialog("Processing payment, please wait...", false);
+        showDialog("Validating Payment Details. Please wait...", false);
 
         String billUrl = mPaymentType.getUrl();
 
         new GetBill(billUrl, new Callback() {
             @Override
             public void onTaskexecuted(String bill, String error) {
-                Log.d("Citrus", "Bill ::: " + bill + " ERROR :: " + error);
-
                 dismissDialog();
+
                 if (!android.text.TextUtils.isEmpty(error)) {
                     Toast.makeText(CitrusActivity.this, error, Toast.LENGTH_SHORT).show();
                 } else {
@@ -106,7 +105,7 @@ public class CitrusActivity extends Activity {
     }
 
     private void proceedToPayment(String billJSON) {
-        showDialog("Processing payment, please wait...", false);
+        showDialog("Redirecting to Citrus. Please wait...", false);
 
         final CitrusUser citrusUser = mPaymentParams.getUser();
         UserDetails userDetails = new UserDetails(CitrusUser.toJSONObject(citrusUser));
@@ -126,6 +125,7 @@ public class CitrusActivity extends Activity {
 
     private void processresponse(String response, String error) {
 
+        TransactionResponse transactionResponse = null;
         if (!android.text.TextUtils.isEmpty(response)) {
             try {
 
@@ -135,6 +135,9 @@ public class CitrusActivity extends Activity {
                     mPaymentWebview.loadUrl(redirect.getString("redirectUrl"));
                 } else {
                     Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+
+                    transactionResponse = new TransactionResponse(TransactionResponse.TransactionStatus.FAIL, response, mTransactionId);
+                    sendResult(transactionResponse);
                 }
 
             } catch (JSONException e) {
@@ -142,6 +145,9 @@ public class CitrusActivity extends Activity {
             }
         } else {
             Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
+
+            transactionResponse = new TransactionResponse(TransactionResponse.TransactionStatus.FAIL, error, mTransactionId);
+            sendResult(transactionResponse);
         }
 
     }

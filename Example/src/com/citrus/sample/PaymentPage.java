@@ -78,7 +78,9 @@ public class PaymentPage extends Activity {
                 PaymentType paymentType =new PaymentType.PGPayment(amount, BILL_URL);
                 DebitCardOption debitCardOption = new DebitCardOption("My Debit Card", "4111111111111111", "123", Month.APR, Year._2016);
 
-                PaymentParams paymentParams = PaymentParams.builder(amount, paymentType, debitCardOption);
+                PaymentParams paymentParams = PaymentParams.builder(amount, paymentType, debitCardOption)
+                                                            .environment(PaymentParams.Environment.SANDBOX)
+                                                            .build();
                 startCitrusActivity(paymentParams);
             }
         });
@@ -86,11 +88,13 @@ public class PaymentPage extends Activity {
         tokenpayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Amount amount =new Amount(2.5);
-                PaymentType paymentType =new PaymentType.PGPayment(amount, BILL_URL);
+                Amount amount = new Amount(2.5);
+                PaymentType paymentType = new PaymentType.PGPayment(amount, BILL_URL);
                 CreditCardOption creditCardOption = new CreditCardOption("f1b2508e360c345285d7917d4f4eb112", "123");
 
-                PaymentParams paymentParams = PaymentParams.builder(amount, paymentType, creditCardOption);
+                PaymentParams paymentParams = PaymentParams.builder(amount, paymentType, creditCardOption)
+                        .environment(PaymentParams.Environment.SANDBOX)
+                        .build();
                 startCitrusActivity(paymentParams);
             }
         });
@@ -98,11 +102,13 @@ public class PaymentPage extends Activity {
         bankpay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Amount amount =new Amount(2.5);
-                PaymentType paymentType =new PaymentType.PGPayment(amount, BILL_URL);
-                NetbankingOption netbankingOption = new NetbankingOption("ICICI Bank", "CID002");
+                Amount amount = new Amount(2.5);
+                PaymentType paymentType = new PaymentType.PGPayment(amount, BILL_URL);
+                NetbankingOption netbankingOption = new NetbankingOption("ICICI Bank", "CID001");
 
-                PaymentParams paymentParams = PaymentParams.builder(amount, paymentType, netbankingOption);
+                PaymentParams paymentParams = PaymentParams.builder(amount, paymentType, netbankingOption)
+                        .environment(PaymentParams.Environment.SANDBOX)
+                        .build();
                 startCitrusActivity(paymentParams);
             }
         });
