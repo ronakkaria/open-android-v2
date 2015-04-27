@@ -43,6 +43,11 @@ public abstract class CardOption extends PaymentOption {
     String cardExpiryYear = null;
     String cardScheme = null;
 
+    CardOption(String token, String cardCVV) {
+        this.token = token;
+        this.cardCVV = cardCVV;
+    }
+
     CardOption() {
     }
 

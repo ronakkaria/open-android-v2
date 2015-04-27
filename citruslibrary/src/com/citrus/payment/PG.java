@@ -147,7 +147,11 @@ public class PG {
         else
         	paymenttype = "netbank";
     }
-    
+
+    /**
+     * @deprecated Use {@link com.citrus.sdk.CitrusActivity} instead.
+     * @param callback
+     */
     public void charge(Callback callback) {
         this.callback = callback;
 

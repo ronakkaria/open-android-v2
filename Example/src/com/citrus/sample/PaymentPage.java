@@ -37,7 +37,9 @@ import com.citrus.sdk.Constants;
 import com.citrus.sdk.PaymentParams;
 import com.citrus.sdk.TransactionResponse;
 import com.citrus.sdk.classes.Amount;
+import com.citrus.sdk.payment.CreditCardOption;
 import com.citrus.sdk.payment.DebitCardOption;
+import com.citrus.sdk.payment.NetbankingOption;
 import com.citrus.sdk.payment.PaymentOption;
 import com.citrus.sdk.payment.PaymentType;
 
@@ -71,162 +73,54 @@ public class PaymentPage extends Activity {
         cardpayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                new GetBill(BILL_URL, new Callback() {
-//                    @Override
-//                    public void onTaskexecuted(String bill, String error) {
-//                        if (TextUtils.isEmpty(error)) {
-//                            cardpay(bill);
-//                        }
-//                    }
-//                }).execute();
 
                 Amount amount =new Amount(2.5);
                 PaymentType paymentType =new PaymentType.PGPayment(amount, BILL_URL);
                 DebitCardOption debitCardOption = new DebitCardOption("My Debit Card", "4111111111111111", "123", Month.APR, Year._2016);
 
                 PaymentParams paymentParams = PaymentParams.builder(amount, paymentType, debitCardOption);
-
-                Intent intent = new Intent(PaymentPage.this, CitrusActivity.class);
-                intent.putExtra(Constants.INTENT_EXTRA_PAYMENT_PARAMS, paymentParams);
-                startActivityForResult(intent, Constants.RESULT_CODE_PAYMENT);
-
-
+                startCitrusActivity(paymentParams);
             }
         });
 
         tokenpayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new GetBill(BILL_URL, new Callback() {
-                    @Override
-                    public void onTaskexecuted(String bill, String error) {
-                          tokenpay(bill);
-                    }
-                }).execute();
+                Amount amount =new Amount(2.5);
+                PaymentType paymentType =new PaymentType.PGPayment(amount, BILL_URL);
+                CreditCardOption creditCardOption = new CreditCardOption("f1b2508e360c345285d7917d4f4eb112", "123");
+
+                PaymentParams paymentParams = PaymentParams.builder(amount, paymentType, creditCardOption);
+                startCitrusActivity(paymentParams);
             }
         });
 
         bankpay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new GetBill(BILL_URL, new Callback() {
-                    @Override
-                    public void onTaskexecuted(String bill, String error) {
-                          bankpay(bill);
-                    }
-                }).execute();
-            }
-        });
-               
-        filluserDetails();
-    }
+                Amount amount =new Amount(2.5);
+                PaymentType paymentType =new PaymentType.PGPayment(amount, BILL_URL);
+                NetbankingOption netbankingOption = new NetbankingOption("ICICI Bank", "CID002");
 
-    private void cardpay(String bill_string) {
-        Bill bill = new Bill(bill_string);
-
-        Card card = new Card("4111111111111111", "04", "21", "778", "Tester Citrus", "debit");
-
-        UserDetails userDetails = new UserDetails(customer);
-
-        PG paymentgateway = new PG(card, bill, userDetails);
-
-        paymentgateway.charge(new Callback() {
-            @Override
-            public void onTaskexecuted(String success, String error) {
-                processresponse(success, error);
+                PaymentParams paymentParams = PaymentParams.builder(amount, paymentType, netbankingOption);
+                startCitrusActivity(paymentParams);
             }
         });
     }
 
-    private void tokenpay(String bill_string) {
-        Bill bill = new Bill(bill_string);
-
-        Card card = new Card("f1b2508e360c345285d7917d4f4eb112", "123");
-
-        UserDetails userDetails = new UserDetails(customer);
-
-        PG paymentgateway = new PG(card, bill, userDetails);
-
-        paymentgateway.charge(new Callback() {
-            @Override
-            public void onTaskexecuted(String success, String error) {
-                processresponse(success, error);
-            }
-        });
+    private void startCitrusActivity(PaymentParams paymentParams) {
+        Intent intent = new Intent(PaymentPage.this, CitrusActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_PAYMENT_PARAMS, paymentParams);
+        startActivityForResult(intent, Constants.RESULT_CODE_PAYMENT);
     }
-
-    private void bankpay(String bill_string) {
-        Bill bill = new Bill(bill_string);
-
-        Bank netbank = new Bank("CID002");
-
-        UserDetails userDetails = new UserDetails(customer);
-
-        PG paymentgateway = new PG(netbank, bill, userDetails);
-
-        paymentgateway.charge(new Callback() {
-            @Override
-            public void onTaskexecuted(String success, String error) {
-                processresponse(success, error);
-            }
-        });
-    }
-    
-    private void filluserDetails() {
-        /*All the below mentioned parameters are mandatory - missing anyone of them may create errors
-        * Do not change the key in the json below - only change the values*/
-
-        try {
-            customer.put("firstName", "Tester");
-            customer.put("lastName", "Citrus");
-            customer.put("email", "testeremail@mailinator.com");
-            customer.put("mobileNo", "9787543290");
-            customer.put("street1", "streetone");
-            customer.put("street2", "streettwo");
-            customer.put("city", "Mumbai");
-            customer.put("state", "Maharashtra");
-            customer.put("country", "India");
-            customer.put("zip", "400052");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void processresponse(String response, String error) {
-
-        if (!TextUtils.isEmpty(response)) {
-            try {
-
-                JSONObject redirect = new JSONObject(response);
-                Intent i = new Intent(PaymentPage.this, WebPage.class);
-
-                if (!TextUtils.isEmpty(redirect.getString("redirectUrl"))) {
-
-                    i.putExtra("url", redirect.getString("redirectUrl"));
-                    startActivity(i);
-                }
-                else {
-                    Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        else {
-            Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
-        }
-
-    }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         TransactionResponse transactionResponse = data.getParcelableExtra(Constants.INTENT_EXTRA_TRANSACTION_RESPONSE);
-        Log.d("Citrus", "transactionResponse :: " + transactionResponse.toString());
+        if (transactionResponse != null) {
+            Log.d("Citrus", "transactionResponse :: " + transactionResponse.toString());
+        }
     }
 }

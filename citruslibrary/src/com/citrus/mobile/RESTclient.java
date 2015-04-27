@@ -90,9 +90,10 @@ public class RESTclient {
 
 
     public JSONObject makeWithdrawRequest(String accessToken, double amount, String currency, String owner, String accountNumber, String ifscCode) {
-        HttpsURLConnection conn = null;
+        HttpsURLConnection conn;
         DataOutputStream wr = null;
         JSONObject txnDetails = null;
+        BufferedReader in = null;
 
         try {
             String url = urls.getString(base_url) + urls.getString(type);
@@ -130,7 +131,7 @@ public class RESTclient {
             System.out.println("Post parameters : " + buff.toString());
             System.out.println("Response Code : " + responseCode);
 
-            BufferedReader in = new BufferedReader(
+            in = new BufferedReader(
                     new InputStreamReader(conn.getInputStream()));
             String inputLine;
             StringBuffer response = new StringBuffer();
@@ -138,7 +139,6 @@ public class RESTclient {
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }
-            in.close();
 
             txnDetails = new JSONObject(response.toString());
 
@@ -149,6 +149,14 @@ public class RESTclient {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
             try {
                 if (wr != null) {
                     wr.close();

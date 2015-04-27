@@ -37,6 +37,10 @@ public final class DebitCardOption extends CardOption implements Parcelable {
     public DebitCardOption() {
     }
 
+    public DebitCardOption(String token, String cardCVV) {
+        super(token, cardCVV);
+    }
+
     /**
      * @param cardHolderName - Name of the card holder.
      * @param cardNumber     - Card number.

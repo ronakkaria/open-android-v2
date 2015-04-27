@@ -14,8 +14,10 @@
 package com.citrus.sdk;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -33,6 +35,7 @@ import com.citrus.card.Card;
 import com.citrus.card.TextUtils;
 import com.citrus.library.R;
 import com.citrus.mobile.Callback;
+import com.citrus.mobile.Config;
 import com.citrus.payment.Bill;
 import com.citrus.payment.PG;
 import com.citrus.payment.UserDetails;
@@ -51,6 +54,7 @@ public class CitrusActivity extends Activity {
     private PaymentParams mPaymentParams = null;
     private PaymentType mPaymentType = null;
     private PaymentOption mPaymentOption = null;
+    private String mTransactionId = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,16 +81,14 @@ public class CitrusActivity extends Activity {
         mPaymentWebview.setWebChromeClient(new WebChromeClient());
 
         mPaymentWebview.setWebViewClient(new CitrusWebClient());
-        // Load the bank's or card payment url
-//        mPaymentWebview.loadUrl(mUrl);
 
         fetchBill();
     }
 
     private void fetchBill() {
-        showDialog("Processing payment, please wait...",false);
+        showDialog("Processing payment, please wait...", false);
 
-        String billUrl =  mPaymentType.getUrl();
+        String billUrl = mPaymentType.getUrl();
 
         new GetBill(billUrl, new Callback() {
             @Override
@@ -104,11 +106,12 @@ public class CitrusActivity extends Activity {
     }
 
     private void proceedToPayment(String billJSON) {
-        showDialog("Processing payment, please wait...",false);
+        showDialog("Processing payment, please wait...", false);
 
         final CitrusUser citrusUser = mPaymentParams.getUser();
         UserDetails userDetails = new UserDetails(CitrusUser.toJSONObject(citrusUser));
         Bill bill = new Bill(billJSON);
+        mTransactionId = bill.getTxnId();
 
         PG paymentgateway = new PG(mPaymentOption, bill, userDetails);
 
@@ -130,8 +133,7 @@ public class CitrusActivity extends Activity {
                 if (!android.text.TextUtils.isEmpty(redirect.getString("redirectUrl"))) {
 
                     mPaymentWebview.loadUrl(redirect.getString("redirectUrl"));
-                }
-                else {
+                } else {
                     Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
                 }
 
@@ -159,6 +161,40 @@ public class CitrusActivity extends Activity {
         }
     }
 
+
+    @Override
+    public void onBackPressed() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        // Add the buttons
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+
+                TransactionResponse transactionResponse = new TransactionResponse(TransactionResponse.TransactionStatus.FAIL, "Cancelled By User", mTransactionId);
+                sendResult(transactionResponse);
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+        });
+        // Set other dialog properties
+        builder.setMessage("Do you want to cancel the transaction?")
+                .setTitle("Cancel Transaction?");
+        // Create the AlertDialog
+        AlertDialog dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+    }
+
+    private void sendResult(TransactionResponse transactionResponse) {
+        Intent intent = new Intent();
+        intent.putExtra(Constants.INTENT_EXTRA_TRANSACTION_RESPONSE, transactionResponse);
+        setResult(Constants.RESULT_CODE_PAYMENT, intent);
+        finish();
+    }
 
     /**
      * Handle all the Webview loading in custom webview client.
@@ -201,11 +237,7 @@ public class CitrusActivity extends Activity {
         @JavascriptInterface
         public void pgResponse(String response) {
             TransactionResponse transactionResponse = TransactionResponse.fromJSON(response);
-            //mListener.onTransactionComplete(transactionResponse);
-            Intent intent = new Intent();
-            intent.putExtra(Constants.INTENT_EXTRA_TRANSACTION_RESPONSE,transactionResponse);
-            setResult(Constants.RESULT_CODE_PAYMENT, intent);
-            finish();
+            sendResult(transactionResponse);
         }
     }
 

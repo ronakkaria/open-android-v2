@@ -16,38 +16,61 @@ import android.os.AsyncTask;
 
 import com.citrus.mobile.Callback;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
+import org.apache.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class GetBill extends AsyncTask<Void, Void, Void> {
     String billurl;
 
-    JSONObject response;
+    JSONObject billJSONObject;
     String error;
 
     Callback callback;
 
     public GetBill(String url, Callback callback) {
-        billurl = url;
+        this.billurl = url;
         this.callback = callback;
     }
 
     @Override
     protected Void doInBackground(Void... params) {
-        HttpClient httpClient = new DefaultHttpClient();
-        HttpGet httpGet = new HttpGet(billurl);
-        HttpResponse httpResponse;
+        URLConnection urlConnection = null;
+        BufferedReader bufferedReader = null;
 
         try {
-            httpResponse = httpClient.execute(httpGet);
-            response = new JSONObject(EntityUtils.toString(httpResponse.getEntity()));
+            int responseCode;
+            if (billurl.startsWith("https")) {
+                urlConnection = (HttpsURLConnection) new URL(billurl).openConnection();
+                responseCode = ((HttpsURLConnection) urlConnection).getResponseCode();
+            } else {
+                urlConnection = (HttpURLConnection) new URL(billurl).openConnection();
+                responseCode = ((HttpURLConnection) urlConnection).getResponseCode();
+            }
+
+            if (responseCode == HttpStatus.SC_OK) {
+
+
+                bufferedReader = new BufferedReader(
+                        new InputStreamReader(urlConnection.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = bufferedReader.readLine()) != null) {
+                    response.append(inputLine);
+                }
+
+                billJSONObject = new JSONObject(response.toString());
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -67,7 +90,7 @@ public class GetBill extends AsyncTask<Void, Void, Void> {
         if (error != null) {
             callback.onTaskexecuted(null, error);
         } else {
-            callback.onTaskexecuted(response.toString(), null);
+            callback.onTaskexecuted(billJSONObject.toString(), null);
         }
     }
 }

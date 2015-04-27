@@ -26,6 +26,10 @@ public final class CreditCardOption extends CardOption implements android.os.Par
     public CreditCardOption() {
     }
 
+    public CreditCardOption(String token, String cardCVV) {
+        super(token, cardCVV);
+    }
+
     /**
      * @param cardHolderName - Name of the card holder.
      * @param cardNumber     - Card number.
