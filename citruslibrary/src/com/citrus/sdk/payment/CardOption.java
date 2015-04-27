@@ -17,6 +17,9 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 
+import com.citrus.mobile.Month;
+import com.citrus.mobile.Year;
+
 /**
  * Created by salil on 13/2/15.
  */
@@ -71,14 +74,19 @@ public abstract class CardOption extends PaymentOption {
      * @param cardExpiryMonth - Card Expiry Month 01 to 12 e.g. 01 for January.
      * @param cardExpiryYear  - Card Expiry Year in the form of YYYY e.g. 2015.
      */
-    CardOption(String cardHolderName, String cardNumber, String cardCVV, String cardExpiryMonth, String cardExpiryYear) {
+    CardOption(String cardHolderName, String cardNumber, String cardCVV, Month cardExpiryMonth, Year cardExpiryYear) {
         this.cardHolderName = cardHolderName;
         this.cardNumber = cardNumber;
         this.cardCVV = cardCVV;
-        this.cardExpiryMonth = cardExpiryMonth;
-        this.cardExpiryYear = cardExpiryYear;
 
-        if (!TextUtils.isEmpty(cardExpiryMonth) && !TextUtils.isEmpty(cardExpiryYear)) {
+        if (cardExpiryMonth != null) {
+            this.cardExpiryMonth = cardExpiryMonth.toString();
+        }
+        if (cardExpiryYear != null) {
+            this.cardExpiryYear = cardExpiryYear.toString();
+        }
+
+        if (!TextUtils.isEmpty(this.cardExpiryMonth) && !TextUtils.isEmpty(this.cardExpiryYear)) {
             this.cardExpiry = cardExpiryMonth + "/" + cardExpiryYear;
         }
     }

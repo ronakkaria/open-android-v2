@@ -25,6 +25,8 @@ import org.json.JSONObject;
  */
 public final class CitrusUser implements Parcelable {
 
+    public static CitrusUser DEFAULT_USER = new CitrusUser();
+
     public static final Creator<CitrusUser> CREATOR = new Creator<CitrusUser>() {
         public CitrusUser createFromParcel(Parcel source) {
             return new CitrusUser(source);
@@ -39,6 +41,10 @@ public final class CitrusUser implements Parcelable {
     private String emailId = null;
     private String mobileNo = null;
     private Address address = null;
+
+    private CitrusUser() {
+
+    }
 
     public CitrusUser(String emailId, String mobileNo) {
         this.emailId = emailId;
@@ -94,7 +100,7 @@ public final class CitrusUser implements Parcelable {
             } else {
                 customer.put("firstName", user.firstName);
             }
-            if (user == null || TextUtils.isEmpty(user.firstName)) {
+            if (user == null || TextUtils.isEmpty(user.lastName)) {
                 customer.put("lastName", "Citrus");
             } else {
                 customer.put("lastName", user.lastName);

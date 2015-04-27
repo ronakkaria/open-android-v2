@@ -16,6 +16,9 @@ package com.citrus.sdk.payment;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.citrus.mobile.Month;
+import com.citrus.mobile.Year;
+
 /**
  * Created by salil on 13/2/15.
  */
@@ -51,7 +54,7 @@ public final class DebitCardOption extends CardOption implements Parcelable {
      * @param cardExpiryMonth - Card Expiry Month 01 to 12 e.g. 01 for January.
      * @param cardExpiryYear  - Card Expiry Year in the form of YYYY e.g. 2015.
      */
-    public DebitCardOption(String cardHolderName, String cardNumber, String cardCVV, String cardExpiryMonth, String cardExpiryYear) {
+    public DebitCardOption(String cardHolderName, String cardNumber, String cardCVV, Month cardExpiryMonth, Year cardExpiryYear) {
         super(cardHolderName, cardNumber, cardCVV, cardExpiryMonth, cardExpiryYear);
     }
 

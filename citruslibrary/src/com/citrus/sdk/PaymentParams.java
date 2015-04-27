@@ -112,6 +112,7 @@ public final class PaymentParams implements Parcelable {
             this.transactionAmount = amount;
             this.paymentType = paymentType;
             this.paymentOption = paymentOption;
+            environment(Environment.SANDBOX);
         } else {
             throw new IllegalArgumentException("Please make sure to pass amount, paymentType and selected paymentOption");
         }
@@ -222,6 +223,9 @@ public final class PaymentParams implements Parcelable {
     }
 
     public CitrusUser getUser() {
+        if (user == null) {
+            user = CitrusUser.DEFAULT_USER;
+        }
         return user;
     }
 
@@ -259,6 +263,10 @@ public final class PaymentParams implements Parcelable {
 
     public PaymentType getPaymentType() {
         return paymentType;
+    }
+
+    public PaymentOption getPaymentOption() {
+        return paymentOption;
     }
 
     public String getVanity() {

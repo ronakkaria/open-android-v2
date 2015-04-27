@@ -20,13 +20,27 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
+import com.citrus.asynch.GetBill;
+import com.citrus.card.Card;
+import com.citrus.card.TextUtils;
 import com.citrus.library.R;
+import com.citrus.mobile.Callback;
+import com.citrus.payment.Bill;
+import com.citrus.payment.PG;
+import com.citrus.payment.UserDetails;
+import com.citrus.sdk.payment.PaymentOption;
+import com.citrus.sdk.payment.PaymentType;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class CitrusActivity extends Activity {
 
@@ -34,6 +48,9 @@ public class CitrusActivity extends Activity {
     private String mUrl = null;
     private Context mContext = this;
     private ProgressDialog mProgressDialog = null;
+    private PaymentParams mPaymentParams = null;
+    private PaymentType mPaymentType = null;
+    private PaymentOption mPaymentOption = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +59,10 @@ public class CitrusActivity extends Activity {
 
         mProgressDialog = new ProgressDialog(mContext);
         mUrl = getIntent().getStringExtra(Constants.INTENT_EXTRA_RETURN_URL);
+        mPaymentParams = getIntent().getParcelableExtra(Constants.INTENT_EXTRA_PAYMENT_PARAMS);
+        mPaymentType = mPaymentParams.getPaymentType();
+        mPaymentOption = mPaymentParams.getPaymentOption();
+
         mPaymentWebview = (WebView) findViewById(R.id.payment_webview);
         mPaymentWebview.getSettings().setJavaScriptEnabled(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -51,13 +72,76 @@ public class CitrusActivity extends Activity {
              */
             mPaymentWebview.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
-        mPaymentWebview.addJavascriptInterface(new JsInterface(), "CitrusResponse");
+        mPaymentWebview.addJavascriptInterface(new JsInterface(), Constants.JS_INTERFACE_NAME);
 
         mPaymentWebview.setWebChromeClient(new WebChromeClient());
 
         mPaymentWebview.setWebViewClient(new CitrusWebClient());
         // Load the bank's or card payment url
-        mPaymentWebview.loadUrl(mUrl);
+//        mPaymentWebview.loadUrl(mUrl);
+
+        fetchBill();
+    }
+
+    private void fetchBill() {
+        showDialog("Processing payment, please wait...",false);
+
+        String billUrl =  mPaymentType.getUrl();
+
+        new GetBill(billUrl, new Callback() {
+            @Override
+            public void onTaskexecuted(String bill, String error) {
+                Log.d("Citrus", "Bill ::: " + bill + " ERROR :: " + error);
+
+                dismissDialog();
+                if (!android.text.TextUtils.isEmpty(error)) {
+                    Toast.makeText(CitrusActivity.this, error, Toast.LENGTH_SHORT).show();
+                } else {
+                    proceedToPayment(bill);
+                }
+            }
+        }).execute();
+    }
+
+    private void proceedToPayment(String billJSON) {
+        showDialog("Processing payment, please wait...",false);
+
+        final CitrusUser citrusUser = mPaymentParams.getUser();
+        UserDetails userDetails = new UserDetails(CitrusUser.toJSONObject(citrusUser));
+        Bill bill = new Bill(billJSON);
+
+        PG paymentgateway = new PG(mPaymentOption, bill, userDetails);
+
+        paymentgateway.charge(new Callback() {
+            @Override
+            public void onTaskexecuted(String success, String error) {
+                processresponse(success, error);
+                dismissDialog();
+            }
+        });
+    }
+
+    private void processresponse(String response, String error) {
+
+        if (!android.text.TextUtils.isEmpty(response)) {
+            try {
+
+                JSONObject redirect = new JSONObject(response);
+                if (!android.text.TextUtils.isEmpty(redirect.getString("redirectUrl"))) {
+
+                    mPaymentWebview.loadUrl(redirect.getString("redirectUrl"));
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
+        }
+
     }
 
     private void showDialog(String message, boolean cancelable) {

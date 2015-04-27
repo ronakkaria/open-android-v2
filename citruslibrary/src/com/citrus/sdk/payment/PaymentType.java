@@ -45,7 +45,13 @@ public abstract class PaymentType implements Parcelable {
         this.url = url;
     }
 
+    public Amount getAmount() {
+        return amount;
+    }
 
+    public String getUrl() {
+        return url;
+    }
 
     public static class LoadMoney extends PaymentType implements Parcelable {
 
@@ -132,8 +138,8 @@ public abstract class PaymentType implements Parcelable {
         public PGPayment() {
         }
 
-        public PGPayment(Amount amount, String url) throws IllegalArgumentException {
-            super(amount, url);
+        public PGPayment(Amount amount, String billUrl) throws IllegalArgumentException {
+            super(amount, billUrl);
         }
 
 
