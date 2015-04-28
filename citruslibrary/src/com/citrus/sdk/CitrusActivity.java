@@ -22,7 +22,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.TextUtils;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -31,14 +31,13 @@ import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import com.citrus.asynch.GetBill;
-import com.citrus.card.Card;
-import com.citrus.card.TextUtils;
+import com.citrus.cash.LoadMoney;
 import com.citrus.library.R;
 import com.citrus.mobile.Callback;
-import com.citrus.mobile.Config;
 import com.citrus.payment.Bill;
 import com.citrus.payment.PG;
 import com.citrus.payment.UserDetails;
+import com.citrus.sdk.classes.Amount;
 import com.citrus.sdk.payment.PaymentOption;
 import com.citrus.sdk.payment.PaymentType;
 
@@ -62,7 +61,7 @@ public class CitrusActivity extends Activity {
         setContentView(R.layout.activity_citrus);
 
         mProgressDialog = new ProgressDialog(mContext);
-        mUrl = getIntent().getStringExtra(Constants.INTENT_EXTRA_RETURN_URL);
+//        mUrl = getIntent().getStringExtra(Constants.INTENT_EXTRA_RETURN_URL);
         mPaymentParams = getIntent().getParcelableExtra(Constants.INTENT_EXTRA_PAYMENT_PARAMS);
         mPaymentType = mPaymentParams.getPaymentType();
         mPaymentOption = mPaymentParams.getPaymentOption();
@@ -81,8 +80,22 @@ public class CitrusActivity extends Activity {
         mPaymentWebview.setWebChromeClient(new WebChromeClient());
 
         mPaymentWebview.setWebViewClient(new CitrusWebClient());
+        if(mPaymentType instanceof PaymentType.PGPayment || mPaymentType instanceof PaymentType.CitrusCash) {
+            fetchBill();
+        }
+        else { //load cash does not requires Bill Generator
+            Amount amount = mPaymentType.getAmount();
 
-        fetchBill();
+            LoadMoney loadMoney = new LoadMoney(amount.getValue()+"", mPaymentType.getUrl());
+            PG paymentgateway = new PG(mPaymentOption, loadMoney,new UserDetails(CitrusUser.toJSONObject(mPaymentParams.getUser())));
+
+            paymentgateway.load(CitrusActivity.this, new Callback() {
+                @Override
+                public void onTaskexecuted(String success, String error) {
+                    processresponse(success, error);
+                }
+            });
+        }
     }
 
     private void fetchBill() {
@@ -230,6 +243,9 @@ public class CitrusActivity extends Activity {
             // Dismiss the progress/message dialog.
             dismissDialog();
         }
+
+
+
     }
 
     /**
@@ -243,6 +259,29 @@ public class CitrusActivity extends Activity {
         @JavascriptInterface
         public void pgResponse(String response) {
             TransactionResponse transactionResponse = TransactionResponse.fromJSON(response);
+            sendResult(transactionResponse);
+        }
+
+        /**
+         * This method will be called by returnURL when Cash is loaded in user's account
+         * @param response post parameters sent by Citrus
+         */
+        @JavascriptInterface
+        public void loadWalletResponse(String response) {
+
+            if (response.contains(":")) {
+                String decodeResp[] = response.split(":");
+                if(decodeResp.length>0) {
+                    if (TextUtils.equals(decodeResp[0], "SUCCESSFUL")) {
+                        Toast.makeText(getApplicationContext(), "Your wallet is loaded Successfully." , Toast.LENGTH_LONG).show();
+                    } else {
+                        //transaction was fail
+                        Toast.makeText(getApplicationContext(), "Wallet Load Failed." , Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+
+            TransactionResponse transactionResponse = TransactionResponse.parseLoadMoneyResponse(response);
             sendResult(transactionResponse);
         }
     }

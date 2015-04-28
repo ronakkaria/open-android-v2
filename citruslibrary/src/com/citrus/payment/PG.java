@@ -13,12 +13,6 @@
 package com.citrus.payment;
 
 
-import java.io.IOException;
-import java.util.ArrayList;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.text.TextUtils;
@@ -36,9 +30,14 @@ import com.citrus.mobile.User;
 import com.citrus.netbank.Bank;
 import com.citrus.netbank.BankPaymentType;
 import com.citrus.sdk.payment.CardOption;
-import com.citrus.sdk.payment.CreditCardOption;
 import com.citrus.sdk.payment.NetbankingOption;
 import com.citrus.sdk.payment.PaymentOption;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 
 public class PG {
@@ -89,6 +88,34 @@ public class PG {
             }
         }
         this.bill = bill;
+        this.userDetails = userDetails;
+    }
+
+    public PG(PaymentOption paymentOption, LoadMoney load, UserDetails userDetails) {
+        if (paymentOption != null) {
+            if (paymentOption instanceof CardOption) {
+                CardOption cardOption = (CardOption) paymentOption;
+                // If token payment
+                if (cardOption.getToken() != null) {
+                    this.card = new Card(cardOption.getToken(), cardOption.getCardCVV());
+                    this.paymenttype = "cardtoken";
+                } else {
+                    this.card = new Card(cardOption.getCardNumber(), cardOption.getCardExpiryMonth(), cardOption.getCardExpiryYear(), cardOption.getCardCVV(), cardOption.getCardHolderName(), cardOption.getCardType());
+                    this.paymenttype = "card";
+                }
+            } else if (paymentOption instanceof NetbankingOption) {
+                NetbankingOption netbankingOption = (NetbankingOption) paymentOption;
+                // If token payment
+                if (netbankingOption.getToken() != null) {
+                    this.bank = new Bank(netbankingOption.getToken(), BankPaymentType.TOKEN);
+                    this.paymenttype = this.bank.getPaymentType().toString();
+                } else {
+                    this.bank = new Bank(netbankingOption.getBankCID());
+                    this.paymenttype = "netbank";
+                }
+            }
+        }
+        this.loadmoney = load;
         this.userDetails = userDetails;
     }
 
