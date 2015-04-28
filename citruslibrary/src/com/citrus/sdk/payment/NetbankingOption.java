@@ -45,6 +45,14 @@ public final class NetbankingOption extends PaymentOption implements Parcelable 
         this.bankCID = bankCID;
     }
 
+    /**
+     * Use this constructor for tokenized payments.
+     *
+     * @param token
+     */
+    public NetbankingOption(String token) {
+        super(null, token);
+    }
 
     /**
      * @param name     - Human readable names for banks. e.g. Net Banking - AXIS BANK
