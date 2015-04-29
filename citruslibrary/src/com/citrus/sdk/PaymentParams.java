@@ -188,18 +188,13 @@ public final class PaymentParams implements Parcelable {
 //        return this;
 //    }
 //
-//    public PaymentParams merchantOrTitleName(String merchantOrTitleName) {
-//        this.merchantOrTitleName = merchantOrTitleName;
-//        return this;
-//    }
+    public PaymentParams merchantOrTitleName(String merchantOrTitleName) {
+        this.merchantOrTitleName = merchantOrTitleName;
+        return this;
+    }
 
     public PaymentParams user(CitrusUser user) {
         this.user = user;
-
-        if (user != null) {
-//            Config.setEmailID(user.getEmailId());
-//            Config.setMobileNo(user.getMobileNo());
-        }
 
         return this;
     }
