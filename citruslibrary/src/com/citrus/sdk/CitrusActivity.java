@@ -55,13 +55,13 @@ public class CitrusActivity extends Activity {
     private PaymentOption mPaymentOption = null;
     private String mTransactionId = null;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_citrus);
 
         mProgressDialog = new ProgressDialog(mContext);
-//        mUrl = getIntent().getStringExtra(Constants.INTENT_EXTRA_RETURN_URL);
         mPaymentParams = getIntent().getParcelableExtra(Constants.INTENT_EXTRA_PAYMENT_PARAMS);
         mPaymentType = mPaymentParams.getPaymentType();
         mPaymentOption = mPaymentParams.getPaymentOption();
@@ -110,6 +110,9 @@ public class CitrusActivity extends Activity {
 
                 if (!android.text.TextUtils.isEmpty(error)) {
                     Toast.makeText(CitrusActivity.this, error, Toast.LENGTH_SHORT).show();
+
+                    TransactionResponse transactionResponse = new TransactionResponse(TransactionResponse.TransactionStatus.FAIL, error, mTransactionId);
+                    sendResult(transactionResponse);
                 } else {
                     proceedToPayment(bill);
                 }
