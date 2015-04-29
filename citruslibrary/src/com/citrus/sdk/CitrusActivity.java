@@ -13,6 +13,7 @@
 
 package com.citrus.sdk;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -20,9 +21,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -44,7 +52,7 @@ import com.citrus.sdk.payment.PaymentType;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class CitrusActivity extends Activity {
+public class CitrusActivity extends ActionBarActivity {
 
     private WebView mPaymentWebview = null;
     private String mUrl = null;
@@ -54,18 +62,32 @@ public class CitrusActivity extends Activity {
     private PaymentType mPaymentType = null;
     private PaymentOption mPaymentOption = null;
     private String mTransactionId = null;
-
+    private ActionBar mActionBar = null;
+    private String mColorPrimary = null;
+    private String mColorPrimaryDark = null;
+    private String mVanity = null;
+    private String mMerchantOrItemName = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_citrus);
 
-        mProgressDialog = new ProgressDialog(mContext);
         mPaymentParams = getIntent().getParcelableExtra(Constants.INTENT_EXTRA_PAYMENT_PARAMS);
-        mPaymentType = mPaymentParams.getPaymentType();
-        mPaymentOption = mPaymentParams.getPaymentOption();
 
+        // Set payment Params
+        if (mPaymentParams != null) {
+            mPaymentType = mPaymentParams.getPaymentType();
+            mPaymentOption = mPaymentParams.getPaymentOption();
+            mColorPrimary = mPaymentParams.getColorPrimary();
+            mColorPrimaryDark = mPaymentParams.getColorPrimaryDark();
+            mVanity = mPaymentParams.getVanity();
+        } else {
+            throw new IllegalArgumentException("Payment Params Should not be null");
+        }
+
+        mActionBar = getSupportActionBar();
+        mProgressDialog = new ProgressDialog(mContext);
         mPaymentWebview = (WebView) findViewById(R.id.payment_webview);
         mPaymentWebview.getSettings().setJavaScriptEnabled(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -80,14 +102,13 @@ public class CitrusActivity extends Activity {
         mPaymentWebview.setWebChromeClient(new WebChromeClient());
 
         mPaymentWebview.setWebViewClient(new CitrusWebClient());
-        if(mPaymentType instanceof PaymentType.PGPayment || mPaymentType instanceof PaymentType.CitrusCash) {
+        if (mPaymentType instanceof PaymentType.PGPayment || mPaymentType instanceof PaymentType.CitrusCash) {
             fetchBill();
-        }
-        else { //load cash does not requires Bill Generator
+        } else { //load cash does not requires Bill Generator
             Amount amount = mPaymentType.getAmount();
 
-            LoadMoney loadMoney = new LoadMoney(amount.getValue()+"", mPaymentType.getUrl());
-            PG paymentgateway = new PG(mPaymentOption, loadMoney,new UserDetails(CitrusUser.toJSONObject(mPaymentParams.getUser())));
+            LoadMoney loadMoney = new LoadMoney(amount.getValue() + "", mPaymentType.getUrl());
+            PG paymentgateway = new PG(mPaymentOption, loadMoney, new UserDetails(CitrusUser.toJSONObject(mPaymentParams.getUser())));
 
             paymentgateway.load(CitrusActivity.this, new Callback() {
                 @Override
@@ -95,6 +116,25 @@ public class CitrusActivity extends Activity {
                     processresponse(success, error);
                 }
             });
+        }
+
+        setTitle("Processing...");
+        setActionBarBackground(mColorPrimary, mColorPrimaryDark);
+
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void setActionBarBackground(String colorPrimary, String colorPrimaryDark) {
+        // Set primary color
+        if (mColorPrimary != null && mActionBar != null) {
+            mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor(colorPrimary)));
+        }
+
+        // Set action bar color. Available only on android version Lollipop or higher.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && mColorPrimaryDark != null) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.parseColor(colorPrimaryDark));
         }
     }
 
@@ -218,6 +258,18 @@ public class CitrusActivity extends Activity {
         finish();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (mPaymentWebview != null) {
+            mPaymentWebview.stopLoading();
+            mPaymentWebview.destroy();
+        }
+        mPaymentWebview = null;
+        mUrl = null;
+    }
+
     /**
      * Handle all the Webview loading in custom webview client.
      */
@@ -248,7 +300,6 @@ public class CitrusActivity extends Activity {
         }
 
 
-
     }
 
     /**
@@ -267,6 +318,7 @@ public class CitrusActivity extends Activity {
 
         /**
          * This method will be called by returnURL when Cash is loaded in user's account
+         *
          * @param response post parameters sent by Citrus
          */
         @JavascriptInterface
@@ -274,12 +326,12 @@ public class CitrusActivity extends Activity {
 
             if (response.contains(":")) {
                 String decodeResp[] = response.split(":");
-                if(decodeResp.length>0) {
+                if (decodeResp.length > 0) {
                     if (TextUtils.equals(decodeResp[0], "SUCCESSFUL")) {
-                        Toast.makeText(getApplicationContext(), "Your wallet is loaded Successfully." , Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Your wallet is loaded Successfully.", Toast.LENGTH_LONG).show();
                     } else {
                         //transaction was fail
-                        Toast.makeText(getApplicationContext(), "Wallet Load Failed." , Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Wallet Load Failed.", Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -287,17 +339,5 @@ public class CitrusActivity extends Activity {
             TransactionResponse transactionResponse = TransactionResponse.parseLoadMoneyResponse(response);
             sendResult(transactionResponse);
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        if (mPaymentWebview != null) {
-            mPaymentWebview.stopLoading();
-            mPaymentWebview.destroy();
-        }
-        mPaymentWebview = null;
-        mUrl = null;
     }
 }

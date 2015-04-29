@@ -26,6 +26,7 @@ import com.citrus.sdk.payment.PaymentType;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -34,19 +35,36 @@ import java.util.ArrayList;
  */
 public final class PaymentParams implements Parcelable {
 
+    public static final Creator<PaymentParams> CREATOR = new Creator<PaymentParams>() {
+        public PaymentParams createFromParcel(Parcel source) {
+            return new PaymentParams(source);
+        }
+
+        public PaymentParams[] newArray(int size) {
+            return new PaymentParams[size];
+        }
+    };
+    /**
+     * Transaction amount.
+     */
+    final Amount transactionAmount;
     // Following are the parameters used internally.
     ArrayList<NetbankingOption> netbankingOptionList = new ArrayList<>(); // Netbanking options enabled for the merchant.
     ArrayList<NetbankingOption> topNetbankingOptions = new ArrayList<>(); // List of top n banks. This list will contain 0 to 4 items depending upon the enabled netbanking options for the merchant.
+    /**
+     * Bill url. This page will be hosted on your server. Host pages depending upon your backend technology.
+     * It is required to authenticate the transaction. The merchant needs to sign the particular transaction.
+     */
+//    final String billUrl;
     ArrayList<PaymentOption> userSavedOptionList = new ArrayList<>(); // List of different payment options saved for the user.
     /**
      * User details. Email id and mobile no. will be used to fetch saved payment options for that user.
      */
     CitrusUser user;
     /**
-     * Bill url. This page will be hosted on your server. Host pages depending upon your backend technology.
-     * It is required to authenticate the transaction. The merchant needs to sign the particular transaction.
+     * Name of the merchant. For the display purpose.
      */
-//    final String billUrl;
+    String merchantOrTitleName;
     /**
      * Accent color for the app, in the form of #123456.
      * This is the color of the status bar when the is opened.
@@ -65,14 +83,6 @@ public final class PaymentParams implements Parcelable {
      * Accent color for the app, will be used to display common actions.
      */
     private String accentColor;
-    /**
-     * Transaction amount.
-     */
-    final Amount transactionAmount;
-    /**
-     * Name of the merchant. For the display purpose.
-     */
-    String merchantOrTitleName;
     /**
      * JSON Key store containing the merchant credentials. The json is in the following format.
      * <p/>
@@ -100,23 +110,9 @@ public final class PaymentParams implements Parcelable {
     private String signinSecret;
     private String signupId;
     private String signupSecret;
-
     private PaymentType paymentType = null;
-
     private Environment environment = Environment.SANDBOX;
-
     private PaymentOption paymentOption = null;
-
-    private PaymentParams(Amount amount, PaymentType paymentType, PaymentOption paymentOption) {
-        if (amount != null && paymentType != null && paymentOption != null) {
-            this.transactionAmount = amount;
-            this.paymentType = paymentType;
-            this.paymentOption = paymentOption;
-            environment(Environment.SANDBOX);
-        } else {
-            throw new IllegalArgumentException("Please make sure to pass amount, paymentType and selected paymentOption");
-        }
-    }
 
 //    private PaymentParams(Amount transactionAmount, String billUrl, String jsonKeyStore) {
 //        this.transactionAmount = transactionAmount;
@@ -160,6 +156,41 @@ public final class PaymentParams implements Parcelable {
 //        return new PaymentParams(transactionAmount, billUrl, jsonKeyStore);
 //    }
 
+    private PaymentParams(Amount amount, PaymentType paymentType, PaymentOption paymentOption) {
+        if (amount != null && paymentType != null && paymentOption != null) {
+            this.transactionAmount = amount;
+            this.paymentType = paymentType;
+            this.paymentOption = paymentOption;
+            environment(Environment.SANDBOX);
+        } else {
+            throw new IllegalArgumentException("Please make sure to pass amount, paymentType and selected paymentOption");
+        }
+    }
+
+    private PaymentParams(Parcel in) {
+        this.netbankingOptionList = (ArrayList<NetbankingOption>) in.readSerializable();
+        this.topNetbankingOptions = (ArrayList<NetbankingOption>) in.readSerializable();
+        this.userSavedOptionList = (ArrayList<PaymentOption>) in.readSerializable();
+        this.user = in.readParcelable(CitrusUser.class.getClassLoader());
+        this.colorPrimaryDark = in.readString();
+        this.colorPrimary = in.readString();
+        this.textColorPrimary = in.readString();
+        this.accentColor = in.readString();
+        this.transactionAmount = in.readParcelable(Amount.class.getClassLoader());
+        this.merchantOrTitleName = in.readString();
+        this.jsonKeyStore = in.readString();
+        this.vanity = in.readString();
+        this.accessKey = in.readString();
+        this.signinId = in.readString();
+        this.signinSecret = in.readString();
+        this.signupId = in.readString();
+        this.signupSecret = in.readString();
+        this.paymentType = in.readParcelable(PaymentType.class.getClassLoader());
+        int tmpEnvironment = in.readInt();
+        this.environment = tmpEnvironment == -1 ? null : Environment.values()[tmpEnvironment];
+        this.paymentOption = in.readParcelable(PaymentOption.class.getClassLoader());
+    }
+
     public static PaymentParams builder(Amount transactionAmount, PaymentType paymentType, PaymentOption paymentOption) {
 //        if (transactionAmount <= 0 && TextUtils.isEmpty(billUrl) && TextUtils.isEmpty(jsonKeyStore)) {
 //            throw new IllegalArgumentException("Mandatory parameters missing...");
@@ -168,23 +199,31 @@ public final class PaymentParams implements Parcelable {
         return new PaymentParams(transactionAmount, paymentType, paymentOption);
     }
 
-//    public PaymentParams colorPrimaryDark(String colorPrimaryDark) {
-//        this.colorPrimaryDark = colorPrimaryDark;
-//        return this;
-//    }
-//
-//    public PaymentParams colorPrimary(String colorPrimary) {
-//        this.colorPrimary = colorPrimary;
-//        return this;
-//    }
-//
-//    public PaymentParams textColorPrimary(String textColorPrimary) {
-//        this.textColorPrimary = textColorPrimary;
-//        return this;
-//    }
-//
-//    public PaymentParams accentColor(String accentColor) {
+    public PaymentParams colorPrimaryDark(String colorPrimaryDark) {
+        if (!TextUtils.isEmpty(colorPrimaryDark)) {
+            this.colorPrimaryDark = colorPrimaryDark;
+        }
+        return this;
+    }
+
+    public PaymentParams colorPrimary(String colorPrimary) {
+        if (!TextUtils.isEmpty(colorPrimary)) {
+            this.colorPrimary = colorPrimary;
+        }
+        return this;
+    }
+
+    public PaymentParams textColorPrimary(String textColorPrimary) {
+        if (!TextUtils.isEmpty(textColorPrimary)) {
+            this.textColorPrimary = textColorPrimary;
+        }
+        return this;
+    }
+
+    //    public PaymentParams accentColor(String accentColor) {
+//    if (!TextUtils.isEmpty(accentColor)) {
 //        this.accentColor = accentColor;
+//    }
 //        return this;
 //    }
 //
@@ -217,16 +256,22 @@ public final class PaymentParams implements Parcelable {
         return this;
     }
 
+//    public String getBillUrl() {
+//        return billUrl;
+//    }
+
+    public PaymentParams vanity(String vanity) {
+        this.vanity = vanity;
+
+        return this;
+    }
+
     public CitrusUser getUser() {
         if (user == null) {
             user = CitrusUser.DEFAULT_USER;
         }
         return user;
     }
-
-//    public String getBillUrl() {
-//        return billUrl;
-//    }
 
     public String getColorPrimaryDark() {
         return colorPrimaryDark;
@@ -296,10 +341,6 @@ public final class PaymentParams implements Parcelable {
         return this;
     }
 
-    public static enum Environment {
-        PRODUCTION, SANDBOX
-    }
-
     @Override
     public int describeContents() {
         return 0;
@@ -329,37 +370,7 @@ public final class PaymentParams implements Parcelable {
         dest.writeParcelable(this.paymentOption, 0);
     }
 
-    private PaymentParams(Parcel in) {
-        this.netbankingOptionList = (ArrayList<NetbankingOption>) in.readSerializable();
-        this.topNetbankingOptions = (ArrayList<NetbankingOption>) in.readSerializable();
-        this.userSavedOptionList = (ArrayList<PaymentOption>) in.readSerializable();
-        this.user = in.readParcelable(CitrusUser.class.getClassLoader());
-        this.colorPrimaryDark = in.readString();
-        this.colorPrimary = in.readString();
-        this.textColorPrimary = in.readString();
-        this.accentColor = in.readString();
-        this.transactionAmount = in.readParcelable(Amount.class.getClassLoader());
-        this.merchantOrTitleName = in.readString();
-        this.jsonKeyStore = in.readString();
-        this.vanity = in.readString();
-        this.accessKey = in.readString();
-        this.signinId = in.readString();
-        this.signinSecret = in.readString();
-        this.signupId = in.readString();
-        this.signupSecret = in.readString();
-        this.paymentType = in.readParcelable(PaymentType.class.getClassLoader());
-        int tmpEnvironment = in.readInt();
-        this.environment = tmpEnvironment == -1 ? null : Environment.values()[tmpEnvironment];
-        this.paymentOption = in.readParcelable(PaymentOption.class.getClassLoader());
+    public static enum Environment {
+        PRODUCTION, SANDBOX
     }
-
-    public static final Creator<PaymentParams> CREATOR = new Creator<PaymentParams>() {
-        public PaymentParams createFromParcel(Parcel source) {
-            return new PaymentParams(source);
-        }
-
-        public PaymentParams[] newArray(int size) {
-            return new PaymentParams[size];
-        }
-    };
 }
