@@ -48,4 +48,46 @@ public class TextUtils {
     public static boolean isBlank(String value) {
         return value == null || value.trim().length() == 0;
     }
+
+    public static long isVaidMobileNumber(String mobileNumber) {
+        if (mobileNumber.length() < 10) {
+//            CitrusLogging.logDebug("Invalid ***");
+            return -1;
+        }
+
+        mobileNumber = mobileNumber.replaceAll("-", "");
+        mobileNumber = mobileNumber.replaceAll("\\(", "");
+        mobileNumber = mobileNumber.replaceAll("\\)", "");
+        mobileNumber = mobileNumber.replaceAll("\\s+", "");
+        String startOne = "^0091.*"; //Welcome(.*)
+        String startTwo = "^\\+91.*";
+        String startThree = "^91.*";
+        String startFour = "^0.*";
+        String startFive = "^[7-9][0-9]{9}$";
+        //"^(?:0091|\\+91||91|0)[7-9][0-9-]{9}$";
+
+        if (mobileNumber.matches(startFive) && mobileNumber.length() == 10) {
+            return Long.parseLong(mobileNumber);
+        } else if (mobileNumber.matches(startOne)) {
+            mobileNumber = mobileNumber.substring(4);
+        } else if (mobileNumber.matches(startTwo)) {
+            mobileNumber = mobileNumber.substring(3);
+        } else if (mobileNumber.matches(startThree)) {
+            mobileNumber = mobileNumber.substring(2);
+        } else if (mobileNumber.matches(startFour)) {
+            mobileNumber = mobileNumber.substring(1);
+        }
+        if (mobileNumber.length() < 10) {
+//            CitrusLogging.logDebug("Invalid ***");
+            return -1;
+        }
+        if (mobileNumber.matches(startFive)) {
+//            CitrusLogging.logDebug("Trimmed NUMBER **** " + mobileNumber);
+            return Long.parseLong(mobileNumber);
+        } else {
+//            CitrusLogging.logDebug("Invalid ***");
+           return -1;
+        }
+
+    }
 }

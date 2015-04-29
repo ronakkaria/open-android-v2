@@ -16,6 +16,7 @@ package com.citrus.sdk.payment;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.citrus.sdk.CitrusUser;
 import com.citrus.sdk.classes.Amount;
 
 /**
@@ -32,15 +33,9 @@ public abstract class PaymentType implements Parcelable {
     /**
      *
      * @param amount
-     * @throws IllegalArgumentException if the amount is null.
+     * @param url
      */
-    public PaymentType(Amount amount, String url) throws IllegalArgumentException {
-        if (amount == null) {
-            throw new IllegalArgumentException("Amount should be not null.");
-        } else if (url == null) {
-            throw new IllegalArgumentException("Url should be not null.");
-        }
-
+    public PaymentType(Amount amount, String url)  {
         this.amount = amount;
         this.url = url;
     }
@@ -66,6 +61,12 @@ public abstract class PaymentType implements Parcelable {
          */
         public LoadMoney(Amount amount, String returnUrl) throws IllegalArgumentException {
             super(amount, returnUrl);
+
+            if (amount == null) {
+                throw new IllegalArgumentException("Amount should be not null.");
+            } else if (url == null) {
+                throw new IllegalArgumentException("returnUrl should be not null.");
+            }
         }
 
 
@@ -101,8 +102,20 @@ public abstract class PaymentType implements Parcelable {
         public CitrusCash() {
         }
 
+        /**
+         *
+         * @param amount - amount to be Payed
+         * @param billUrl - Url of the billGenerator
+         * @throws IllegalArgumentException - If amount or billUrl is null.
+         */
         public CitrusCash(Amount amount, String billUrl) throws IllegalArgumentException {
             super(amount, billUrl);
+
+            if (amount == null) {
+                throw new IllegalArgumentException("Amount should be not null.");
+            } else if (url == null) {
+                throw new IllegalArgumentException("billUrl should be not null.");
+            }
         }
 
 
@@ -138,8 +151,20 @@ public abstract class PaymentType implements Parcelable {
         public PGPayment() {
         }
 
+        /**
+         *
+         * @param amount - Amount to be payed
+         * @param billUrl - url of the billGenerator
+         * @throws IllegalArgumentException - if amount or billUrl is null.
+         */
         public PGPayment(Amount amount, String billUrl) throws IllegalArgumentException {
             super(amount, billUrl);
+
+            if (amount == null) {
+                throw new IllegalArgumentException("Amount should be not null.");
+            } else if (url == null) {
+                throw new IllegalArgumentException("Url should be not null.");
+            }
         }
 
 
@@ -166,6 +191,63 @@ public abstract class PaymentType implements Parcelable {
 
             public PGPayment[] newArray(int size) {
                 return new PGPayment[size];
+            }
+        };
+    }
+
+    public static class SendMoney extends PaymentType implements Parcelable {
+
+        private CitrusUser user = null;
+
+        public SendMoney() {
+        }
+
+        /**
+         *
+         * @param amount - Amount to be sent
+         * @param user - User details
+         * @throws IllegalArgumentException - If amount or user is null.
+         */
+        public SendMoney(Amount amount, CitrusUser user) throws IllegalArgumentException {
+            super(amount, null);
+            this.user = user;
+
+            if (amount == null) {
+                throw new IllegalArgumentException("Amount should be not null.");
+            } else if (user == null) {
+                throw new IllegalArgumentException("Url should be not null.");
+            }
+        }
+
+        public CitrusUser getUser() {
+            return user;
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeParcelable(this.user, 0);
+            dest.writeParcelable(this.amount, 0);
+            dest.writeString(this.url);
+        }
+
+        private SendMoney(Parcel in) {
+            this.user = in.readParcelable(CitrusUser.class.getClassLoader());
+            this.amount = in.readParcelable(Amount.class.getClassLoader());
+            this.url = in.readString();
+        }
+
+        public static final Creator<SendMoney> CREATOR = new Creator<SendMoney>() {
+            public SendMoney createFromParcel(Parcel source) {
+                return new SendMoney(source);
+            }
+
+            public SendMoney[] newArray(int size) {
+                return new SendMoney[size];
             }
         };
     }

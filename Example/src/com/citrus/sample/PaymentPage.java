@@ -44,7 +44,7 @@ import com.citrus.sdk.payment.PaymentOption;
 import com.citrus.sdk.payment.PaymentType;
 
 public class PaymentPage extends Activity {
-    public static final String BILL_URL = "https://salty-plateau-1529.herokuapp.com/billGenerator.sandbox.php?amount=2.3";
+    public static final String BILL_URL = "https://salty-plateau-1529.herokuapp.com/billGenerator.sandbox.php?";
 
     Button cardpayment, tokenpayment, bankpay, walletpay, signin, getbalance;
 
@@ -61,26 +61,26 @@ public class PaymentPage extends Activity {
         tokenpayment = (Button) this.findViewById(R.id.tokenpayment);
 
         bankpay = (Button) this.findViewById(R.id.bankpay);
-        
+
         walletpay = (Button) this.findViewById(R.id.walletpay);
-        
+
         signin = (Button) this.findViewById(R.id.signin);
-        
+
         getbalance = (Button) this.findViewById(R.id.getbalance);
-        
+
         customer = new JSONObject();
 
         cardpayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Amount amount =new Amount(2.5);
-                PaymentType paymentType =new PaymentType.PGPayment(amount, BILL_URL);
+                Amount amount = new Amount(2.5);
+                PaymentType paymentType = new PaymentType.PGPayment(amount, BILL_URL + "amount=" + amount.getValue());
                 DebitCardOption debitCardOption = new DebitCardOption("My Debit Card", "4111111111111111", "123", Month.APR, Year._2016);
 
                 PaymentParams paymentParams = PaymentParams.builder(amount, paymentType, debitCardOption)
-                                                            .environment(PaymentParams.Environment.SANDBOX)
-                                                            .build();
+                        .environment(PaymentParams.Environment.SANDBOX)
+                        .build();
                 startCitrusActivity(paymentParams);
             }
         });
@@ -89,7 +89,7 @@ public class PaymentPage extends Activity {
             @Override
             public void onClick(View v) {
                 Amount amount = new Amount(2.5);
-                PaymentType paymentType = new PaymentType.PGPayment(amount, BILL_URL);
+                PaymentType paymentType = new PaymentType.PGPayment(amount, BILL_URL + "amount=" + amount.getValue());
                 CreditCardOption creditCardOption = new CreditCardOption("f1b2508e360c345285d7917d4f4eb112", "123");
 
                 PaymentParams paymentParams = PaymentParams.builder(amount, paymentType, creditCardOption)
@@ -103,7 +103,7 @@ public class PaymentPage extends Activity {
             @Override
             public void onClick(View v) {
                 Amount amount = new Amount(2.5);
-                PaymentType paymentType = new PaymentType.PGPayment(amount, BILL_URL);
+                PaymentType paymentType = new PaymentType.PGPayment(amount, BILL_URL + "amount=" + amount.getValue());
                 NetbankingOption netbankingOption = new NetbankingOption("ICICI Bank", "CID001");
 
                 PaymentParams paymentParams = PaymentParams.builder(amount, paymentType, netbankingOption)

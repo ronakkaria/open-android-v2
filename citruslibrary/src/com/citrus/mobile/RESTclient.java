@@ -41,7 +41,11 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.text.TextUtils;
 import android.util.Log;
+
+import com.citrus.sdk.CitrusUser;
+import com.citrus.sdk.classes.Amount;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -52,7 +56,7 @@ public class RESTclient {
     private JSONObject params, headers;
 
     private String type, base_url;
-    
+
     private HttpClient httpClient;
 
     private HttpResponse response;
@@ -82,6 +86,8 @@ public class RESTclient {
             urls.put("prepaidbill", "service/v2/prepayment/load");
             urls.put("paymentoptions", "service/v1/merchant/pgsetting");
             urls.put("cashout", "service/v2/prepayment/cashout");
+            urls.put("transfer", "service/v2/prepayment/transfer");
+            urls.put("suspensetransfer", "service/v2/prepayment/transfer/extended");
         } catch (JSONException e) {
             return;
         }
@@ -169,10 +175,96 @@ public class RESTclient {
         return txnDetails;
     }
 
+    public JSONObject makeSendMoneyRequest(String accessToken, CitrusUser toUser, Amount amount, String message) {
+        HttpsURLConnection conn;
+        DataOutputStream wr = null;
+        JSONObject txnDetails = null;
+        BufferedReader in = null;
+
+        try {
+            String url = null;
+
+            StringBuffer postDataBuff = new StringBuffer("amount=");
+            postDataBuff.append(amount.getValue());
+
+            postDataBuff.append("&currency=");
+            postDataBuff.append(amount.getCurrency());
+
+            postDataBuff.append("&message=");
+            postDataBuff.append(message);
+
+            if (!TextUtils.isEmpty(toUser.getEmailId())) {
+                url = urls.getString(base_url) + urls.getString("transfer");
+                postDataBuff.append("&to=");
+                postDataBuff.append(toUser.getEmailId());
+
+            } else if (!TextUtils.isEmpty(toUser.getMobileNo())) {
+                url = urls.getString(base_url) + urls.getString("suspensetransfer");
+
+                postDataBuff.append("&to=");
+                postDataBuff.append(toUser.getMobileNo());
+
+            }
+
+            conn = (HttpsURLConnection) new URL(url).openConnection();
+
+            //add reuqest header
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Authorization", "Bearer " + accessToken);
+
+            conn.setDoOutput(true);
+            wr = new DataOutputStream(conn.getOutputStream());
+
+            wr.writeBytes(postDataBuff.toString());
+            wr.flush();
+
+            int responseCode = conn.getResponseCode();
+            System.out.println("\nSending 'POST' request to URL : " + url);
+            System.out.println("Post parameters : " + postDataBuff.toString());
+            System.out.println("Response Code : " + responseCode);
+
+            in = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+
+            txnDetails = new JSONObject(response.toString());
+
+        }catch (JSONException exception) {
+            exception.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            try {
+                if (wr != null) {
+                    wr.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return txnDetails;
+    }
+
      public JSONObject makePostrequest() throws IOException {
     	 HttpParams redirectparams = new BasicHttpParams();
     	 redirectparams.setParameter("http.protocol.handle-redirects",false);
-    	 
+
          httpClient = new DefaultHttpClient();
          HttpPost httpPost = null;
          try {
@@ -214,7 +306,7 @@ public class RESTclient {
          }
          return parseResponse(response);
      }
-    
+
     public JSONObject makePutrequest() {
     	HttpClient client = new DefaultHttpClient();
 
@@ -235,7 +327,7 @@ public class RESTclient {
             	e.printStackTrace();
             }
         }
-        
+
         List<NameValuePair> putdata = new ArrayList<NameValuePair>(2);
         Iterator<String> iter = params.keys();
         while (iter.hasNext()) {
@@ -247,7 +339,7 @@ public class RESTclient {
                 Log.d("exception", e.toString());
             }
         }
-        
+
         try {
             put.setEntity(new UrlEncodedFormEntity(putdata));
         } catch (UnsupportedEncodingException e) {
@@ -360,11 +452,11 @@ public class RESTclient {
 
     private JSONObject parseResponse(HttpResponse response) {
         try {
-        	
+
         	if (response == null) {
         		return formError(600, "Null response - is your internet connection functional?");
         	}
-        	
+
             switch (response.getStatusLine().getStatusCode()) {
                 case HttpStatus.SC_OK:
                     return new JSONObject(EntityUtils.toString(response.getEntity()));
@@ -396,7 +488,7 @@ public class RESTclient {
         }
 
     }
-    
+
     private JSONObject getCookies(HttpResponse response) {
     	Header[] headers = response.getAllHeaders();
     	JSONObject cookies = new JSONObject();
@@ -408,10 +500,10 @@ public class RESTclient {
 				e.printStackTrace();
 				return null;
 			}
-    	} 
+    	}
     	return cookies;
     }
-    
+
     private JSONObject formError(int status, String message) {
         JSONObject error = new JSONObject();
         try {

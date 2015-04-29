@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.citrus.asynch.CashOutAsynch;
 import com.citrus.asynch.ForgotPass;
 import com.citrus.asynch.LinkUser;
+import com.citrus.asynch.SendMoneyAsync;
 import com.citrus.asynch.SetPassword;
 import com.citrus.asynch.SignIn;
 import com.citrus.asynch.WalletStatus;
@@ -33,13 +34,16 @@ import com.citrus.sample.DebugLogConfig;
 import com.citrus.sample.GetBill;
 import com.citrus.sample.R;
 import com.citrus.sample.WebPage;
+import com.citrus.sdk.CitrusUser;
+import com.citrus.sdk.classes.Amount;
+import com.citrus.sdk.response.CitrusResponse;
 
 public class PrepaidWallet extends Activity {
 	
 	private static final String bill_url = "https://salty-plateau-1529.herokuapp.com/billGenerator.sandbox.php?amount=3.0";
 	
 	Button isSignedin, linkuser, setpass, forgot, signin, getbalance
-	,card_load, token_load, bank_load, token_bank_Load, citrus_cashpay, get_prepaidToken, withdrawMoney;
+	,card_load, token_load, bank_load, token_bank_Load, citrus_cashpay, get_prepaidToken, withdrawMoney, sendMoneyByEmail, sendMoneyByMobile;
 
 	Callback callback;
 	
@@ -74,6 +78,10 @@ public class PrepaidWallet extends Activity {
 		
 		citrus_cashpay = (Button) this.findViewById(R.id.citruscash);
 		withdrawMoney = (Button) this.findViewById(R.id.withdraw_money);
+		sendMoneyByEmail = (Button) this.findViewById(R.id.send_money_by_email);
+		sendMoneyByMobile = (Button) this.findViewById(R.id.send_money_by_mobile);
+
+		customer = new JSONObject();
 		
 		callback = new Callback() {
 			
@@ -108,7 +116,7 @@ public class PrepaidWallet extends Activity {
 				.execute(new String[]{"testeremail@mailinator.com", "9769507476"});
 			}
 		});
-		
+
 		setpass.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -152,7 +160,7 @@ public class PrepaidWallet extends Activity {
 				
 				Card card = new Card("4111111111111111", "04", "21", "778", "Bruce Banner", "debit");
 				
-				LoadMoney load = new LoadMoney("10", "http://yourwebsite.com/return_url.php");
+				LoadMoney load = new LoadMoney("10", "https://salty-plateau-1529.herokuapp.com/redirectURL.sandbox.php");
 				
 				UserDetails userDetails = new UserDetails(customer);
 				
@@ -173,9 +181,9 @@ public class PrepaidWallet extends Activity {
 			@Override
 			public void onClick(View v) {
 				
-				Card card = new Card("f1b2508e360c345285d7917d4f4eb112", "778");
+				Card card = new Card("c210ecd40f9837e7895068a69f1129d4", "808");
 				
-				LoadMoney load = new LoadMoney("100", "http://yourwebsite.com/return_url.php");
+				LoadMoney load = new LoadMoney("100", "https://salty-plateau-1529.herokuapp.com/redirectURL.sandbox.php");
 				
 				UserDetails userDetails = new UserDetails(customer);
 				
@@ -198,7 +206,7 @@ public class PrepaidWallet extends Activity {
 				
 				Bank netbank = new Bank("CID002");
 				
-				LoadMoney load = new LoadMoney("100", "http://yourwebsite.com/return_url.php");
+				LoadMoney load = new LoadMoney("100", "https://salty-plateau-1529.herokuapp.com/redirectURL.sandbox.php");
 				
 				UserDetails userDetails = new UserDetails(customer);
 				
@@ -264,6 +272,27 @@ public class PrepaidWallet extends Activity {
 
 			}
 		});
+
+		sendMoneyByEmail.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Amount amount = new Amount(37);
+				CitrusUser user = new CitrusUser("salil.godbole@citruspay.com", "");
+
+				new SendMoneyAsync(PrepaidWallet.this, amount, user, "My contribution", callback).execute();
+
+			}
+		});
+
+		sendMoneyByMobile.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Amount amount = new Amount(30);
+				CitrusUser user = new CitrusUser("", "9970950374");
+
+				new SendMoneyAsync(PrepaidWallet.this, amount, user, "My contribution", callback).execute();
+			}
+		});
 		
 	}
 	
@@ -305,11 +334,10 @@ public class PrepaidWallet extends Activity {
 
         Config.setSigninId("gogo-pre-wallet");
         Config.setSigninSecret("e6f1b840c652d2ffc46530faaac8b771");
-        
+
 	}
 	
 	private void initcustdetails() {
-		customer = new JSONObject();
 		/*All the below mentioned parameters are mandatory - missing anyone of them may create errors
 	     * Do not change the key in the json below - only change the values*/
 
