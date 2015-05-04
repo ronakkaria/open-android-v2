@@ -7,19 +7,19 @@ import android.os.Parcelable;
  * Created by salil on 24/4/15.
  */
 public class Amount implements Parcelable {
-    private double value;
+    private String value;
     private String currency;
 
     /**
      *
      * @param value
      */
-    public Amount(double value) {
+    public Amount(String value) {
         this.value = value;
         this.currency = "INR";
     }
 
-    public double getValue() {
+    public String getValue() {
         return value;
     }
 
@@ -34,12 +34,12 @@ public class Amount implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeDouble(this.value);
+        dest.writeString(this.value);
         dest.writeString(this.currency);
     }
 
     private Amount(Parcel in) {
-        this.value = in.readDouble();
+        this.value = in.readString();
         this.currency = in.readString();
     }
 

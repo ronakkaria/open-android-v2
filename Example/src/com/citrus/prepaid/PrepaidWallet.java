@@ -1,8 +1,5 @@
 package com.citrus.prepaid;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,13 +27,14 @@ import com.citrus.netbank.BankPaymentType;
 import com.citrus.payment.Bill;
 import com.citrus.payment.PG;
 import com.citrus.payment.UserDetails;
-import com.citrus.sample.DebugLogConfig;
 import com.citrus.sample.GetBill;
 import com.citrus.sample.R;
 import com.citrus.sample.WebPage;
 import com.citrus.sdk.CitrusUser;
 import com.citrus.sdk.classes.Amount;
-import com.citrus.sdk.response.CitrusResponse;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class PrepaidWallet extends Activity {
 	
@@ -276,7 +274,7 @@ public class PrepaidWallet extends Activity {
 		sendMoneyByEmail.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Amount amount = new Amount(37);
+				Amount amount = new Amount("37");
 				CitrusUser user = new CitrusUser("salil.godbole@citruspay.com", "");
 
 				new SendMoneyAsync(PrepaidWallet.this, amount, user, "My contribution", callback).execute();
@@ -287,7 +285,7 @@ public class PrepaidWallet extends Activity {
 		sendMoneyByMobile.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Amount amount = new Amount(30);
+				Amount amount = new Amount("30");
 				CitrusUser user = new CitrusUser("", "9970950374");
 
 				new SendMoneyAsync(PrepaidWallet.this, amount, user, "My contribution", callback).execute();

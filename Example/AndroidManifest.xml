@@ -31,7 +31,7 @@
             </intent-filter>
 
         </activity>
-        <activity
+<!--        <activity
             android:name="com.citrus.sample.MainActivity"
             android:label="@string/title_activity_main" >
 
@@ -41,7 +41,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-        </activity>
+        </activity>-->
         <activity
             android:name=".Widgets"
             android:label="@string/title_activity_widgets" >
