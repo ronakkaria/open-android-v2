@@ -112,10 +112,18 @@
               android:text="Pay Using Citrus Cash" />
 
           <Button
-              android:id="@+id/withdraw_money"
+              android:id="@+id/citruscashWebView"
               android:layout_width="match_parent"
               android:layout_height="50dp"
               android:layout_below="@id/citruscash"
+              android:layout_margin="10dp"
+              android:text="Pay Using Citrus Cash Method 2" />
+
+          <Button
+              android:id="@+id/withdraw_money"
+              android:layout_width="match_parent"
+              android:layout_height="50dp"
+              android:layout_below="@id/citruscashWebView"
               android:layout_margin="10dp"
               android:text="Withdraw Rs. 10" />
 
