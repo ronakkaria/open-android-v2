@@ -72,10 +72,18 @@
               android:text="Load Using Card" />
 
           <Button
+              android:id="@+id/cardloadWebView"
+              android:layout_width="match_parent"
+              android:layout_height="50dp"
+              android:layout_below="@+id/cardload"
+              android:layout_margin="10dp"
+              android:text="Load Using Card Method 2" />
+
+          <Button
               android:id="@+id/tokenload"
               android:layout_width="match_parent"
               android:layout_height="50dp"
-              android:layout_below="@id/cardload"
+              android:layout_below="@id/cardloadWebView"
               android:layout_margin="10dp"
               android:text="Load Using Card Token" />
 

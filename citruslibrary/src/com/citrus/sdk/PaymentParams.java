@@ -19,14 +19,9 @@ import android.text.TextUtils;
 
 import com.citrus.mobile.Config;
 import com.citrus.sdk.classes.Amount;
-import com.citrus.sdk.payment.CardOption;
 import com.citrus.sdk.payment.NetbankingOption;
 import com.citrus.sdk.payment.PaymentOption;
 import com.citrus.sdk.payment.PaymentType;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -156,8 +151,11 @@ public final class PaymentParams implements Parcelable {
 //        return new PaymentParams(transactionAmount, billUrl, jsonKeyStore);
 //    }
 
+
     private PaymentParams(Amount amount, PaymentType paymentType, PaymentOption paymentOption) {
-        if (amount != null && paymentType != null && paymentOption != null) {
+        if (amount != null && paymentType != null
+                && ((paymentType instanceof PaymentType.CitrusCash && paymentOption == null)
+                || ((paymentOption != null && (paymentType instanceof PaymentType.PGPayment ||  paymentType instanceof PaymentType.LoadMoney))))) {
             this.transactionAmount = amount;
             this.paymentType = paymentType;
             this.paymentOption = paymentOption;
@@ -166,6 +164,7 @@ public final class PaymentParams implements Parcelable {
             throw new IllegalArgumentException("Please make sure to pass amount, paymentType and selected paymentOption");
         }
     }
+
 
     private PaymentParams(Parcel in) {
         this.netbankingOptionList = (ArrayList<NetbankingOption>) in.readSerializable();

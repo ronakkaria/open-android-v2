@@ -14,7 +14,6 @@
 package com.citrus.sdk;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -23,15 +22,15 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -107,7 +106,7 @@ public class CitrusActivity extends ActionBarActivity {
         } else { //load cash does not requires Bill Generator
             Amount amount = mPaymentType.getAmount();
 
-            LoadMoney loadMoney = new LoadMoney(amount.getValue() + "", mPaymentType.getUrl());
+            LoadMoney loadMoney = new LoadMoney(amount.getValue(), mPaymentType.getUrl());
             PG paymentgateway = new PG(mPaymentOption, loadMoney, new UserDetails(CitrusUser.toJSONObject(mPaymentParams.getUser())));
 
             paymentgateway.load(CitrusActivity.this, new Callback() {
@@ -300,6 +299,14 @@ public class CitrusActivity extends ActionBarActivity {
         }
 
 
+        @Override
+        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+            super.onReceivedSslError(view, handler, error);
+            handler.proceed();
+        }
+
+
+
     }
 
     /**
@@ -324,7 +331,7 @@ public class CitrusActivity extends ActionBarActivity {
         @JavascriptInterface
         public void loadWalletResponse(String response) {
 
-            if (response.contains(":")) {
+          /*  if (response.contains(":")) {
                 String decodeResp[] = response.split(":");
                 if (decodeResp.length > 0) {
                     if (TextUtils.equals(decodeResp[0], "SUCCESSFUL")) {
@@ -334,7 +341,7 @@ public class CitrusActivity extends ActionBarActivity {
                         Toast.makeText(getApplicationContext(), "Wallet Load Failed.", Toast.LENGTH_LONG).show();
                     }
                 }
-            }
+            }*/
 
             TransactionResponse transactionResponse = TransactionResponse.parseLoadMoneyResponse(response);
             sendResult(transactionResponse);

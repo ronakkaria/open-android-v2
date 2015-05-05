@@ -22,6 +22,8 @@ import com.citrus.cash.Prepaid;
 import com.citrus.cash.PrepaidPg;
 import com.citrus.mobile.Callback;
 import com.citrus.mobile.Config;
+import com.citrus.mobile.Month;
+import com.citrus.mobile.Year;
 import com.citrus.netbank.Bank;
 import com.citrus.netbank.BankPaymentType;
 import com.citrus.payment.Bill;
@@ -30,8 +32,14 @@ import com.citrus.payment.UserDetails;
 import com.citrus.sample.GetBill;
 import com.citrus.sample.R;
 import com.citrus.sample.WebPage;
+import com.citrus.sdk.CitrusActivity;
 import com.citrus.sdk.CitrusUser;
+import com.citrus.sdk.Constants;
+import com.citrus.sdk.PaymentParams;
+import com.citrus.sdk.TransactionResponse;
 import com.citrus.sdk.classes.Amount;
+import com.citrus.sdk.payment.DebitCardOption;
+import com.citrus.sdk.payment.PaymentType;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,7 +49,7 @@ public class PrepaidWallet extends Activity {
 	private static final String bill_url = "https://salty-plateau-1529.herokuapp.com/billGenerator.sandbox.php?amount=3.0";
 	
 	Button isSignedin, linkuser, setpass, forgot, signin, getbalance
-	,card_load, token_load, bank_load, token_bank_Load, citrus_cashpay, get_prepaidToken, withdrawMoney, sendMoneyByEmail, sendMoneyByMobile;
+	,card_load, card_loadWebView, token_load, bank_load, token_bank_Load, citrus_cashpay, get_prepaidToken, withdrawMoney, sendMoneyByEmail, sendMoneyByMobile;
 
 	Callback callback;
 	
@@ -67,6 +75,8 @@ public class PrepaidWallet extends Activity {
 		getbalance = (Button) this.findViewById(R.id.getbalance);
 				
 		card_load = (Button) this.findViewById(R.id.cardload);
+
+		card_loadWebView = (Button) this.findViewById(R.id.cardloadWebView);
 		
 		token_load = (Button) this.findViewById(R.id.tokenload);
 		
@@ -171,6 +181,24 @@ public class PrepaidWallet extends Activity {
 					}
 				});
 						
+			}
+		});
+
+		card_loadWebView.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				CitrusUser citrusUser = new CitrusUser("mangesh.kadam@citruspay.com", "8692862420");
+
+				Amount amount =new Amount("500");
+				PaymentType paymentType =new PaymentType.LoadMoney(amount,"https://salty-plateau-1529.herokuapp.com/redirectUrlLoadCash.php");
+				DebitCardOption debitCardOption = new DebitCardOption("My Debit Card", "4111111111111111", "123", Month.APR, Year._2016);
+				PaymentParams paymentParams = PaymentParams.builder(amount, paymentType, debitCardOption)
+						.environment(PaymentParams.Environment.SANDBOX)
+						.user(citrusUser)
+						.build();
+
+				startCitrusActivity(paymentParams);
+
 			}
 		});
 		
@@ -366,11 +394,11 @@ public class PrepaidWallet extends Activity {
         PG paymentgateway = new PG(prepaid, bill, userDetails);
 
         paymentgateway.charge(new Callback() {
-            @Override
-            public void onTaskexecuted(String success, String error) {
-                prepaidPayment(success, error);
-            }
-        });
+			@Override
+			public void onTaskexecuted(String success, String error) {
+				prepaidPayment(success, error);
+			}
+		});
     }
 
 
@@ -400,4 +428,22 @@ public class PrepaidWallet extends Activity {
 	    if (!TextUtils.isEmpty(error))
 	        Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
 	}
+
+
+	private void startCitrusActivity(PaymentParams paymentParams) {
+		Intent intent = new Intent(PrepaidWallet.this, CitrusActivity.class);
+		intent.putExtra(Constants.INTENT_EXTRA_PAYMENT_PARAMS, paymentParams);
+		startActivityForResult(intent, Constants.RESULT_CODE_PAYMENT);
+	}
+
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		TransactionResponse transactionResponse = data.getParcelableExtra(Constants.INTENT_EXTRA_TRANSACTION_RESPONSE);
+		if (transactionResponse != null) {
+			Toast.makeText(getApplicationContext(), transactionResponse.getMessage(), Toast.LENGTH_LONG).show();
+		}
+	}
+
 }
