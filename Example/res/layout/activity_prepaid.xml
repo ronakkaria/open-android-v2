@@ -133,7 +133,7 @@
               android:layout_height="50dp"
               android:layout_below="@id/withdraw_money"
               android:layout_margin="10dp"
-              android:text="Send Rs. 37" />
+              android:text="Send Rs. 37 By Email" />
 
           <Button
               android:id="@+id/send_money_by_mobile"
@@ -141,7 +141,7 @@
               android:layout_height="50dp"
               android:layout_below="@id/send_money_by_email"
               android:layout_margin="10dp"
-              android:text="Send Rs. 30" />
+              android:text="Send Rs. 30 By Mobile" />
       </RelativeLayout>
 
 </ScrollView>

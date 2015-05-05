@@ -3,6 +3,7 @@ package com.citrus.asynch;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 
 import com.citrus.mobile.Callback;
 import com.citrus.mobile.Config;
@@ -39,21 +40,27 @@ public class SendMoneyAsync extends AsyncTask<Void, Void, JSONObject>{
         String accessToken = null;
 
         try {
-            accessToken = token.getuserToken().getString("access_token");
+            if (token != null && token.getuserToken() != null) {
+                accessToken = token.getuserToken().getString("access_token");
+            } else {
+                error = "Please login the user.";
+                return null;
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         long validMobileNumber = -1;
-        validMobileNumber = com.citrus.card.TextUtils.isVaidMobileNumber(toUser.getMobileNo());
+        if (!TextUtils.isEmpty(toUser.getMobileNo())) {
+            validMobileNumber = com.citrus.card.TextUtils.isValidMobileNumber(toUser.getMobileNo());
 
-      /*  if (validMobileNumber != -1) {
-            toUser.setMobileNo(validMobileNumber + "");
-        } else {
-            Toast.makeText(mContext, "Please enter correct Mobile No.", Toast.LENGTH_SHORT).show();
-            error = "Please enter correct Mobile No.";
-            return null;
-        }*/
+            if (validMobileNumber != -1) {
+                toUser.setMobileNo(validMobileNumber + "");
+            } else {
+                error = "Please enter correct Mobile No.";
+                return null;
+            }
+        }
 
         RESTclient resTclient = new RESTclient(null, Config.getEnv(), null, null);
         txnDetails = resTclient.makeSendMoneyRequest(accessToken, toUser, mAmount, message);
