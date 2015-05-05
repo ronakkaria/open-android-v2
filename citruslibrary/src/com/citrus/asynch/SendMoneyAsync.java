@@ -3,6 +3,7 @@ package com.citrus.asynch;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 
 import com.citrus.mobile.Callback;
 import com.citrus.mobile.Config;
@@ -50,13 +51,15 @@ public class SendMoneyAsync extends AsyncTask<Void, Void, JSONObject>{
         }
 
         long validMobileNumber = -1;
-        validMobileNumber = com.citrus.card.TextUtils.isVaidMobileNumber(toUser.getMobileNo());
+        if (!TextUtils.isEmpty(toUser.getMobileNo())) {
+            validMobileNumber = com.citrus.card.TextUtils.isValidMobileNumber(toUser.getMobileNo());
 
-        if (validMobileNumber != -1) {
-            toUser.setMobileNo(validMobileNumber + "");
-        } else {
-            error = "Please enter correct Mobile No.";
-            return null;
+            if (validMobileNumber != -1) {
+                toUser.setMobileNo(validMobileNumber + "");
+            } else {
+                error = "Please enter correct Mobile No.";
+                return null;
+            }
         }
 
         RESTclient resTclient = new RESTclient(null, Config.getEnv(), null, null);

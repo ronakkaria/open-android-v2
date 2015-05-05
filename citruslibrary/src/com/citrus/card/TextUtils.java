@@ -49,7 +49,7 @@ public class TextUtils {
         return value == null || value.trim().length() == 0;
     }
 
-    public static long isVaidMobileNumber(String mobileNumber) {
+    public static long isValidMobileNumber(String mobileNumber) {
         if (mobileNumber.length() < 10) {
 //            CitrusLogging.logDebug("Invalid ***");
             return -1;
