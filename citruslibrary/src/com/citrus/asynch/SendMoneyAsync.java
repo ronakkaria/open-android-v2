@@ -39,7 +39,12 @@ public class SendMoneyAsync extends AsyncTask<Void, Void, JSONObject>{
         String accessToken = null;
 
         try {
-            accessToken = token.getuserToken().getString("access_token");
+            if (token != null && token.getuserToken() != null) {
+                accessToken = token.getuserToken().getString("access_token");
+            } else {
+                error = "Please login the user.";
+                return null;
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -47,13 +52,12 @@ public class SendMoneyAsync extends AsyncTask<Void, Void, JSONObject>{
         long validMobileNumber = -1;
         validMobileNumber = com.citrus.card.TextUtils.isVaidMobileNumber(toUser.getMobileNo());
 
-      /*  if (validMobileNumber != -1) {
+        if (validMobileNumber != -1) {
             toUser.setMobileNo(validMobileNumber + "");
         } else {
-            Toast.makeText(mContext, "Please enter correct Mobile No.", Toast.LENGTH_SHORT).show();
             error = "Please enter correct Mobile No.";
             return null;
-        }*/
+        }
 
         RESTclient resTclient = new RESTclient(null, Config.getEnv(), null, null);
         txnDetails = resTclient.makeSendMoneyRequest(accessToken, toUser, mAmount, message);
