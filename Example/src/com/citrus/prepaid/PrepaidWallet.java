@@ -20,7 +20,6 @@ import com.citrus.card.Card;
 import com.citrus.cash.LoadMoney;
 import com.citrus.cash.Prepaid;
 import com.citrus.cash.PrepaidPg;
-import com.citrus.debug.DebugLogConfig;
 import com.citrus.mobile.Callback;
 import com.citrus.mobile.Config;
 import com.citrus.mobile.Month;
@@ -108,6 +107,7 @@ public class PrepaidWallet extends Activity {
 		initconfig();
 		
 		initcustdetails();
+
 	}
 	
 	private void init() {

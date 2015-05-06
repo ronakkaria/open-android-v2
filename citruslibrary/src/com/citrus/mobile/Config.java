@@ -83,4 +83,13 @@ public class Config {
         else
             return GA_PRODUCTION_ID;
     }
+
+    public static String getBaseURL() {
+        if ("sandbox".equalsIgnoreCase(env))
+            return "https://sandboxadmin.citruspay.com";
+        else if("staging".equalsIgnoreCase(env))
+            return "https://stg1admin.citruspay.com";
+        else
+            return "https://admin.citruspay.com";
+    }
 }
