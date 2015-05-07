@@ -343,7 +343,7 @@ public class CitrusActivity extends ActionBarActivity {
     private void sendResult(TransactionResponse transactionResponse) {
         Intent intent = new Intent();
         intent.putExtra(Constants.INTENT_EXTRA_TRANSACTION_RESPONSE, transactionResponse);
-        setResult(Constants.RESULT_CODE_PAYMENT, intent);
+        setResult(RESULT_OK, intent);
         finish();
     }
 
@@ -394,9 +394,6 @@ public class CitrusActivity extends ActionBarActivity {
             super.onReceivedSslError(view, handler, error);
             handler.proceed();
         }
-
-
-
     }
 
     /**

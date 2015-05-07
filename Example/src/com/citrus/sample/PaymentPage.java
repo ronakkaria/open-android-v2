@@ -107,7 +107,7 @@ public class PaymentPage extends Activity {
     private void startCitrusActivity(PaymentParams paymentParams) {
         Intent intent = new Intent(PaymentPage.this, CitrusActivity.class);
         intent.putExtra(Constants.INTENT_EXTRA_PAYMENT_PARAMS, paymentParams);
-        startActivityForResult(intent, Constants.RESULT_CODE_PAYMENT);
+        startActivityForResult(intent, Constants.REQUEST_CODE_PAYMENT);
     }
 
     @Override
