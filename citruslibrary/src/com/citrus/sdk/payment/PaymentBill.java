@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -99,7 +100,14 @@ public class PaymentBill implements Parcelable {
 
             JSONObject customParamsObject = billObject.optJSONObject("customParameters");
             if (customParamsObject != null) {
-//                customParamsObject.
+
+                Iterator<String> iter = customParamsObject.keys();
+                while (iter.hasNext()) {
+                    String key = iter.next();
+                    String value = customParamsObject.optString(key);
+
+                    customParametersMap.put(key, value);
+                }
             }
 
             if (amount != null && requestSignature != null && returnUrl != null
@@ -123,6 +131,7 @@ public class PaymentBill implements Parcelable {
             String requestSignature = paymentBill.getRequestSignature();
             String returnUrl = paymentBill.getReturnUrl();
             String notifyUrl = paymentBill.getNotifyUrl();
+            Map<String, String> customParametersMap = paymentBill.getCustomParametersMap();
 
             if (amount != null && requestSignature != null && merchantAccessKey != null
                     && merchantTransactionId != null && returnUrl != null) {
@@ -135,8 +144,16 @@ public class PaymentBill implements Parcelable {
                     billObject.put("requestSignature", requestSignature);
                     billObject.put("returnUrl", returnUrl);
                     billObject.put("notifyUrl", notifyUrl);
-//                    billObject.put("customParameters")
 
+                    // Putting customParameters
+                    if (customParametersMap != null && customParametersMap.size() > 0) {
+                        JSONObject customParamsObj = new JSONObject();
+                        for (Map.Entry<String, String> entry : customParametersMap.entrySet()) {
+                            customParamsObj.put(entry.getKey(), entry.getValue());
+                        }
+
+                        billObject.put("customParameters", customParamsObj);
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -160,7 +177,7 @@ public class PaymentBill implements Parcelable {
         dest.writeString(this.merchantAccessKey);
         dest.writeString(this.returnUrl);
         dest.writeString(this.notifyUrl);
-//        dest.writeMap(this.customParametersMap);
+        dest.writeMap(this.customParametersMap);
     }
 
     private PaymentBill(Parcel in) {
@@ -170,7 +187,7 @@ public class PaymentBill implements Parcelable {
         this.merchantAccessKey = in.readString();
         this.returnUrl = in.readString();
         this.notifyUrl = in.readString();
-//        this.customParametersMap = in.readMap(customParametersMap, String.class.getClassLoader());
+        this.customParametersMap = in.readHashMap(String.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<PaymentBill> CREATOR = new Parcelable.Creator<PaymentBill>() {
