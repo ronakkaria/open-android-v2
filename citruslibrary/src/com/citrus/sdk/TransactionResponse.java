@@ -299,14 +299,14 @@ public final class TransactionResponse implements Parcelable {
     }
 
     public static enum TransactionStatus {
-        SUCCESS, FAIL;
+        SUCCESSFUL, FAILED, CANCELLED;
 
         public static TransactionStatus getTransactionStatus(String transactionStatus) {
             TransactionStatus status = null;
             if (TextUtils.equals(transactionStatus, "SUCCESS")) {
-                status = SUCCESS;
+                status = SUCCESSFUL;
             } else if (TextUtils.equals(transactionStatus, "FAIL")) {
-                status = FAIL;
+                status = FAILED;
             }
 
             return status;
@@ -427,16 +427,23 @@ public final class TransactionResponse implements Parcelable {
     //http://192.168.27.1:8080/redirectURLLoadCash.jsp#SUCCESSFUL:1472849:1513.00:INR:1427444325000:100.00:INR
     public static TransactionResponse parseLoadMoneyResponse(String response) {
         TransactionResponse transactionResponse = null;
-        if (response.contains(":")) {
-            String decodeResp[] = response.split(":");
-            if (TextUtils.equals(decodeResp[0], "SUCCESSFUL")) {
-                transactionResponse = new TransactionResponse(TransactionStatus.SUCCESS, "Citrus Cash Wallet loaded successfully", decodeResp[1]);
-                transactionResponse.amount = decodeResp[5];
-                transactionResponse.currency =decodeResp[6];
+        if (response.contains("#")) {
+            String token[] = response.split("#");
+            if (token != null && token.length == 2) {
+                String decodeResp[] = token[1].split(":");
+                if (TextUtils.equals(decodeResp[0], "SUCCESSFUL")) {
+                    transactionResponse = new TransactionResponse(TransactionStatus.SUCCESSFUL, "Citrus Cash Wallet loaded successfully", decodeResp[1]);
+                    transactionResponse.amount = decodeResp[5];
+                    transactionResponse.currency = decodeResp[6];
 
-            }else {
-                transactionResponse = new TransactionResponse(TransactionStatus.FAIL,"Failed to load money into Citrus Cash", null);
+                } else {
+                    transactionResponse = new TransactionResponse(TransactionStatus.FAILED, "Failed to load money into Citrus Cash", null);
+                }
+            } else {
+                transactionResponse = new TransactionResponse(TransactionStatus.FAILED, "Failed to load money into Citrus Cash", null);
             }
+        } else {
+            transactionResponse = new TransactionResponse(TransactionStatus.FAILED, "Failed to load money into Citrus Cash", null);
         }
         return transactionResponse;
     }

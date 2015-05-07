@@ -167,7 +167,7 @@ public class CitrusActivity extends ActionBarActivity {
                 if (!android.text.TextUtils.isEmpty(error)) {
                     Toast.makeText(CitrusActivity.this, error, Toast.LENGTH_SHORT).show();
 
-                    TransactionResponse transactionResponse = new TransactionResponse(TransactionResponse.TransactionStatus.FAIL, error, mTransactionId);
+                    TransactionResponse transactionResponse = new TransactionResponse(TransactionResponse.TransactionStatus.FAILED, error, mTransactionId);
                     sendResult(transactionResponse);
                 } else {
                     proceedToPayment(bill);
@@ -229,7 +229,7 @@ public class CitrusActivity extends ActionBarActivity {
                 } else {
                     Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
 
-                    transactionResponse = new TransactionResponse(TransactionResponse.TransactionStatus.FAIL, response, mTransactionId);
+                    transactionResponse = new TransactionResponse(TransactionResponse.TransactionStatus.FAILED, response, mTransactionId);
                     sendResult(transactionResponse);
                 }
 
@@ -239,7 +239,7 @@ public class CitrusActivity extends ActionBarActivity {
         } else {
             Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
 
-            transactionResponse = new TransactionResponse(TransactionResponse.TransactionStatus.FAIL, error, mTransactionId);
+            transactionResponse = new TransactionResponse(TransactionResponse.TransactionStatus.FAILED, error, mTransactionId);
             sendResult(transactionResponse);
         }
 
@@ -258,7 +258,7 @@ public class CitrusActivity extends ActionBarActivity {
                 } else {
                     Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
 
-                    transactionResponse = new TransactionResponse(TransactionResponse.TransactionStatus.FAIL, response, mTransactionId);
+                    transactionResponse = new TransactionResponse(TransactionResponse.TransactionStatus.FAILED, response, mTransactionId);
                     sendResult(transactionResponse);
                 }
 
@@ -269,7 +269,7 @@ public class CitrusActivity extends ActionBarActivity {
         else{
             Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
 
-            transactionResponse = new TransactionResponse(TransactionResponse.TransactionStatus.FAIL, error, mTransactionId);
+            transactionResponse = new TransactionResponse(TransactionResponse.TransactionStatus.FAILED, error, mTransactionId);
             sendResult(transactionResponse);
         }
 
@@ -301,7 +301,7 @@ public class CitrusActivity extends ActionBarActivity {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.dismiss();
 
-                TransactionResponse transactionResponse = new TransactionResponse(TransactionResponse.TransactionStatus.FAIL, "Cancelled By User", mTransactionId);
+                TransactionResponse transactionResponse = new TransactionResponse(TransactionResponse.TransactionStatus.CANCELLED, "Cancelled By User", mTransactionId);
                 sendResult(transactionResponse);
             }
         });
