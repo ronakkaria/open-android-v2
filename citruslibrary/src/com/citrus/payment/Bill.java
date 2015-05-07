@@ -18,6 +18,7 @@ import org.json.JSONObject;
 
 public class Bill {
     private String txnId, signature, access_key, returnurl, notifyurl=null;
+    private JSONObject customParameters = null;
     private JSONObject amount;
 
     public Bill(String bill) {
@@ -36,6 +37,10 @@ public class Bill {
             
             if (jsonBill.has("notifyUrl")) {
             	this.notifyurl = jsonBill.getString("notifyUrl");
+            }
+
+            if (jsonBill.has("customParameters")) {
+                this.customParameters = jsonBill.getJSONObject("customParameters");
             }
             
         } catch (JSONException e) {
@@ -59,6 +64,10 @@ public class Bill {
             
             if (jsonBill.has("notifyUrl")) {
             	this.notifyurl = jsonBill.getString("notifyUrl");
+            }
+
+            if (jsonBill.has("customParameters")) {
+                this.customParameters = jsonBill.getJSONObject("customParameters");
             }
             
         } catch (JSONException e) {
@@ -88,5 +97,9 @@ public class Bill {
     
     public String getNotifyurl() {
     	return this.notifyurl;
+    }
+
+    public JSONObject getCustomParameters() {
+        return customParameters;
     }
 }

@@ -2,6 +2,7 @@ package com.citrus.sdk.payment;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import com.citrus.sdk.classes.Amount;
 
@@ -143,7 +144,10 @@ public class PaymentBill implements Parcelable {
                     billObject.put("merchantAccessKey", merchantAccessKey);
                     billObject.put("requestSignature", requestSignature);
                     billObject.put("returnUrl", returnUrl);
-                    billObject.put("notifyUrl", notifyUrl);
+
+                    if (!TextUtils.isEmpty(notifyUrl)) {
+                        billObject.put("notifyUrl", notifyUrl);
+                    }
 
                     // Putting customParameters
                     if (customParametersMap != null && customParametersMap.size() > 0) {

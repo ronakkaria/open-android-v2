@@ -182,11 +182,15 @@ public class CitrusActivity extends ActionBarActivity {
         if(mPaymentType instanceof PaymentType.CitrusCash) { //pay using citrus cash
 
             final CitrusUser citrusUser = mPaymentParams.getUser();
+
             UserDetails userDetails = new UserDetails(CitrusUser.toJSONObject(citrusUser));
             Prepaid prepaid = new Prepaid(userDetails.getEmail());
             Bill bill = new Bill(billJSON);
             mTransactionId = bill.getTxnId();
             PG paymentgateway = new PG(prepaid, bill, userDetails);
+            if (bill.getCustomParameters() != null) {
+                paymentgateway.setCustomParameters(bill.getCustomParameters());
+            }
             paymentgateway.charge(new Callback() {
                 @Override
                 public void onTaskexecuted(String success, String error) {
