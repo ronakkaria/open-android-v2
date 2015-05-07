@@ -26,8 +26,14 @@ public abstract class PaymentType implements Parcelable {
 
     protected Amount amount;
     protected String url;
+    protected PaymentBill paymentBill = null;
 
     public PaymentType() {
+    }
+
+    protected PaymentType(PaymentBill paymentBill) {
+        this.paymentBill = paymentBill;
+        this.amount = paymentBill.getAmount();
     }
 
     /**
@@ -46,6 +52,10 @@ public abstract class PaymentType implements Parcelable {
 
     public String getUrl() {
         return url;
+    }
+
+    public PaymentBill getPaymentBill() {
+        return paymentBill;
     }
 
     public static class LoadMoney extends PaymentType implements Parcelable {
@@ -77,13 +87,15 @@ public abstract class PaymentType implements Parcelable {
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
-            dest.writeParcelable(this.amount, flags);
+            dest.writeParcelable(this.amount, 0);
             dest.writeString(this.url);
+            dest.writeParcelable(this.paymentBill, 0);
         }
 
         private LoadMoney(Parcel in) {
             this.amount = in.readParcelable(Amount.class.getClassLoader());
             this.url = in.readString();
+            this.paymentBill = in.readParcelable(PaymentBill.class.getClassLoader());
         }
 
         public static final Creator<LoadMoney> CREATOR = new Creator<LoadMoney>() {
@@ -100,6 +112,10 @@ public abstract class PaymentType implements Parcelable {
     public static class CitrusCash extends PaymentType implements Parcelable {
 
         public CitrusCash() {
+        }
+
+        public CitrusCash(PaymentBill paymentBill) {
+            super(paymentBill);
         }
 
         /**
@@ -126,13 +142,15 @@ public abstract class PaymentType implements Parcelable {
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
-            dest.writeParcelable(this.amount, flags);
+            dest.writeParcelable(this.amount, 0);
             dest.writeString(this.url);
+            dest.writeParcelable(this.paymentBill, 0);
         }
 
         private CitrusCash(Parcel in) {
             this.amount = in.readParcelable(Amount.class.getClassLoader());
             this.url = in.readString();
+            this.paymentBill = in.readParcelable(PaymentBill.class.getClassLoader());
         }
 
         public static final Creator<CitrusCash> CREATOR = new Creator<CitrusCash>() {
@@ -149,6 +167,10 @@ public abstract class PaymentType implements Parcelable {
     public static class PGPayment extends PaymentType implements Parcelable {
 
         public PGPayment() {
+        }
+
+        public PGPayment(PaymentBill paymentBill) {
+            super(paymentBill);
         }
 
         /**
@@ -175,13 +197,15 @@ public abstract class PaymentType implements Parcelable {
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
-            dest.writeParcelable(this.amount, flags);
+            dest.writeParcelable(this.amount, 0);
             dest.writeString(this.url);
+            dest.writeParcelable(this.paymentBill, 0);
         }
 
         private PGPayment(Parcel in) {
             this.amount = in.readParcelable(Amount.class.getClassLoader());
             this.url = in.readString();
+            this.paymentBill = in.readParcelable(PaymentBill.class.getClassLoader());
         }
 
         public static final Creator<PGPayment> CREATOR = new Creator<PGPayment>() {
@@ -195,62 +219,62 @@ public abstract class PaymentType implements Parcelable {
         };
     }
 
-    public static class SendMoney extends PaymentType implements Parcelable {
-
-        private CitrusUser user = null;
-
-        public SendMoney() {
-        }
-
-        /**
-         *
-         * @param amount - Amount to be sent
-         * @param user - User details
-         * @throws IllegalArgumentException - If amount or user is null.
-         */
-        public SendMoney(Amount amount, CitrusUser user) throws IllegalArgumentException {
-            super(amount, null);
-            this.user = user;
-
-            if (amount == null) {
-                throw new IllegalArgumentException("Amount should be not null.");
-            } else if (user == null) {
-                throw new IllegalArgumentException("Url should be not null.");
-            }
-        }
-
-        public CitrusUser getUser() {
-            return user;
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeParcelable(this.user, 0);
-            dest.writeParcelable(this.amount, 0);
-            dest.writeString(this.url);
-        }
-
-        private SendMoney(Parcel in) {
-            this.user = in.readParcelable(CitrusUser.class.getClassLoader());
-            this.amount = in.readParcelable(Amount.class.getClassLoader());
-            this.url = in.readString();
-        }
-
-        public static final Creator<SendMoney> CREATOR = new Creator<SendMoney>() {
-            public SendMoney createFromParcel(Parcel source) {
-                return new SendMoney(source);
-            }
-
-            public SendMoney[] newArray(int size) {
-                return new SendMoney[size];
-            }
-        };
-    }
+//    public static class SendMoney extends PaymentType implements Parcelable {
+//
+//        private CitrusUser user = null;
+//
+//        public SendMoney() {
+//        }
+//
+//        /**
+//         *
+//         * @param amount - Amount to be sent
+//         * @param user - User details
+//         * @throws IllegalArgumentException - If amount or user is null.
+//         */
+//        public SendMoney(Amount amount, CitrusUser user) throws IllegalArgumentException {
+//            super(amount, null);
+//            this.user = user;
+//
+//            if (amount == null) {
+//                throw new IllegalArgumentException("Amount should be not null.");
+//            } else if (user == null) {
+//                throw new IllegalArgumentException("Url should be not null.");
+//            }
+//        }
+//
+//        public CitrusUser getUser() {
+//            return user;
+//        }
+//
+//        @Override
+//        public int describeContents() {
+//            return 0;
+//        }
+//
+//        @Override
+//        public void writeToParcel(Parcel dest, int flags) {
+//            dest.writeParcelable(this.user, 0);
+//            dest.writeParcelable(this.amount, 0);
+//            dest.writeString(this.url);
+//        }
+//
+//        private SendMoney(Parcel in) {
+//            this.user = in.readParcelable(CitrusUser.class.getClassLoader());
+//            this.amount = in.readParcelable(Amount.class.getClassLoader());
+//            this.url = in.readString();
+//        }
+//
+//        public static final Creator<SendMoney> CREATOR = new Creator<SendMoney>() {
+//            public SendMoney createFromParcel(Parcel source) {
+//                return new SendMoney(source);
+//            }
+//
+//            public SendMoney[] newArray(int size) {
+//                return new SendMoney[size];
+//            }
+//        };
+//    }
 
     @Override
     public int describeContents() {
@@ -259,13 +283,15 @@ public abstract class PaymentType implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(this.amount, flags);
+        dest.writeParcelable(this.amount, 0);
         dest.writeString(this.url);
+        dest.writeParcelable(this.paymentBill, flags);
     }
 
     private PaymentType(Parcel in) {
         this.amount = in.readParcelable(Amount.class.getClassLoader());
         this.url = in.readString();
+        this.paymentBill = in.readParcelable(PaymentBill.class.getClassLoader());
     }
 
 }

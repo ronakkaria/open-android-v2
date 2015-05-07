@@ -2,6 +2,10 @@ package com.citrus.sdk.classes;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by salil on 24/4/15.
@@ -19,12 +23,48 @@ public class Amount implements Parcelable {
         this.currency = "INR";
     }
 
+    private Amount(String value, String currency) {
+        this.value = value;
+        this.currency = currency;
+    }
+
     public String getValue() {
         return value;
     }
 
     public String getCurrency() {
         return currency;
+    }
+
+    public static Amount fromJSONObject(JSONObject amountObject) {
+        Amount amount = null;
+
+        if (amountObject != null) {
+            String value = amountObject.optString("value");
+            String currency = amountObject.optString("currency");
+
+            if (!TextUtils.isEmpty(value) && !TextUtils.isEmpty(currency)) {
+                amount = new Amount(value, currency);
+            }
+        }
+
+        return amount;
+    }
+
+    public static JSONObject toJSONObject(Amount amount) {
+        JSONObject billObject = null;
+
+        if (amount != null) {
+            try {
+                billObject = new JSONObject();
+                billObject.put("value", amount.value);
+                billObject.put("currency", amount.currency);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return billObject;
     }
 
     @Override

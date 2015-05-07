@@ -50,6 +50,7 @@ import com.citrus.payment.Bill;
 import com.citrus.payment.PG;
 import com.citrus.payment.UserDetails;
 import com.citrus.sdk.classes.Amount;
+import com.citrus.sdk.payment.PaymentBill;
 import com.citrus.sdk.payment.PaymentOption;
 import com.citrus.sdk.payment.PaymentType;
 
@@ -111,7 +112,14 @@ public class CitrusActivity extends ActionBarActivity {
 
         mPaymentWebview.setWebViewClient(new CitrusWebClient());
         if (mPaymentType instanceof PaymentType.PGPayment || mPaymentType instanceof PaymentType.CitrusCash) {
-            fetchBill();
+            if (mPaymentType.getPaymentBill() != null) {
+                // TODO Need to refactor the code.
+                if(PaymentBill.toJSONObject(mPaymentType.getPaymentBill()) != null) {
+                    proceedToPayment(PaymentBill.toJSONObject(mPaymentType.getPaymentBill()).toString());
+                }
+            } else {
+                fetchBill();
+            }
         } else { //load cash does not requires Bill Generator
             Amount amount = mPaymentType.getAmount();
 
