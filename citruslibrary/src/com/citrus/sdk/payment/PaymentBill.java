@@ -83,7 +83,7 @@ public class PaymentBill implements Parcelable {
         if (billObject != null) {
             Amount amount = null;
             String requestSignature = null;
-            String merchantTransactionId = null;
+            String merchantTransactionId = null; // TODO: Do the validation of the transaction id length
             String merchantAccessKey = null;
             String returnUrl = null;
             String notifyUrl = null;

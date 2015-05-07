@@ -39,266 +39,266 @@ import com.citrus.sdk.PaymentParams;
 import com.citrus.sdk.TransactionResponse;
 import com.citrus.sdk.classes.Amount;
 import com.citrus.sdk.payment.DebitCardOption;
+import com.citrus.sdk.payment.PaymentBill;
 import com.citrus.sdk.payment.PaymentType;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class PrepaidWallet extends Activity {
-	
-	private static final String bill_url = "https://salty-plateau-1529.herokuapp.com/billGenerator.sandbox.php?amount=3.0";
-	
-	Button isSignedin, linkuser, setpass, forgot, signin, getbalance
-	,card_load, card_loadWebView, token_load, bank_load, token_bank_Load, citrus_cashpay,citruscashWebView, get_prepaidToken, withdrawMoney, sendMoneyByEmail, sendMoneyByMobile;
 
-	Callback callback;
-	
-	String prepaid_bill;
-	
-	JSONObject customer;
-	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_prepaid);
-		
-		isSignedin = (Button) this.findViewById(R.id.issignedin);
-		
-		linkuser = (Button) this.findViewById(R.id.linkuser);
-		
-		setpass = (Button) this.findViewById(R.id.setpassword);
-		
-		forgot = (Button) this.findViewById(R.id.forgot);
-		
-		signin = (Button) this.findViewById(R.id.signin);
-		
-		getbalance = (Button) this.findViewById(R.id.getbalance);
-				
-		card_load = (Button) this.findViewById(R.id.cardload);
+    private static final String bill_url = "https://salty-plateau-1529.herokuapp.com/billGenerator.sandbox.php?amount=3.0";
 
-		card_loadWebView = (Button) this.findViewById(R.id.cardloadWebView);
-		
-		token_load = (Button) this.findViewById(R.id.tokenload);
-		
-		bank_load = (Button) this.findViewById(R.id.bankload);
-		
-		token_bank_Load = (Button) this.findViewById(R.id.tokenbankload);
-		
-		citrus_cashpay = (Button) this.findViewById(R.id.citruscash);
+    Button isSignedin, linkuser, setpass, forgot, signin, getbalance, card_load, card_loadWebView, token_load, bank_load, token_bank_Load, citrus_cashpay, citruscashWebView, get_prepaidToken, withdrawMoney, sendMoneyByEmail, sendMoneyByMobile;
 
-		citruscashWebView  = (Button) this.findViewById(R.id.citruscashWebView);
+    Callback callback;
 
-		withdrawMoney = (Button) this.findViewById(R.id.withdraw_money);
-		sendMoneyByEmail = (Button) this.findViewById(R.id.send_money_by_email);
-		sendMoneyByMobile = (Button) this.findViewById(R.id.send_money_by_mobile);
+    String prepaid_bill;
 
-		customer = new JSONObject();
-		
-		callback = new Callback() {
-			
-			@Override
-			public void onTaskexecuted(String success, String error) {
-					showToast(success, error);
-			}
-		};
-		
-		init();
-		
-		initconfig();
-		
-		initcustdetails();
+    JSONObject customer;
 
-	}
-	
-	private void init() {
-		
-		isSignedin.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				new WalletStatus(PrepaidWallet.this, callback).execute();
-			}
-		});
-		
-		linkuser.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				new LinkUser(PrepaidWallet.this, callback)
-				.execute(new String[]{"testeremail@mailinator.com", "9769507476"});
-			}
-		});
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_prepaid);
 
-		setpass.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				new SetPassword(PrepaidWallet.this, callback)
-				.execute(new String[]{"testeremail@mailinator.com", "9769507476", "tester@123"});
-			}
-		});
-		
-		forgot.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				new ForgotPass(PrepaidWallet.this, "testeremail@mailinator.com", callback)
-				.execute();
-			}
-		});
-		
-		signin.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				new SignIn(PrepaidWallet.this, callback)
-				.execute(new String[]{"testeremail@mailinator.com", "tester@123"});
-			}
-		});
-		
-		getbalance.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Prepaid user = new Prepaid("testeremail@mailinator.com");
-				user.getBalance(PrepaidWallet.this, callback);
-			}
-		});
-		
-		card_load.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				
-				Card card = new Card("4111111111111111", "04", "21", "778", "Bruce Banner", "debit");
-				
-				LoadMoney load = new LoadMoney("10", "https://salty-plateau-1529.herokuapp.com/redirectURL.sandbox.php");
-				
-				UserDetails userDetails = new UserDetails(customer);
-				
-				PG paymentgateway = new PG(card, load, userDetails);
-				
-				paymentgateway.load(PrepaidWallet.this, new Callback() {
-					@Override
-					public void onTaskexecuted(String success, String error) {
-						processresponse(success, error);
-					}
-				});
-						
-			}
-		});
+        isSignedin = (Button) this.findViewById(R.id.issignedin);
 
-		card_loadWebView.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				CitrusUser citrusUser = new CitrusUser("mangesh.kadam@citruspay.com", "8692862420");
+        linkuser = (Button) this.findViewById(R.id.linkuser);
 
-				Amount amount =new Amount("500");
-				PaymentType paymentType =new PaymentType.LoadMoney(amount,"https://salty-plateau-1529.herokuapp.com/redirectUrlLoadCash.php");
-				DebitCardOption debitCardOption = new DebitCardOption("My Debit Card", "4111111111111111", "123", Month.APR, Year._2016);
-				PaymentParams paymentParams = PaymentParams.builder(amount, paymentType, debitCardOption)
-						.environment(PaymentParams.Environment.SANDBOX)
-						.user(citrusUser)
-						.build();
+        setpass = (Button) this.findViewById(R.id.setpassword);
 
-				startCitrusActivity(paymentParams);
+        forgot = (Button) this.findViewById(R.id.forgot);
 
-			}
-		});
-		
-		token_load.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				
-				Card card = new Card("c210ecd40f9837e7895068a69f1129d4", "808");
-				
-				LoadMoney load = new LoadMoney("100", "https://salty-plateau-1529.herokuapp.com/redirectURL.sandbox.php");
-				
-				UserDetails userDetails = new UserDetails(customer);
-				
-				PG paymentgateway = new PG(card, load, userDetails);
-				
-				paymentgateway.load(PrepaidWallet.this, new Callback() {
-					@Override
-					public void onTaskexecuted(String success, String error) {
-						processresponse(success, error);
-					}
-				});
-				
-			}
-		});
-		
-		bank_load.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				
-				Bank netbank = new Bank("CID002");
-				
-				LoadMoney load = new LoadMoney("100", "https://salty-plateau-1529.herokuapp.com/redirectURL.sandbox.php");
-				
-				UserDetails userDetails = new UserDetails(customer);
-				
-				PG paymentgateway = new PG(netbank, load, userDetails);
-				
-				paymentgateway.load(PrepaidWallet.this, new Callback() {
-		            @Override
-		            public void onTaskexecuted(String success, String error) {
-		                processresponse(success, error);
-		            }
-		        });
-				
-			}
-		});
-		
-		token_bank_Load.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				
-				
-				Bank netbank = new Bank("48ec899d5dd14be93dce01038a8af60d", BankPaymentType.TOKEN);
+        signin = (Button) this.findViewById(R.id.signin);
 
-				
-				LoadMoney load = new LoadMoney("1", "http://yourwebsite.com/return_url.php");
-				
-				UserDetails userDetails = new UserDetails(customer);
-				
-				PG paymentgateway = new PG(netbank, load, userDetails);
-				
-				paymentgateway.load(PrepaidWallet.this, new Callback() {
-		            @Override
-		            public void onTaskexecuted(String success, String error) {
-		                processresponse(success, error);
-		            }
-		        });
-				
-			}
-		});
-		
-		citrus_cashpay.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				new GetBill(bill_url, new Callback() {
-					
-					@Override
-					public void onTaskexecuted(String bill, String error) {
-						if (!TextUtils.isEmpty(bill))
-							walletpay(bill);
-						
-						showToast(bill, error);
-					}
-				})
-				.execute();				
-			}
-		});
+        getbalance = (Button) this.findViewById(R.id.getbalance);
+
+        card_load = (Button) this.findViewById(R.id.cardload);
+
+        card_loadWebView = (Button) this.findViewById(R.id.cardloadWebView);
+
+        token_load = (Button) this.findViewById(R.id.tokenload);
+
+        bank_load = (Button) this.findViewById(R.id.bankload);
+
+        token_bank_Load = (Button) this.findViewById(R.id.tokenbankload);
+
+        citrus_cashpay = (Button) this.findViewById(R.id.citruscash);
+
+        citruscashWebView = (Button) this.findViewById(R.id.citruscashWebView);
+
+        withdrawMoney = (Button) this.findViewById(R.id.withdraw_money);
+        sendMoneyByEmail = (Button) this.findViewById(R.id.send_money_by_email);
+        sendMoneyByMobile = (Button) this.findViewById(R.id.send_money_by_mobile);
+
+        customer = new JSONObject();
+
+        callback = new Callback() {
+
+            @Override
+            public void onTaskexecuted(String success, String error) {
+                showToast(success, error);
+            }
+        };
+
+        init();
+
+        initconfig();
+
+        initcustdetails();
+
+    }
+
+    private void init() {
+
+        isSignedin.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                new WalletStatus(PrepaidWallet.this, callback).execute();
+            }
+        });
+
+        linkuser.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                new LinkUser(PrepaidWallet.this, callback)
+                        .execute(new String[]{"testeremail@mailinator.com", "9769507476"});
+            }
+        });
+
+        setpass.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                new SetPassword(PrepaidWallet.this, callback)
+                        .execute(new String[]{"testeremail@mailinator.com", "9769507476", "tester@123"});
+            }
+        });
+
+        forgot.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                new ForgotPass(PrepaidWallet.this, "testeremail@mailinator.com", callback)
+                        .execute();
+            }
+        });
+
+        signin.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                new SignIn(PrepaidWallet.this, callback)
+                        .execute(new String[]{"testeremail@mailinator.com", "tester@123"});
+            }
+        });
+
+        getbalance.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Prepaid user = new Prepaid("testeremail@mailinator.com");
+                user.getBalance(PrepaidWallet.this, callback);
+            }
+        });
+
+        card_load.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                Card card = new Card("4111111111111111", "04", "21", "778", "Bruce Banner", "debit");
+
+                LoadMoney load = new LoadMoney("10", "https://salty-plateau-1529.herokuapp.com/redirectURL.sandbox.php");
+
+                UserDetails userDetails = new UserDetails(customer);
+
+                PG paymentgateway = new PG(card, load, userDetails);
+
+                paymentgateway.load(PrepaidWallet.this, new Callback() {
+                    @Override
+                    public void onTaskexecuted(String success, String error) {
+                        processresponse(success, error);
+                    }
+                });
+
+            }
+        });
+
+        card_loadWebView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CitrusUser citrusUser = new CitrusUser("mangesh.kadam@citruspay.com", "8692862420");
+
+                Amount amount = new Amount("500");
+                PaymentType paymentType = new PaymentType.LoadMoney(amount, "https://salty-plateau-1529.herokuapp.com/redirectUrlLoadCash.php");
+                DebitCardOption debitCardOption = new DebitCardOption("My Debit Card", "4111111111111111", "123", Month.getMonth("05"), Year.getYear("17"));
+                PaymentParams paymentParams = PaymentParams.builder(amount, paymentType, debitCardOption)
+                        .environment(PaymentParams.Environment.SANDBOX)
+                        .user(citrusUser)
+                        .build();
+
+                startCitrusActivity(paymentParams);
+
+            }
+        });
+
+        token_load.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                Card card = new Card("c210ecd40f9837e7895068a69f1129d4", "808");
+
+                LoadMoney load = new LoadMoney("100", "https://salty-plateau-1529.herokuapp.com/redirectURL.sandbox.php");
+
+                UserDetails userDetails = new UserDetails(customer);
+
+                PG paymentgateway = new PG(card, load, userDetails);
+
+                paymentgateway.load(PrepaidWallet.this, new Callback() {
+                    @Override
+                    public void onTaskexecuted(String success, String error) {
+                        processresponse(success, error);
+                    }
+                });
+
+            }
+        });
+
+        bank_load.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                Bank netbank = new Bank("CID002");
+
+                LoadMoney load = new LoadMoney("100", "https://salty-plateau-1529.herokuapp.com/redirectURL.sandbox.php");
+
+                UserDetails userDetails = new UserDetails(customer);
+
+                PG paymentgateway = new PG(netbank, load, userDetails);
+
+                paymentgateway.load(PrepaidWallet.this, new Callback() {
+                    @Override
+                    public void onTaskexecuted(String success, String error) {
+                        processresponse(success, error);
+                    }
+                });
+
+            }
+        });
+
+        token_bank_Load.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
 
 
-		citruscashWebView.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
+                Bank netbank = new Bank("48ec899d5dd14be93dce01038a8af60d", BankPaymentType.TOKEN);
+
+
+                LoadMoney load = new LoadMoney("1", "http://yourwebsite.com/return_url.php");
+
+                UserDetails userDetails = new UserDetails(customer);
+
+                PG paymentgateway = new PG(netbank, load, userDetails);
+
+                paymentgateway.load(PrepaidWallet.this, new Callback() {
+                    @Override
+                    public void onTaskexecuted(String success, String error) {
+                        processresponse(success, error);
+                    }
+                });
+
+            }
+        });
+
+        citrus_cashpay.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                new GetBill(bill_url, new Callback() {
+
+                    @Override
+                    public void onTaskexecuted(String bill, String error) {
+                        if (!TextUtils.isEmpty(bill))
+                            walletpay(bill);
+
+                        showToast(bill, error);
+                    }
+                })
+                        .execute();
+            }
+        });
+
+
+        citruscashWebView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
 				CitrusUser citrusUser = new CitrusUser("testeremail@mailinator.com", "");
 
 				Amount amount =new Amount("50");
@@ -313,41 +313,43 @@ public class PrepaidWallet extends Activity {
 
 				startCitrusActivity(paymentParams);
 
-			}
-		});
 
-		withdrawMoney.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				new CashOutAsynch(PrepaidWallet.this, 10, "Salil Godbole", "042401523201", "ICIC0000424", callback).execute();
+            }
+        });
 
-			}
-		});
+        withdrawMoney.setOnClickListener(new OnClickListener() {
+             @Override
+             public void onClick(View v) {
+                 new CashOutAsynch(PrepaidWallet.this, 10, "Salil Godbole", "042401523201", "ICIC0000424", callback).execute();
 
-		sendMoneyByEmail.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Amount amount = new Amount("37");
-				CitrusUser user = new CitrusUser("salil.godbole@citruspay.com", "");
+             }
+        });
 
-				new SendMoneyAsync(PrepaidWallet.this, amount, user, "My contribution", callback).execute();
+        sendMoneyByEmail.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Amount amount = new Amount("37");
+                CitrusUser user = new CitrusUser("salil.godbole@citruspay.com", "");
 
-			}
-		});
+                new SendMoneyAsync(PrepaidWallet.this, amount, user, "My contribution", callback).execute();
+            }
+        }
+        );
 
-		sendMoneyByMobile.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Amount amount = new Amount("30");
-				CitrusUser user = new CitrusUser("", "9970950374");
+        sendMoneyByMobile.setOnClickListener(new OnClickListener() {
+                 @Override
+                 public void onClick(View v) {
+                     Amount amount = new Amount("30");
+                     CitrusUser user = new CitrusUser("", "9970950374");
 
-				new SendMoneyAsync(PrepaidWallet.this, amount, user, "My contribution", callback).execute();
-			}
-		});
-		
-	}
-	
-	private void processresponse(String response, String error) {
+                     new SendMoneyAsync(PrepaidWallet.this, amount, user, "My contribution", callback).execute();
+                 }
+             }
+        );
+
+    }
+
+    private void processresponse(String response, String error) {
 
         if (!TextUtils.isEmpty(response)) {
             try {
@@ -359,25 +361,22 @@ public class PrepaidWallet extends Activity {
 
                     i.putExtra("url", redirect.getString("redirectUrl"));
                     startActivity(i);
-                }
-                else {
+                } else {
                     Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
                 }
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }
-
-        else {
+        } else {
             Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
         }
 
     }
-	
-	
-	private void initconfig() {
-		Config.setEnv("sandbox"); //replace it with "production" when you are ready
+
+
+    private void initconfig() {
+        Config.setEnv("sandbox"); //replace it with "production" when you are ready
         
         /*Replace following details with oauth details provided to you*/
         Config.setupSignupId("test-signup");
@@ -386,89 +385,89 @@ public class PrepaidWallet extends Activity {
         Config.setSigninId("gogo-pre-wallet");
         Config.setSigninSecret("e6f1b840c652d2ffc46530faaac8b771");
 
-	}
-	
-	private void initcustdetails() {
-		/*All the below mentioned parameters are mandatory - missing anyone of them may create errors
-	     * Do not change the key in the json below - only change the values*/
+    }
 
-	        try {
-	            customer.put("firstName", "Tester");
-	            customer.put("lastName", "Citrus");
-	            customer.put("email", "testeremail@mailinator.com");
-	            customer.put("mobileNo", "9769507476");
-	            customer.put("street1", "streetone");
-	            customer.put("street2", "streettwo");
-	            customer.put("city", "Mumbai");
-	            customer.put("state", "Maharashtra");
-	            customer.put("country", "India");
-	            customer.put("zip", "400052");
-	        } catch (JSONException e) {
-	            e.printStackTrace();
-	        }
+    private void initcustdetails() {
+        /*All the below mentioned parameters are mandatory - missing anyone of them may create errors
+         * Do not change the key in the json below - only change the values*/
 
-	}
-	
-	private void walletpay(String bill_string) {
-    	Bill bill = new Bill(bill_string);
-    	
-    	Prepaid prepaid = new Prepaid("testeremail@mailinator.com");
-    	
-    	UserDetails userDetails = new UserDetails(customer);
+        try {
+            customer.put("firstName", "Tester");
+            customer.put("lastName", "Citrus");
+            customer.put("email", "testeremail@mailinator.com");
+            customer.put("mobileNo", "9769507476");
+            customer.put("street1", "streetone");
+            customer.put("street2", "streettwo");
+            customer.put("city", "Mumbai");
+            customer.put("state", "Maharashtra");
+            customer.put("country", "India");
+            customer.put("zip", "400052");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void walletpay(String bill_string) {
+        Bill bill = new Bill(bill_string);
+
+        Prepaid prepaid = new Prepaid("testeremail@mailinator.com");
+
+        UserDetails userDetails = new UserDetails(customer);
 
         PG paymentgateway = new PG(prepaid, bill, userDetails);
 
         paymentgateway.charge(new Callback() {
-			@Override
-			public void onTaskexecuted(String success, String error) {
-				prepaidPayment(success, error);
-			}
-		});
+            @Override
+            public void onTaskexecuted(String success, String error) {
+                prepaidPayment(success, error);
+            }
+        });
     }
 
 
-	private void prepaidPayment(String response, String error) {
-    	
-    	if (TextUtils.isEmpty(response.toString())) {
-    		return;
-    	}
-    	 
-    	Callback prepaidCb = new Callback() {
-			
-			@Override
-			public void onTaskexecuted(String success, String error) {
-				showToast(success, error);
-			}
-		};
-		
-		PrepaidPg paymentPg = new PrepaidPg(PrepaidWallet.this);
-		
-		paymentPg.pay(prepaidCb, response, error);
+    private void prepaidPayment(String response, String error) {
+
+        if (TextUtils.isEmpty(response.toString())) {
+            return;
+        }
+
+        Callback prepaidCb = new Callback() {
+
+            @Override
+            public void onTaskexecuted(String success, String error) {
+                showToast(success, error);
+            }
+        };
+
+        PrepaidPg paymentPg = new PrepaidPg(PrepaidWallet.this);
+
+        paymentPg.pay(prepaidCb, response, error);
     }
-	
-	private void showToast(String message, String error) {
-		if (!TextUtils.isEmpty(message))
-	        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
 
-	    if (!TextUtils.isEmpty(error))
-	        Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
-	}
+    private void showToast(String message, String error) {
+        if (!TextUtils.isEmpty(message))
+            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
 
-
-	private void startCitrusActivity(PaymentParams paymentParams) {
-		Intent intent = new Intent(PrepaidWallet.this, CitrusActivity.class);
-		intent.putExtra(Constants.INTENT_EXTRA_PAYMENT_PARAMS, paymentParams);
-		startActivityForResult(intent, Constants.RESULT_CODE_PAYMENT);
-	}
+        if (!TextUtils.isEmpty(error))
+            Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
+    }
 
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		TransactionResponse transactionResponse = data.getParcelableExtra(Constants.INTENT_EXTRA_TRANSACTION_RESPONSE);
-		if (transactionResponse != null) {
-			Toast.makeText(getApplicationContext(), transactionResponse.getMessage(), Toast.LENGTH_LONG).show();
-		}
-	}
+    private void startCitrusActivity(PaymentParams paymentParams) {
+        Intent intent = new Intent(PrepaidWallet.this, CitrusActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_PAYMENT_PARAMS, paymentParams);
+        startActivityForResult(intent, Constants.REQUEST_CODE_PAYMENT);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        TransactionResponse transactionResponse = data.getParcelableExtra(Constants.INTENT_EXTRA_TRANSACTION_RESPONSE);
+        if (transactionResponse != null) {
+            Toast.makeText(getApplicationContext(), transactionResponse.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
 
 }
