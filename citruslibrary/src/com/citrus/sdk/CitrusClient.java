@@ -15,10 +15,12 @@
 
 package com.citrus.sdk;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import com.citrus.sdk.classes.Amount;
 import com.citrus.sdk.payment.PaymentBill;
 import com.citrus.sdk.payment.PaymentOption;
-import com.citrus.sdk.payment.PaymentType;
 import com.citrus.sdk.response.CitrusResponse;
 
 import java.util.List;
@@ -54,11 +56,13 @@ public class CitrusClient {
     private Environment environment = Environment.SANDBOX;
     private Amount balanceAmount;
     private static CitrusClient instance = null;
+    private Context mContext = null;
+    private SharedPreferences mSharedPreferences = null;
 
     private CitrusClient() {
     }
 
-    public static CitrusClient getInstance() {
+    public static CitrusClient getInstance(Context context) {
         if (instance == null) {
             synchronized (CitrusClient.class) {
                 if (instance == null) {
@@ -81,7 +85,7 @@ public class CitrusClient {
      * @param mobileNo
      * @param callback
      */
-    public synchronized void linkUser(String emailId, String mobileNo, Callback<CitrusUser> callback) {
+    public synchronized void linkUser(String emailId, String mobileNo, Callback<CitrusResponse> callback) {
         // TODO: Implemenation is remaining, need to change the response type as well.
     }
 
