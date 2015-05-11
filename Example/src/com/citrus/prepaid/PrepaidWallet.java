@@ -172,7 +172,7 @@ public class PrepaidWallet extends Activity {
 
                 Card card = new Card("4111111111111111", "04", "21", "778", "Bruce Banner", "debit");
 
-                LoadMoney load = new LoadMoney("10", "https://salty-plateau-1529.herokuapp.com/redirectURL.sandbox.php");
+                LoadMoney load = new LoadMoney("10", "https://salty-plateau-1529.herokuapp.com/redirectUrlLoadCash.php");
 
                 UserDetails userDetails = new UserDetails(customer);
 
