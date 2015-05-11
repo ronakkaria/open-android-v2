@@ -11,23 +11,30 @@ import retrofit.client.OkClient;
 public class RetroFitClient {
     private static API RETROFIT_CLIENT;
 
-    private static String CITRUS_ROOT =
-            "https://sandboxadmin.citruspay.com";
+    private static String CITRUS_ROOT = null;
+           // "https://sandboxadmin.citruspay.com";
 
 
-    static {
-        setupCitrusRestClient();
-    }
+    /*static {
+        setupCitrusRetroFitClient();
+    }*/
 
     private RetroFitClient() {}
 
 
-    public static API getCitrusRestClient() {
+    public static API getCitrusRetroFitClient() {
         return RETROFIT_CLIENT;
     }
 
+    public static void initRetroFitClient(String environment) {
+        if("sandbox".equalsIgnoreCase(environment))
+            CITRUS_ROOT = "https://sandboxadmin.citruspay.com";
+        else
+            CITRUS_ROOT = "https://admin.citruspay.com";
+        setupCitrusRetroFitClient();
+    }
 
-    private static void setupCitrusRestClient() {
+    private static void setupCitrusRetroFitClient() {
         RestAdapter builder = new RestAdapter.Builder()
                 .setEndpoint(CITRUS_ROOT)
                 .setClient(new OkClient(new OkHttpClient()))

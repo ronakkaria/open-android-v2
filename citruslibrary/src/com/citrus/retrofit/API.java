@@ -1,5 +1,6 @@
 package com.citrus.retrofit;
 
+import com.citrus.pojo.AccessTokenPOJO;
 import com.citrus.pojo.BillGeneratorPOJO;
 import com.citrus.pojo.PaymentOptionsPOJO;
 import com.citrus.pojo.StructResponsePOJO;
@@ -19,6 +20,12 @@ import retrofit.mime.TypedString;
  * Created by MANGESH KADAM on 5/7/2015.
  */
 public interface API {
+
+
+    @FormUrlEncoded
+    @POST("/oauth/token")
+    void getSignUpToken(@Field("client_id") String client_ID, @Field("client_secret") String client_Secret, @Field("grant_type") String grantType, Callback<AccessTokenPOJO> accessTokenPOJOCallback);
+
 
     //return url from citrus
     @Headers("Content-Type: application/json")

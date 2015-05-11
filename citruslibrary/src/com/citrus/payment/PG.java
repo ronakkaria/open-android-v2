@@ -422,7 +422,7 @@ public class PG {
 
 
     private void retrofitCharge() {
-        RetroFitClient.getCitrusRestClient().getPaymentResponse(new TypedString(payment.toString()), new retrofit.Callback<StructResponsePOJO>() {
+        RetroFitClient.getCitrusRetroFitClient().getPaymentResponse(new TypedString(payment.toString()), new retrofit.Callback<StructResponsePOJO>() {
             @Override
             public void success(StructResponsePOJO structResponse, Response response) {
                 Log.d("STRUCT RESPONSE ", structResponse.getTxMsg());

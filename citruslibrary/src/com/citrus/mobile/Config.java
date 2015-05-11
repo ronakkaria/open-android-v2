@@ -12,6 +12,8 @@
 */
 package com.citrus.mobile;
 
+import com.citrus.retrofit.RetroFitClient;
+
 public class Config {
     private static String env, signinId, signinSecret, signupId, signupSecret, prepaid_cookie = "", vanity;
 
@@ -22,6 +24,7 @@ public class Config {
 
     public static void setEnv(String sip) {
         env = sip;
+        RetroFitClient.initRetroFitClient(env);
     }
 
     public static void setSigninId(String id) {
