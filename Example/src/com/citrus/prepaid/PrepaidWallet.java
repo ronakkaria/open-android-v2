@@ -29,6 +29,7 @@ import com.citrus.netbank.BankPaymentType;
 import com.citrus.payment.Bill;
 import com.citrus.payment.PG;
 import com.citrus.payment.UserDetails;
+import com.citrus.pojo.BillGeneratorPOJO;
 import com.citrus.sample.GetBill;
 import com.citrus.sample.R;
 import com.citrus.sample.WebPage;
@@ -39,7 +40,6 @@ import com.citrus.sdk.PaymentParams;
 import com.citrus.sdk.TransactionResponse;
 import com.citrus.sdk.classes.Amount;
 import com.citrus.sdk.payment.DebitCardOption;
-import com.citrus.sdk.payment.PaymentBill;
 import com.citrus.sdk.payment.PaymentType;
 
 import org.json.JSONException;
@@ -318,33 +318,33 @@ public class PrepaidWallet extends Activity {
         });
 
         withdrawMoney.setOnClickListener(new OnClickListener() {
-             @Override
-             public void onClick(View v) {
-                 new CashOutAsynch(PrepaidWallet.this, 10, "Salil Godbole", "042401523201", "ICIC0000424", callback).execute();
+            @Override
+            public void onClick(View v) {
+                new CashOutAsynch(PrepaidWallet.this, 10, "Salil Godbole", "042401523201", "ICIC0000424", callback).execute();
 
-             }
+            }
         });
 
         sendMoneyByEmail.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Amount amount = new Amount("37");
-                CitrusUser user = new CitrusUser("salil.godbole@citruspay.com", "");
+                                                @Override
+                                                public void onClick(View v) {
+                                                    Amount amount = new Amount("37");
+                                                    CitrusUser user = new CitrusUser("salil.godbole@citruspay.com", "");
 
-                new SendMoneyAsync(PrepaidWallet.this, amount, user, "My contribution", callback).execute();
-            }
-        }
+                                                    new SendMoneyAsync(PrepaidWallet.this, amount, user, "My contribution", callback).execute();
+                                                }
+                                            }
         );
 
         sendMoneyByMobile.setOnClickListener(new OnClickListener() {
-                 @Override
-                 public void onClick(View v) {
-                     Amount amount = new Amount("30");
-                     CitrusUser user = new CitrusUser("", "9970950374");
+                                                 @Override
+                                                 public void onClick(View v) {
+                                                     Amount amount = new Amount("30");
+                                                     CitrusUser user = new CitrusUser("", "9970950374");
 
-                     new SendMoneyAsync(PrepaidWallet.this, amount, user, "My contribution", callback).execute();
-                 }
-             }
+                                                     new SendMoneyAsync(PrepaidWallet.this, amount, user, "My contribution", callback).execute();
+                                                 }
+                                             }
         );
 
     }
@@ -426,6 +426,25 @@ public class PrepaidWallet extends Activity {
     }
 
 
+
+    private void walletpay(BillGeneratorPOJO billGeneratorPOJO) {
+        Bill bill = new Bill(billGeneratorPOJO);
+
+        Prepaid prepaid = new Prepaid("testeremail@mailinator.com");
+
+        UserDetails userDetails = new UserDetails(customer);
+
+        PG paymentgateway = new PG(prepaid, bill, userDetails);
+
+        paymentgateway.charge(new Callback() {
+            @Override
+            public void onTaskexecuted(String success, String error) {
+                prepaidPayment(success, error);
+            }
+        });
+    }
+
+
     private void prepaidPayment(String response, String error) {
 
         if (TextUtils.isEmpty(response.toString())) {
@@ -469,5 +488,28 @@ public class PrepaidWallet extends Activity {
             Toast.makeText(getApplicationContext(), transactionResponse.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
+
+
+  /*  citrus_cashpay.setOnClickListener(new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            new GetJSONBill("https://salty-plateau-1529.herokuapp.com/billGenerator.sandbox.php", "3.0", new retrofit.Callback<BillGeneratorPOJO>() {
+                @Override
+                public void success(BillGeneratorPOJO billGeneratorPOJO, Response response) {
+                    Log.d("BILLPOJO**", billGeneratorPOJO.getAmount().getValue());
+
+                    walletpay(billGeneratorPOJO);
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+
+                }
+            }).getJSONBill();
+        }
+    });*/
+
+
 
 }
