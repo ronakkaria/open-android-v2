@@ -16,6 +16,7 @@ package com.citrus.payment;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.citrus.asynch.MakePayment;
 import com.citrus.card.Card;
@@ -29,6 +30,8 @@ import com.citrus.mobile.RESTclient;
 import com.citrus.mobile.User;
 import com.citrus.netbank.Bank;
 import com.citrus.netbank.BankPaymentType;
+import com.citrus.pojo.StructResponsePOJO;
+import com.citrus.retrofit.RetroFitClient;
 import com.citrus.sdk.payment.CardOption;
 import com.citrus.sdk.payment.NetbankingOption;
 import com.citrus.sdk.payment.PaymentOption;
@@ -38,6 +41,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import retrofit.mime.TypedString;
 
 
 public class PG {
@@ -410,6 +417,23 @@ public class PG {
         }
 
         new MakePayment(payment, headers, callback).execute();
+
+    }
+
+
+    private void retrofitCharge() {
+        RetroFitClient.getCitrusRestClient().getPaymentResponse(new TypedString(payment.toString()), new retrofit.Callback<StructResponsePOJO>() {
+            @Override
+            public void success(StructResponsePOJO structResponse, Response response) {
+                Log.d("STRUCT RESPONSE ", structResponse.getTxMsg());
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("ERROR:", error.getMessage());
+            }
+        });
 
     }
     
