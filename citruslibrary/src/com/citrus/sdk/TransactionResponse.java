@@ -18,6 +18,8 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 
 
+import com.citrus.sdk.classes.Amount;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,8 +40,8 @@ public final class TransactionResponse implements Parcelable {
         }
     };
 
-    private String amount = null;
-    private String currency = null;
+    private Amount balanceAmount = null;
+    private Amount transactionAmount = null;
     private String message = null;
     private String responseCode = null;
     private TransactionStatus transactionStatus = null;
@@ -73,8 +75,7 @@ public final class TransactionResponse implements Parcelable {
     }
 
     /**
-     * @param amount
-     * @param currency
+     * @param transactionAmount
      * @param message
      * @param responseCode
      * @param transactionStatus
@@ -89,9 +90,8 @@ public final class TransactionResponse implements Parcelable {
      * @param COD                - cash on delivery.
      * @param customParamsMap    - custom parameters sent with request.
      */
-    private TransactionResponse(String amount, String currency, String message, String responseCode, TransactionStatus transactionStatus, TransactionDetails transactionDetails, CitrusUser citrusUser, PaymentMode paymentMode, String issuerCode, String impsMobileNumber, String impsMmid, String authIdCode, String signature, boolean COD, Map<String, String> customParamsMap) {
-        this.amount = amount;
-        this.currency = currency;
+    private TransactionResponse(Amount transactionAmount, String message, String responseCode, TransactionStatus transactionStatus, TransactionDetails transactionDetails, CitrusUser citrusUser, PaymentMode paymentMode, String issuerCode, String impsMobileNumber, String impsMmid, String authIdCode, String signature, boolean COD, Map<String, String> customParamsMap) {
+        this.transactionAmount = transactionAmount;
         this.message = message;
         this.responseCode = responseCode;
         this.transactionStatus = transactionStatus;
@@ -108,8 +108,8 @@ public final class TransactionResponse implements Parcelable {
     }
 
     private TransactionResponse(Parcel in) {
-        this.amount = in.readString();
-        this.currency = in.readString();
+        this.transactionAmount = in.readParcelable(Amount.class.getClassLoader());
+        this.balanceAmount = in.readParcelable(Amount.class.getClassLoader());
         this.message = in.readString();
         this.responseCode = in.readString();
         int tmpTransactionStatus = in.readInt();
@@ -154,7 +154,9 @@ public final class TransactionResponse implements Parcelable {
                 CitrusUser citrusUser = CitrusUser.fromJSONObject(jsonObject);
                 boolean cod = "true".equalsIgnoreCase(isCOD) ? true : false;
 
-                transactionResponse = new TransactionResponse(amount, currency, message, responseCode, transactionStatus, transactionDetails, citrusUser, paymentMode, issuerCode, impsMobileNumber, impsMmid, authIdCode, signature, cod, customParamsMap);
+                Amount transactionAmount = new Amount(amount, currency);
+
+                transactionResponse = new TransactionResponse(transactionAmount, message, responseCode, transactionStatus, transactionDetails, citrusUser, paymentMode, issuerCode, impsMobileNumber, impsMmid, authIdCode, signature, cod, customParamsMap);
                 transactionResponse.setJsonResponse(jsonObject.toString());
 
             }
@@ -175,12 +177,12 @@ public final class TransactionResponse implements Parcelable {
         return citrusUser;
     }
 
-    public String getAmount() {
-        return amount;
+    public Amount getTransactionAmount() {
+        return transactionAmount;
     }
 
-    public String getCurrency() {
-        return currency;
+    public Amount getBalanceAmount() {
+        return balanceAmount;
     }
 
     public String getMessage() {
@@ -238,8 +240,8 @@ public final class TransactionResponse implements Parcelable {
     @Override
     public String toString() {
         return "CitrusTransactionResponse{" +
-                "amount='" + amount + '\'' +
-                ", currency='" + currency + '\'' +
+                "transactionAmount='" + transactionAmount.toString() + '\'' +
+                "balanceAmount='" + balanceAmount.toString() + '\'' +
                 ", message='" + message + '\'' +
                 ", responseCode='" + responseCode + '\'' +
                 ", transactionStatus=" + transactionStatus +
@@ -263,8 +265,8 @@ public final class TransactionResponse implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.amount);
-        dest.writeString(this.currency);
+        dest.writeParcelable(this.transactionAmount, flags);
+        dest.writeParcelable(this.balanceAmount, flags);
         dest.writeString(this.message);
         dest.writeString(this.responseCode);
         dest.writeInt(this.transactionStatus == null ? -1 : this.transactionStatus.ordinal());
@@ -433,8 +435,15 @@ public final class TransactionResponse implements Parcelable {
                 String decodeResp[] = token[1].split(":");
                 if (TextUtils.equals(decodeResp[0], "SUCCESSFUL")) {
                     transactionResponse = new TransactionResponse(TransactionStatus.SUCCESSFUL, "Citrus Cash Wallet loaded successfully", decodeResp[1]);
-                    transactionResponse.amount = decodeResp[5];
-                    transactionResponse.currency = decodeResp[6];
+
+                    String balanceValue = decodeResp[1];
+                    String balanceCurrency = decodeResp[2];
+
+                    String transactionValue = decodeResp[5];
+                    String transactionCurrency = decodeResp[6];
+
+                    transactionResponse.transactionAmount = new Amount(transactionValue, transactionCurrency);
+                    transactionResponse.balanceAmount = new Amount(balanceValue, balanceCurrency);
 
                 } else {
                     transactionResponse = new TransactionResponse(TransactionStatus.FAILED, "Failed to load money into Citrus Cash", null);

@@ -23,7 +23,7 @@ public class Amount implements Parcelable {
         this.currency = "INR";
     }
 
-    private Amount(String value, String currency) {
+    public Amount(String value, String currency) {
         this.value = value;
         this.currency = currency;
     }
