@@ -17,6 +17,7 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -91,5 +92,25 @@ public class WebPage extends Activity {
         public void pgResponse(String response) {
             Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
         }
+
+        @JavascriptInterface
+        public void loadWalletResponse(String response) {
+
+               if (response.contains(":")) {
+                String decodeResp[] = response.split(":");
+                if (decodeResp.length > 0) {
+                    if (TextUtils.equals(decodeResp[0], "SUCCESSFUL")) {
+                        Toast.makeText(getApplicationContext(), "Your wallet is loaded Successfully.", Toast.LENGTH_LONG).show();
+                        finish();
+                    } else {
+                        //transaction was fail
+                        Toast.makeText(getApplicationContext(), "Wallet Load Failed.", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+
+        }
+
+
     }
 }
