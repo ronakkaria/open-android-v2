@@ -72,7 +72,7 @@ public final class DebitCardOption extends CardOption implements Parcelable {
      * @param cardScheme     - Card scheme e.g. VISA, MASTER etc.
      * @param cardExpiry     - Card expiry date. In MMYYYY format.
      */
-    public DebitCardOption(String name, String token, String cardHolderName, String cardNumber, String cardScheme, String cardExpiry) {
+    public DebitCardOption(String name, String token, String cardHolderName, String cardNumber, CardScheme cardScheme, String cardExpiry) {
         super(name, token, cardHolderName, cardNumber, cardScheme, cardExpiry);
     }
 
@@ -84,7 +84,7 @@ public final class DebitCardOption extends CardOption implements Parcelable {
         this.cardExpiry = in.readString();
         this.cardExpiryMonth = in.readString();
         this.cardExpiryYear = in.readString();
-        this.cardScheme = in.readString();
+        this.cardScheme = (CardScheme) in.readSerializable();
         this.name = in.readString();
         this.token = in.readString();
         this.savePaymentOption = in.readByte() != 0;
@@ -108,7 +108,7 @@ public final class DebitCardOption extends CardOption implements Parcelable {
         dest.writeString(this.cardExpiry);
         dest.writeString(this.cardExpiryMonth);
         dest.writeString(this.cardExpiryYear);
-        dest.writeString(this.cardScheme);
+        dest.writeSerializable(this.cardScheme);
         dest.writeString(this.name);
         dest.writeString(this.token);
         dest.writeByte(savePaymentOption ? (byte) 1 : (byte) 0);

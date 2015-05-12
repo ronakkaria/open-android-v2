@@ -7,7 +7,7 @@ import android.os.Parcelable;
  * Created by salil on 29/4/15.
  */
 public class CitrusResponse implements Parcelable {
-    public static enum Status { SUCCESSFUL, FAIL }
+    public static enum Status { SUCCESSFUL, FAILED, CANCELLED }
 
     protected String message = null;
     protected Status status = null;

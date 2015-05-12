@@ -19,7 +19,15 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static com.citrus.sdk.payment.CardOption.*;
 
 /**
  * Created by salil on 13/2/15.
@@ -66,9 +74,9 @@ public abstract class PaymentOption implements Parcelable {
 
         if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(token)) {
             if (TextUtils.equals("credit", type)) {
-                paymentOption = new CreditCardOption(name, token, cardHolderName, cardNumber, cardScheme, expiry);
+                paymentOption = new CreditCardOption(name, token, cardHolderName, cardNumber, CardScheme.getCardScheme(cardScheme), expiry);
             } else if (TextUtils.equals("debit", type)) {
-                paymentOption = new DebitCardOption(name, token, cardHolderName, cardNumber, cardScheme, expiry);
+                paymentOption = new DebitCardOption(name, token, cardHolderName, cardNumber, CardScheme.getCardScheme(cardScheme), expiry);
             } else {
                 String bankName = walletObject.optString("bank");
                 paymentOption = new NetbankingOption(name, token, bankName);
@@ -90,9 +98,9 @@ public abstract class PaymentOption implements Parcelable {
         return savePaymentOption;
     }
 
-//    public void setSavePaymentOption(boolean savePaymentOption) {
-//        this.savePaymentOption = savePaymentOption;
-//    }
+    public void setSavePaymentOption(boolean savePaymentOption) {
+        this.savePaymentOption = savePaymentOption;
+    }
 
     public abstract Drawable getOptionIcon(Context context);
 

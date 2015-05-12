@@ -17,15 +17,23 @@ package com.citrus.sdk;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
+import com.citrus.retrofit.API;
+import com.citrus.retrofit.RetroFitClient;
 import com.citrus.sdk.classes.Amount;
+import com.citrus.sdk.payment.MerchantPaymentOption;
 import com.citrus.sdk.payment.PaymentBill;
 import com.citrus.sdk.payment.PaymentOption;
+import com.citrus.sdk.response.CitrusError;
 import com.citrus.sdk.response.CitrusResponse;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.util.List;
 
-import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by salil on 11/5/15.
@@ -58,8 +66,27 @@ public class CitrusClient {
     private static CitrusClient instance = null;
     private Context mContext = null;
     private SharedPreferences mSharedPreferences = null;
+    private API retroFitClient = null;
 
     private CitrusClient() {
+    }
+
+    public void init(String signupId, String signupSecret, String signinId, String signinSecret, String vanity, Environment environment) {
+        this.signupId = signupId;
+        this.signupSecret = signupSecret;
+        this.signinId = signinId;
+        this.signinSecret = signinSecret;
+        this.vanity = vanity;
+        this.environment = environment;
+
+        if (validate()) {
+            initRetrofitClient();
+        }
+    }
+
+    private void initRetrofitClient() {
+        RetroFitClient.initRetroFitClient(environment.toString());
+        retroFitClient = RetroFitClient.getCitrusRetroFitClient();
     }
 
     public static CitrusClient getInstance(Context context) {
@@ -139,6 +166,9 @@ public class CitrusClient {
          * Get the saved payment options of the user.
          */
 
+
+
+
     }
 
     /**
@@ -182,49 +212,69 @@ public class CitrusClient {
 
 //    public synchronized void getPrepaidToken()
 
+    public synchronized void getMerchantPaymentOptions(final Callback<MerchantPaymentOption> callback) {
+        if (validate()) {
+            retroFitClient.getMerchantPaymentOptions(vanity, new retrofit.Callback<JsonElement>() {
+                @Override
+                public void success(JsonElement element, Response response) {
+
+                    MerchantPaymentOption merchantPaymentOption = null;
+
+                    if (element.isJsonObject()) {
+                        JsonObject paymentOptionObj = element.getAsJsonObject();
+                        if (paymentOptionObj != null) {
+                            merchantPaymentOption = MerchantPaymentOption.getMerchantPaymentOptions(paymentOptionObj);
+
+                            callback.success(merchantPaymentOption);
+
+                        } else {
+                            callback.error(new CitrusError("Error while fetching merchant payment options", CitrusResponse.Status.FAILED));
+                        }
+                    } else {
+                        callback.error(new CitrusError("Invlid json received for merchant payment options", CitrusResponse.Status.FAILED));
+                    }
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    callback.error(new CitrusError(error.getMessage(), CitrusResponse.Status.FAILED));
+                }
+            });
+        }
+    }
+
 
     // Public APIS end
 
+    private boolean validate() {
+        if (!TextUtils.isEmpty(signinId) && !TextUtils.isEmpty(signinSecret)
+                && !TextUtils.isEmpty(signupId) && !TextUtils.isEmpty(signupSecret)
+                && !TextUtils.isEmpty(vanity)) {
+            return true;
+        } else {
+            throw new IllegalArgumentException("Please make sure SignIn Id, SignIn Secret, SignUp Id, SignUp Secret & Vanity");
+        }
+    }
 
     // Getters and setters
     public String getSigninId() {
         return signinId;
     }
 
-    public void setSigninId(String signinId) {
-        this.signinId = signinId;
-    }
-
     public String getSigninSecret() {
         return signinSecret;
-    }
-
-    public void setSigninSecret(String signinSecret) {
-        this.signinSecret = signinSecret;
     }
 
     public String getSignupId() {
         return signupId;
     }
 
-    public void setSignupId(String signupId) {
-        this.signupId = signupId;
-    }
-
     public String getSignupSecret() {
         return signupSecret;
     }
 
-    public void setSignupSecret(String signupSecret) {
-        this.signupSecret = signupSecret;
-    }
-
     public String getVanity() {
         return vanity;
-    }
-
-    public void setVanity(String vanity) {
-        this.vanity = vanity;
     }
 
     public String getMerchantName() {
@@ -241,13 +291,12 @@ public class CitrusClient {
 
     public void setEnvironment(Environment environment) {
         this.environment = environment;
+
+        initRetrofitClient();
     }
 
     public Amount getBalanceAmount() {
         return balanceAmount;
     }
 
-    public void setBalanceAmount(Amount balanceAmount) {
-        this.balanceAmount = balanceAmount;
-    }
 }

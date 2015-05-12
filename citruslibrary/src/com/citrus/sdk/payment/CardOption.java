@@ -41,7 +41,7 @@ public abstract class CardOption extends PaymentOption {
     String cardExpiry = null;
     String cardExpiryMonth = null;
     String cardExpiryYear = null;
-    String cardScheme = null;
+    CardScheme cardScheme = null;
 
     CardOption(String token, String cardCVV) {
         this.token = token;
@@ -107,7 +107,7 @@ public abstract class CardOption extends PaymentOption {
      * @param cardScheme     - Card scheme e.g. VISA, MASTER etc.
      * @param cardExpiry     - Card expiry date. In MMYYYY format.
      */
-    CardOption(String name, String token, String cardHolderName, String cardNumber, String cardScheme, String cardExpiry) {
+    CardOption(String name, String token, String cardHolderName, String cardNumber, CardScheme cardScheme, String cardExpiry) {
         super(name, token);
         this.cardHolderName = cardHolderName;
         this.cardNumber = cardNumber;
@@ -159,19 +159,19 @@ public abstract class CardOption extends PaymentOption {
         Drawable drawable = null;
 
         int resourceId = 0;
-        if ("visa".equalsIgnoreCase(cardScheme)) {
+        if (cardScheme == CardScheme.VISA) {
             resourceId = context.getResources().getIdentifier("visa", "drawable", context.getPackageName());
-        } else if ("mcrd".equalsIgnoreCase(cardScheme)) {
+        } else if (cardScheme == CardScheme.MASTER_CARD) {
             resourceId = context.getResources().getIdentifier("mcrd", "drawable", context.getPackageName());
-        } else if ("maestro".equalsIgnoreCase(cardScheme)) {
-            resourceId = context.getResources().getIdentifier("maestro", "drawable", context.getPackageName());
-        } else if ("DINERS".equalsIgnoreCase(cardScheme)) {
+        } else if (cardScheme == CardScheme.MAESTRO) {
+            resourceId = context.getResources().getIdentifier("mtro", "drawable", context.getPackageName());
+        } else if (cardScheme == CardScheme.DINERS) {
             resourceId = context.getResources().getIdentifier("dinerclub", "drawable", context.getPackageName());
-        } else if ("jcb".equalsIgnoreCase(cardScheme)) {
+        } else if (cardScheme == CardScheme.JCB) {
             resourceId = context.getResources().getIdentifier("jcb", "drawable", context.getPackageName());
-        } else if ("amex".equalsIgnoreCase(cardScheme)) {
+        } else if (cardScheme == CardScheme.AMEX) {
             resourceId = context.getResources().getIdentifier("amex", "drawable", context.getPackageName());
-        } else if ("DISCOVER".equalsIgnoreCase(cardScheme)) {
+        } else if (cardScheme == CardScheme.DISCOVER) {
             resourceId = context.getResources().getIdentifier("discover", "drawable", context.getPackageName());
         }
 
@@ -209,7 +209,7 @@ public abstract class CardOption extends PaymentOption {
     public int getCVVLength() {
         int cvvLength = 3;
 
-        if ("AMEX".equalsIgnoreCase(cardScheme)) {
+        if (cardScheme == CardScheme.AMEX) {
             cvvLength = 4;
         }
 
@@ -236,5 +236,29 @@ public abstract class CardOption extends PaymentOption {
          * @return
          */
         public abstract String getCardType();
+    }
+
+    public static enum CardScheme {
+        VISA, MASTER_CARD, MAESTRO, DINERS, JCB, AMEX, DISCOVER;
+
+        public static CardScheme getCardScheme(String cardScheme) {
+            if ("visa".equalsIgnoreCase(cardScheme)) {
+                return VISA;
+            } else if ("mcrd".equalsIgnoreCase(cardScheme)) {
+                return MASTER_CARD;
+            } else if ("mtro".equalsIgnoreCase(cardScheme)) {
+                return MAESTRO;
+            } else if ("DINERS".equalsIgnoreCase(cardScheme)) {
+                return DINERS;
+            } else if ("jcb".equalsIgnoreCase(cardScheme)) {
+                return JCB;
+            } else if ("amex".equalsIgnoreCase(cardScheme)) {
+                return AMEX;
+            } else if ("DISCOVER".equalsIgnoreCase(cardScheme)) {
+                return DISCOVER;
+            } else {
+                return null;
+            }
+        }
     }
 }

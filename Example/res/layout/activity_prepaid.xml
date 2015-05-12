@@ -142,6 +142,14 @@
               android:layout_below="@id/send_money_by_email"
               android:layout_margin="10dp"
               android:text="Send Rs. 30 By Mobile" />
+
+          <Button
+              android:id="@+id/get_merchant_payment_options"
+              android:layout_width="match_parent"
+              android:layout_height="50dp"
+              android:layout_below="@id/send_money_by_mobile"
+              android:layout_margin="10dp"
+              android:text="Get Merchant Payment Options" />
       </RelativeLayout>
 
 </ScrollView>
