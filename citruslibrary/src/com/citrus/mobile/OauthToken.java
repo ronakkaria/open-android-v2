@@ -12,19 +12,21 @@
 */
 package com.citrus.mobile;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.Iterator;
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
-import android.content.SharedPreferences;
+import java.io.IOException;
+import java.util.Date;
+import java.util.Iterator;
 
 
 public class OauthToken {
     private static final String STORED_VALUES = "UserStorage";
+    private  Context context;
 
     private Activity activity;
 
@@ -37,6 +39,14 @@ public class OauthToken {
     public OauthToken(Activity activity, String token_type) {
         this.activity = activity;
         tokenPrefs = this.activity.getSharedPreferences(STORED_VALUES, 0);
+        base_url = Config.getEnv();
+        this.token_type = token_type;
+    }
+
+
+    public OauthToken(Context context, String token_type) {
+        this.context = context;
+        tokenPrefs = this.context.getSharedPreferences(STORED_VALUES, 0);
         base_url = Config.getEnv();
         this.token_type = token_type;
     }
