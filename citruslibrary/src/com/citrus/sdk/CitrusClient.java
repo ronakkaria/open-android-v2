@@ -18,14 +18,25 @@ package com.citrus.sdk;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.citrus.citrususer.RandomPassword;
+import com.citrus.mobile.Config;
+import com.citrus.mobile.OAuth2GrantType;
+import com.citrus.mobile.OauthToken;
+import com.citrus.pojo.AccessTokenPOJO;
+import com.citrus.pojo.BindPOJO;
+import com.citrus.retrofit.API;
+import com.citrus.retrofit.RetroFitClient;
 import com.citrus.sdk.classes.Amount;
 import com.citrus.sdk.payment.PaymentBill;
 import com.citrus.sdk.payment.PaymentOption;
 import com.citrus.sdk.response.CitrusResponse;
+import com.orhanobut.logger.Logger;
 
 import java.util.List;
 
 import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by salil on 11/5/15.
@@ -46,6 +57,14 @@ public class CitrusClient {
         public abstract String getBaseUrl();
     }
 
+
+    public static final String SIGNIN_TOKEN = "signin_token";
+
+    public static final String SIGNUP_TOKEN = "signup_token";
+
+    public static final String PREPAID_TOKEN = "prepaid_token";
+
+
     private String signinId;
     private String signinSecret;
     private String signupId;
@@ -59,14 +78,19 @@ public class CitrusClient {
     private Context mContext = null;
     private SharedPreferences mSharedPreferences = null;
 
-    private CitrusClient() {
+    private API retrofitClient;
+
+    private CitrusClient(Context context) {
+        mContext = context;
+        RetroFitClient.initRetroFitClient(environment.toString());
+        retrofitClient = RetroFitClient.getCitrusRetroFitClient();
     }
 
     public static CitrusClient getInstance(Context context) {
         if (instance == null) {
             synchronized (CitrusClient.class) {
                 if (instance == null) {
-                    instance = new CitrusClient();
+                    instance = new CitrusClient(context);
                 }
             }
         }
@@ -85,8 +109,79 @@ public class CitrusClient {
      * @param mobileNo
      * @param callback
      */
-    public synchronized void linkUser(String emailId, String mobileNo, Callback<CitrusResponse> callback) {
+    public synchronized void linkUser(final String emailId, final String mobileNo, Callback<CitrusResponse> callback) {
         // TODO: Implemenation is remaining, need to change the response type as well.
+
+        final Callback<CitrusResponse> callbackApp = callback;
+        retrofitClient.getSignUpToken(Config.getSignupId(), Config.getSignupSecret(), OAuth2GrantType.implicit.toString(), new retrofit.Callback<AccessTokenPOJO>() {
+            @Override
+            public void success(AccessTokenPOJO accessTokenPOJO, Response response) {
+                Logger.d("accessTokenPOJO " + accessTokenPOJO.getJSON().toString());
+
+                if (accessTokenPOJO.getAccessToken() != null) {
+                    OauthToken signuptoken = new OauthToken(mContext, SIGNUP_TOKEN);
+                    signuptoken.createToken(accessTokenPOJO.getJSON()); //Oauth Token received
+                    String header = "Bearer " + accessTokenPOJO.getAccessToken();
+
+                    retrofitClient.getBindResponse(header, emailId, mobileNo, new Callback<BindPOJO>() {
+                        @Override
+                        public void success(BindPOJO bindPOJO, Response response) {
+                            Logger.d("BIND RESPONSE " + bindPOJO.getUsername());
+
+                            if (bindPOJO.getUsername() != null) {
+                                retrofitClient.getSignInToken(Config.getSigninId(), Config.getSigninSecret(), bindPOJO.getUsername(), OAuth2GrantType.username.toString(), new Callback<AccessTokenPOJO>() {
+                                    @Override
+                                    public void success(AccessTokenPOJO accessTokenPOJO, Response response) {
+                                        Logger.d("SIGNIN accessToken" + accessTokenPOJO.getJSON().toString());
+                                        if (accessTokenPOJO.getAccessToken() != null) {
+                                            OauthToken token = new OauthToken(mContext, SIGNIN_TOKEN);
+                                            token.createToken(accessTokenPOJO.getJSON());
+
+                                            RandomPassword pwd = new RandomPassword();
+
+                                            String random_pass = pwd.generate(emailId, mobileNo);
+
+                                            retrofitClient.getSignInWithPasswordResponse(Config.getSigninId(), Config.getSigninSecret(), emailId, random_pass, OAuth2GrantType.password.toString(), new Callback<AccessTokenPOJO>() {
+                                                @Override
+                                                public void success(AccessTokenPOJO accessTokenPOJO, Response response) {
+                                                    Logger.d("SET PWD RESPONSE" + accessTokenPOJO.getJSON().toString());
+                                                }
+
+                                                @Override
+                                                public void failure(RetrofitError error) {
+                                                    Logger.d("SETPWD ERROR **" + error.getMessage());
+                                                }
+                                            });
+                                        }
+
+                                    }
+
+                                    @Override
+                                    public void failure(RetrofitError error) {
+
+                                    }
+                                });
+                            }
+
+                        }
+
+                        @Override
+                        public void failure(RetrofitError error) {
+
+                        }
+                    });
+
+                }
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                callbackApp.failure(error);
+            }
+        });
+
+
     }
 
     /**

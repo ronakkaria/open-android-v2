@@ -2,6 +2,7 @@ package com.citrus.retrofit;
 
 import com.citrus.pojo.AccessTokenPOJO;
 import com.citrus.pojo.BillGeneratorPOJO;
+import com.citrus.pojo.BindPOJO;
 import com.citrus.pojo.PaymentOptionsPOJO;
 import com.citrus.pojo.StructResponsePOJO;
 
@@ -10,6 +11,7 @@ import retrofit.http.Body;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
+import retrofit.http.Header;
 import retrofit.http.Headers;
 import retrofit.http.POST;
 import retrofit.http.Path;
@@ -26,6 +28,19 @@ public interface API {
     @POST("/oauth/token")
     void getSignUpToken(@Field("client_id") String client_ID, @Field("client_secret") String client_Secret, @Field("grant_type") String grantType, Callback<AccessTokenPOJO> accessTokenPOJOCallback);
 
+
+    @FormUrlEncoded
+    @POST("/service/v2/identity/bind")
+    void getBindResponse(@Header("Authorization") String header, @Field("email") String email, @Field("mobile") String mobile, Callback<BindPOJO> bindPOJOCallback);
+
+    //sign in
+    @FormUrlEncoded
+    @POST("/oauth/token")
+    void getSignInToken(@Field("client_id") String client_ID, @Field("client_secret") String client_Secret, @Field("username") String username, @Field("grant_type") String grantType, Callback<AccessTokenPOJO> accessTokenPOJOCallback);
+
+    @FormUrlEncoded
+    @POST("/oauth/token")
+    void getSignInWithPasswordResponse(@Field("client_id") String client_ID, @Field("client_secret") String client_Secret, @Field("username") String username, @Field("password") String password, @Field("grant_type") String grantType, Callback<AccessTokenPOJO> accessTokenPOJOCallback);
 
     //return url from citrus
     @Headers("Content-Type: application/json")
