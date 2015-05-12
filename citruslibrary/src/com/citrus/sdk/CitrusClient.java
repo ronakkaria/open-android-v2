@@ -46,6 +46,8 @@ import com.citrus.sdk.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+import static com.citrus.sdk.response.CitrusResponse.*;
+
 /**
  * Created by salil on 11/5/15.
  */
@@ -150,13 +152,13 @@ public class CitrusClient {
                     signuptoken.createToken(accessTokenPOJO.getJSON()); //Oauth Token received
                     String header = "Bearer " + accessTokenPOJO.getAccessToken();
 
-                    retrofitClient.getBindResponse(header, emailId, mobileNo, new Callback<BindPOJO>() {
+                    retrofitClient.getBindResponse(header, emailId, mobileNo, new retrofit.Callback<BindPOJO>() {
                         @Override
                         public void success(BindPOJO bindPOJO, Response response) {
                             Logger.d("BIND RESPONSE " + bindPOJO.getUsername());
 
                             if (bindPOJO.getUsername() != null) {
-                                retrofitClient.getSignInToken(Config.getSigninId(), Config.getSigninSecret(), bindPOJO.getUsername(), OAuth2GrantType.username.toString(), new Callback<AccessTokenPOJO>() {
+                                retrofitClient.getSignInToken(Config.getSigninId(), Config.getSigninSecret(), bindPOJO.getUsername(), OAuth2GrantType.username.toString(), new retrofit.Callback<AccessTokenPOJO>() {
                                     @Override
                                     public void success(AccessTokenPOJO accessTokenPOJO, Response response) {
                                         Logger.d("SIGNIN accessToken" + accessTokenPOJO.getJSON().toString());
@@ -168,7 +170,7 @@ public class CitrusClient {
 
                                             String random_pass = pwd.generate(emailId, mobileNo);
 
-                                            retrofitClient.getSignInWithPasswordResponse(Config.getSigninId(), Config.getSigninSecret(), emailId, random_pass, OAuth2GrantType.password.toString(), new Callback<AccessTokenPOJO>() {
+                                            retrofitClient.getSignInWithPasswordResponse(Config.getSigninId(), Config.getSigninSecret(), emailId, random_pass, OAuth2GrantType.password.toString(), new retrofit.Callback<AccessTokenPOJO>() {
                                                 @Override
                                                 public void success(AccessTokenPOJO accessTokenPOJO, Response response) {
                                                     Logger.d("SET PWD RESPONSE" + accessTokenPOJO.getJSON().toString());
@@ -185,7 +187,7 @@ public class CitrusClient {
 
                                     @Override
                                     public void failure(RetrofitError error) {
-
+                                        callbackApp.error(new CitrusError(error.getMessage(), Status.FAILED));
                                     }
                                 });
                             }
@@ -204,7 +206,7 @@ public class CitrusClient {
 
             @Override
             public void failure(RetrofitError error) {
-                callbackApp.failure(error);
+                callbackApp.error(new CitrusError(error.getMessage(), Status.FAILED));
             }
         });
 
@@ -323,16 +325,16 @@ public class CitrusClient {
                             callback.success(merchantPaymentOption);
 
                         } else {
-                            callback.error(new CitrusError("Error while fetching merchant payment options", CitrusResponse.Status.FAILED));
+                            callback.error(new CitrusError("Error while fetching merchant payment options", Status.FAILED));
                         }
                     } else {
-                        callback.error(new CitrusError("Invlid json received for merchant payment options", CitrusResponse.Status.FAILED));
+                        callback.error(new CitrusError("Invlid json received for merchant payment options", Status.FAILED));
                     }
                 }
 
                 @Override
                 public void failure(RetrofitError error) {
-                    callback.error(new CitrusError(error.getMessage(), CitrusResponse.Status.FAILED));
+                    callback.error(new CitrusError(error.getMessage(), Status.FAILED));
                 }
             });
         }
