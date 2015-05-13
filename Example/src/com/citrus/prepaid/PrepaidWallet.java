@@ -24,6 +24,7 @@ import com.citrus.cash.PrepaidPg;
 import com.citrus.mobile.Callback;
 import com.citrus.mobile.Config;
 import com.citrus.mobile.Month;
+import com.citrus.mobile.User;
 import com.citrus.mobile.Year;
 import com.citrus.netbank.Bank;
 import com.citrus.netbank.BankPaymentType;
@@ -49,7 +50,8 @@ import com.citrus.sdk.response.CitrusError;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.citrus.sdk.CitrusClient.*;
+import static com.citrus.sdk.CitrusClient.Environment;
+import static com.citrus.sdk.CitrusClient.getInstance;
 
 public class PrepaidWallet extends Activity {
 
@@ -57,12 +59,15 @@ public class PrepaidWallet extends Activity {
 
     Button isSignedin, linkuser, setpass, forgot, signin, getbalance, card_load, card_loadWebView, token_load, bank_load, token_bank_Load, citrus_cashpay, citruscashWebView, get_prepaidToken, withdrawMoney, sendMoneyByEmail, sendMoneyByMobile, getMerchantPaymentOptions;
 
+    Button btnlogoutUser;
     Callback callback;
 
     String prepaid_bill;
 
     JSONObject customer;
-    CitrusClient citrusClient = null;
+
+
+    CitrusClient citrusClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +105,8 @@ public class PrepaidWallet extends Activity {
         sendMoneyByMobile = (Button) this.findViewById(R.id.send_money_by_mobile);
         getMerchantPaymentOptions = (Button) this.findViewById(R.id.get_merchant_payment_options);
 
+        btnlogoutUser = (Button) this.findViewById(R.id.logoutUser);
+
         customer = new JSONObject();
         citrusClient = getInstance(this);
 
@@ -121,6 +128,7 @@ public class PrepaidWallet extends Activity {
     }
 
     private void init() {
+
 
         isSignedin.setOnClickListener(new OnClickListener() {
 
@@ -374,6 +382,17 @@ public class PrepaidWallet extends Activity {
 
                     }
                 });
+            }
+        });
+
+
+        btnlogoutUser.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(User.logoutUser(PrepaidWallet.this))
+                    Toast.makeText(getApplicationContext(), Constants.LOGOUT_SUCCESS_MESSAGE, Toast.LENGTH_LONG).show();
+                else
+                    Toast.makeText(getApplicationContext(), Constants.LOGOUT_FAIL_MESSAGE, Toast.LENGTH_LONG).show();
             }
         });
 

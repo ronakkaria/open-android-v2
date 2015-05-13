@@ -22,4 +22,7 @@ public interface Constants {
     String INTENT_EXTRA_PAYMENT_PARAMS = "INTENT_EXTRA_PAYMENT_PARAMS";
     int REQUEST_CODE_PAYMENT = 10000;
     String JS_INTERFACE_NAME = "CitrusResponse";
+    String CITRUS_PREPAID_COOKIE = "prepaiduser-payauth=''";
+    String LOGOUT_SUCCESS_MESSAGE = "User Logged Out Successfully.";
+    String LOGOUT_FAIL_MESSAGE = "Failed to LogOut!!!";
 }

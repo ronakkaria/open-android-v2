@@ -29,4 +29,12 @@ public class PersistentConfig {
 	editor.commit();
 
 	}
+
+	public boolean clearToken() {
+		SharedPreferences.Editor editor = settings.edit();
+		editor.clear();
+		return editor.commit();
+
+
+	}
 }

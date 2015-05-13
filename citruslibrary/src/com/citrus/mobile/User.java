@@ -12,12 +12,16 @@
 */
 package com.citrus.mobile;
 
-import java.io.IOException;
+import android.app.Activity;
+import android.webkit.CookieManager;
+
+import com.citrus.cash.PersistentConfig;
+import com.citrus.sdk.Constants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
+import java.io.IOException;
 
 public class User {
 
@@ -168,6 +172,27 @@ public class User {
             return response;
         }
 
+    }
+
+
+    public final static boolean logoutUser(Activity activity) {
+
+        String setCookie = CookieManager.getInstance().getCookie(Config.getBaseURL());
+        CookieManager.getInstance().setCookie(Config.getBaseURL(), Constants.CITRUS_PREPAID_COOKIE);//remove App Cookie
+
+        new PersistentConfig(activity).clearToken(); //clear stored cookies
+
+        OauthToken token = new OauthToken(activity, "");
+        return token.clearToken(); //clear stored oauth token
+
+    }
+
+    public final static boolean isUserLoggedIn(Activity activity) {
+        OauthToken token = new OauthToken(activity, PREPAID_TOKEN);
+        if(token.getuserToken() == null)
+            return false;
+        else
+            return true;
     }
 
 }

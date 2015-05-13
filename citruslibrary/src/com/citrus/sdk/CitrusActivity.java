@@ -32,7 +32,6 @@ import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.SslErrorHandler;
-import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -325,7 +324,6 @@ public class CitrusActivity extends ActionBarActivity {
 
 
     private void setCookie(){
-
         cookieManager = CookieManager.getInstance();
         sessionCookie = new PersistentConfig(CitrusActivity.this).getCookieString();
         cookieManager.setCookie(Config.getBaseURL(), sessionCookie);
@@ -333,17 +331,11 @@ public class CitrusActivity extends ActionBarActivity {
 
 
     private  static void removeCookies() {
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP) {
-            CookieManager.getInstance().removeAllCookies(new ValueCallback<Boolean>() {
-                @Override
-                public void onReceiveValue(Boolean value) {
-                }
-            });
-        }
-        else {
-            CookieManager.getInstance().removeAllCookie();
-        }
+        String setCookie = CookieManager.getInstance().getCookie(Config.getBaseURL());
+        CookieManager.getInstance().setCookie(Config.getBaseURL(),Constants.CITRUS_PREPAID_COOKIE);
     }
+
+
     private void sendResult(TransactionResponse transactionResponse) {
         Intent intent = new Intent();
         intent.putExtra(Constants.INTENT_EXTRA_TRANSACTION_RESPONSE, transactionResponse);
