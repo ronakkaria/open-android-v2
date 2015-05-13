@@ -23,3 +23,13 @@ public interface Constants {
     int REQUEST_CODE_PAYMENT = 10000;
     String JS_INTERFACE_NAME = "CitrusResponse";
 }
+
+interface ResponseMessages {
+    String ERROR_MESSAGE_BLANK_EMAIL_ID_MOBILE_NO = "Please enter emaild id or the mobile no of your friend to send the money";
+    String ERROR_MESSAGE_BLANK_AMOUNT = "Please enter the amount to be sent.";
+    String ERROR_MESSAGE_USER_NOT_LOGGED_IN = "ERROR: User not logged in. Please login the user before doing this.";
+    String ERROR_MESSAGE_INVALID_JSON = "ERROR: Invlid json received.";
+    String ERROR_MESSAGE_FAILED_MERCHANT_PAYMENT_OPTIONS = "ERROR: Unable to fetch merchant payment options";
+    String ERROR_MESSAGE_BLANK_CONFIG_PARAMS = "Please make sure SignIn Id, SignIn Secret, SignUp Id, SignUp Secret & Vanity";
+    String ERROR_MESSAGE_INVALID_MOBILE_NO = "Invalid Mobile No";
+}

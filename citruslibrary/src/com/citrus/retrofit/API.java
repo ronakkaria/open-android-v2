@@ -5,6 +5,9 @@ import com.citrus.pojo.BillGeneratorPOJO;
 import com.citrus.pojo.BindPOJO;
 import com.citrus.pojo.PaymentOptionsPOJO;
 import com.citrus.pojo.StructResponsePOJO;
+import com.citrus.sdk.classes.Amount;
+import com.citrus.sdk.response.CitrusResponse;
+import com.citrus.sdk.response.PaymentResponse;
 import com.google.gson.JsonElement;
 
 import retrofit.Callback;
@@ -15,6 +18,7 @@ import retrofit.http.GET;
 import retrofit.http.Header;
 import retrofit.http.Headers;
 import retrofit.http.POST;
+import retrofit.http.PUT;
 import retrofit.http.Path;
 import retrofit.http.Query;
 import retrofit.mime.TypedString;
@@ -56,15 +60,28 @@ public interface API {
     //payment options of merchant
     @FormUrlEncoded
     @POST("/service/v1/merchant/pgsetting")
-    void getMerchantPaymentOptions(@Field("vanity") String vanity, Callback<JsonElement> paymentOptionsCallback);
+    void getMerchantPaymentOptions(@Field("vanity") String vanity, Callback<JsonElement> callback);
 
-    @POST("/service/v2/profile/me/payment")
-    void getWallet(@Header("Authorization") String header, Callback<JsonElement> userWalletCallback);
+    // Get wallet of the user.
+    @GET("/service/v2/profile/me/payment")
+    void getWallet(@Header("Authorization") String header, Callback<JsonElement> callback);
 
+    // Get the prepaid balance of the user.
+    @GET("/service/v2/mycard")
+    void getBalance(@Header("Authorization") String header, Callback<Amount> callback);
 
     //bill generator response
     @GET("/{path}")
     void getBillGeneratorResponse(@Path("path") String path, @Query("amount") String amount, Callback<BillGeneratorPOJO> billGeneratorPOJOCallback);
 
+    // Send money by email
+    @FormUrlEncoded
+    @POST("/service/v2/prepayment/transfer")
+    void sendMoneyByEmail(@Header("Authorization") String header, @Field("amount") String amount, @Field("currency") String currency, @Field("message") String message, @Field("to") String emailId, Callback<PaymentResponse> callback);
+
+    // Send money by mobile
+    @FormUrlEncoded
+    @POST("/service/v2/prepayment/transfer/extended")
+    void sendMoneyByMobile(@Header("Authorization") String header, @Field("amount") String amount, @Field("currency") String currency, @Field("message") String message, @Field("to") String mobileNo, Callback<PaymentResponse> callback);
 
 }

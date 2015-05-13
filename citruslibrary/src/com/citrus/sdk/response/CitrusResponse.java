@@ -3,13 +3,17 @@ package com.citrus.sdk.response;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by salil on 29/4/15.
  */
 public class CitrusResponse implements Parcelable {
     public static enum Status { SUCCESSFUL, FAILED, CANCELLED }
 
+    @SerializedName("reason")
     protected String message = null;
+    @SerializedName("status")
     protected Status status = null;
 
     CitrusResponse() {}

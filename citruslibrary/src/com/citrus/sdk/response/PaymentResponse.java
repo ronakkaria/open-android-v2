@@ -5,17 +5,26 @@ import android.os.Parcelable;
 
 import com.citrus.sdk.CitrusUser;
 import com.citrus.sdk.classes.Amount;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by salil on 29/4/15.
  */
 public class PaymentResponse extends CitrusResponse implements Parcelable {
+    @SerializedName("id")
     protected String transactionId = null;
+    @SerializedName("amount")
     protected Amount transactionAmount = null;
+    @SerializedName("balance")
     protected Amount balanceAmount = null;
-    protected CitrusUser user = null;
+    @SerializedName("customer")
+    protected String customer = null;
+    @SerializedName("merchant")
     protected String merchantName = null;
+    @SerializedName("date")
     protected String date = null;
+
+    protected CitrusUser user = null;
 
     PaymentResponse() {
         super();
@@ -54,6 +63,9 @@ public class PaymentResponse extends CitrusResponse implements Parcelable {
         return date;
     }
 
+    public String getCustomer() {
+        return customer;
+    }
 
     @Override
     public int describeContents() {
@@ -93,4 +105,16 @@ public class PaymentResponse extends CitrusResponse implements Parcelable {
             return new PaymentResponse[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "PaymentResponse{" +
+                "transactionId='" + transactionId + '\'' +
+                ", transactionAmount=" + transactionAmount +
+                ", balanceAmount=" + balanceAmount +
+                ", user=" + user +
+                ", merchantName='" + merchantName + '\'' +
+                ", date='" + date + '\'' +
+                '}';
+    }
 }

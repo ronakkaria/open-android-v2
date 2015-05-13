@@ -92,4 +92,12 @@ public class Amount implements Parcelable {
             return new Amount[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "Amount{" +
+                "value='" + value + '\'' +
+                ", currency='" + currency + '\'' +
+                '}';
+    }
 }

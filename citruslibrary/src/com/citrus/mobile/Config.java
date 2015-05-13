@@ -24,7 +24,6 @@ public class Config {
 
     public static void setEnv(String sip) {
         env = sip;
-        RetroFitClient.initRetroFitClient(env);
     }
 
     public static void setSigninId(String id) {
