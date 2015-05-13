@@ -43,11 +43,14 @@ import com.citrus.sdk.TransactionResponse;
 import com.citrus.sdk.classes.Amount;
 import com.citrus.sdk.payment.DebitCardOption;
 import com.citrus.sdk.payment.MerchantPaymentOption;
+import com.citrus.sdk.payment.PaymentOption;
 import com.citrus.sdk.payment.PaymentType;
 import com.citrus.sdk.response.CitrusError;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 import static com.citrus.sdk.CitrusClient.*;
 
@@ -55,7 +58,7 @@ public class PrepaidWallet extends Activity {
 
     private static final String bill_url = "https://salty-plateau-1529.herokuapp.com/billGenerator.sandbox.php?amount=3.0";
 
-    Button isSignedin, linkuser, setpass, forgot, signin, getbalance, card_load, card_loadWebView, token_load, bank_load, token_bank_Load, citrus_cashpay, citruscashWebView, get_prepaidToken, withdrawMoney, sendMoneyByEmail, sendMoneyByMobile, getMerchantPaymentOptions;
+    Button isSignedin, linkuser, setpass, forgot, signin, getbalance, card_load, card_loadWebView, token_load, bank_load, token_bank_Load, citrus_cashpay, citruscashWebView, get_prepaidToken, withdrawMoney, sendMoneyByEmail, sendMoneyByMobile, getMerchantPaymentOptions, getWallet;
 
     Callback callback;
 
@@ -99,6 +102,7 @@ public class PrepaidWallet extends Activity {
         sendMoneyByEmail = (Button) this.findViewById(R.id.send_money_by_email);
         sendMoneyByMobile = (Button) this.findViewById(R.id.send_money_by_mobile);
         getMerchantPaymentOptions = (Button) this.findViewById(R.id.get_merchant_payment_options);
+        getWallet = (Button) this.findViewById(R.id.get_wallet);
 
         customer = new JSONObject();
         citrusClient = getInstance(this);
@@ -377,7 +381,29 @@ public class PrepaidWallet extends Activity {
             }
         });
 
+
+        getWallet.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                citrusClient.getWallet(new com.citrus.sdk.Callback<List<PaymentOption>>() {
+                    @Override
+                    public void success(List<PaymentOption> paymentOptionList) {
+                        Toast.makeText(PrepaidWallet.this, "getWallet received...", Toast.LENGTH_SHORT).show();
+//                        Log.d("Citrus", merchantPaymentOption.toString());
+                    }
+
+                    @Override
+                    public void error(CitrusError error) {
+                        Toast.makeText(PrepaidWallet.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+            }
+        });
     }
+
+
 
     private void processresponse(String response, String error) {
 
@@ -416,7 +442,7 @@ public class PrepaidWallet extends Activity {
         Config.setSigninSecret("e6f1b840c652d2ffc46530faaac8b771");
 
 
-        citrusClient.init("test-signup", "c78ec84e389814a05d3ae46546d16d2e", "gogo-pre-wallet", "e6f1b840c652d2ffc46530faaac8b771", "prepaid", Environment.PRODUCTION);
+        citrusClient.init("test-signup", "c78ec84e389814a05d3ae46546d16d2e", "gogo-pre-wallet", "e6f1b840c652d2ffc46530faaac8b771", "prepaid", Environment.SANDBOX);
 
     }
 

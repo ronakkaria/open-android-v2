@@ -18,6 +18,7 @@ package com.citrus.sdk;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.citrus.citrususer.RandomPassword;
 import com.citrus.mobile.Config;
@@ -28,6 +29,7 @@ import com.citrus.pojo.BindPOJO;
 import com.citrus.retrofit.API;
 import com.citrus.retrofit.RetroFitClient;
 import com.citrus.sdk.classes.Amount;
+import com.citrus.sdk.payment.CardOption;
 import com.citrus.sdk.payment.MerchantPaymentOption;
 import com.citrus.sdk.payment.PaymentBill;
 import com.citrus.sdk.payment.PaymentOption;
@@ -43,6 +45,9 @@ import com.orhanobut.logger.Logger;
 import java.util.List;
 
 import com.citrus.sdk.Callback;
+
+import org.json.JSONException;
+
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
@@ -263,7 +268,33 @@ public class CitrusClient {
          * Get the saved payment options of the user.
          */
 
+        retroFitClient.getWallet("Bearer 3fba6c48-2fcf-4b9e-9dc7-9ba6692fb6cf", new retrofit.Callback<JsonElement>() {
+            @Override
+            public void success(JsonElement element, Response response) {
+                Log.d("Citrus", "asString : " + element.getAsString() + " toString : " + element.toString());
 
+//                ArrayList<PaymentOption> walletList = new ArrayList<>();
+//                try {
+//
+//                    JSONObject jsonObject = new JSONObject(response);
+//                    JSONArray paymentOptions = jsonObject.optJSONArray("paymentOptions");
+//
+//                    if (paymentOptions != null) {
+//                        for (int i = 0; i < paymentOptions.length(); i++) {
+//                            PaymentOption option = PaymentOption.fromJSONObject(paymentOptions.getJSONObject(i));
+//                            walletList.add(option);
+//                        }
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
 
 
     }

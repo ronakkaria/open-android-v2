@@ -58,7 +58,6 @@ public interface API {
     @POST("/service/v1/merchant/pgsetting")
     void getMerchantPaymentOptions(@Field("vanity") String vanity, Callback<JsonElement> paymentOptionsCallback);
 
-    @FormUrlEncoded
     @POST("/service/v2/profile/me/payment")
     void getWallet(@Header("Authorization") String header, Callback<JsonElement> userWalletCallback);
 
