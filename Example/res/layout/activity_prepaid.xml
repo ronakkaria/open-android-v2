@@ -152,12 +152,12 @@
               android:text="Get Merchant Payment Options" />
 
           <Button
-              android:id="@+id/get_wallet"
+              android:id="@+id/logoutUser"
               android:layout_width="match_parent"
               android:layout_height="50dp"
               android:layout_below="@id/get_merchant_payment_options"
               android:layout_margin="10dp"
-              android:text="Get Wallet" />
+              android:text="Logout User" />
       </RelativeLayout>
 
 </ScrollView>
