@@ -71,6 +71,7 @@ public class GetBill extends AsyncTask<Void, Void, Void> {
         super.onPostExecute(aVoid);
 
         if (response != null) {
+            Log.d("Citrus", "BILL RESPONSE::: " + response.toString());
             callback.onTaskexecuted(response.toString(), "");
         } else {
             callback.onTaskexecuted("", "Is your billing url correct?");

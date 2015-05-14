@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.citrus.asynch.MakePayment;
 import com.citrus.card.Card;
@@ -344,6 +345,8 @@ public class PG {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        Log.d("Citrus", "STRUCT Response ::: " + payment.toString());
 
         new MakePayment(payment, headers, callback).execute();
 
