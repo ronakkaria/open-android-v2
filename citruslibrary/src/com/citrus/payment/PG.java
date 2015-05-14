@@ -207,7 +207,12 @@ public class PG {
 
             paymentmode = new JSONObject();
             try {
-                paymentmode.put("cvv", card.getCvvNumber());
+                if (card.getCardType() != null && "MTRO".equalsIgnoreCase(card.getCardType().toString())
+                        && TextUtils.isEmpty(card.getCvvNumber())) {
+                    paymentmode.put("cvv", "123"); //dummy value
+                } else {
+                    paymentmode.put("cvv", card.getCvvNumber());
+                }
                 paymentmode.put("holder", card.getCardHolderName());
                 paymentmode.put("number", card.getCardNumber());
                 paymentmode.put("scheme", card.getCardType());
@@ -248,7 +253,12 @@ public class PG {
             try {
                 paymentToken.put("type", "paymentOptionIdToken");
                 paymentToken.put("id", card.getcardToken());
-                paymentToken.put("cvv", card.getCvvNumber());
+                if (!TextUtils.isEmpty(card.getCvvNumber())) {
+                    paymentToken.put("cvv", card.getCvvNumber());
+                }
+                {
+                    paymentToken.put("cvv", "123"); // dummy value c
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
