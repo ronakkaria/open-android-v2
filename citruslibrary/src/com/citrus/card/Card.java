@@ -119,12 +119,18 @@ public class Card {
 		}
 
 		if ("MTRO".equalsIgnoreCase(cardType)) {
-			return validateNumber();
+			return validateNumber() && validateMaestroCtype();
 		} else if (cardCVV == null) {
 			return validateNumber() && validateExpiryDate();
 		} else {
 			return validateNumber() && validateExpiryDate() && validateCVC();
 		}
+	}
+
+	public boolean validateMaestroCtype() {
+		if(getCrdr()==null)
+			return false;
+		return getCrdr().equalsIgnoreCase(CType.DEBIT.toString())?true:false;//Maestro is debit card
 	}
 
 	public boolean validateNumber() {
