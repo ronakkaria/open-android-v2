@@ -112,7 +112,7 @@ public class PaymentPage extends Activity {
     private void cardpay(String bill_string) {
         Bill bill = new Bill(bill_string);
 
-        Card card = new Card("6799990100000000019", "", "", "000", "Tony Stark", "debit");
+        Card card = new Card("4111111111111111", "11", "21", "000", "Tony Stark", "debit");
 
         UserDetails userDetails = new UserDetails(customer);
 
