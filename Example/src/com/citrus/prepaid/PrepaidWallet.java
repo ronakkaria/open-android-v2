@@ -325,7 +325,7 @@ public class PrepaidWallet extends Activity {
 
                 Amount amount = new Amount("50");
 
-                PaymentType paymentType = new PaymentType.CitrusCash(amount, "https://salty-plateau-1529.herokuapp.com/billGenerator.sandboxr.php?" + "amount=" + amount.getValue());
+                PaymentType paymentType = new PaymentType.PGPayment(amount, "https://salty-plateau-1529.herokuapp.com/billGenerator.sandbox.php?" + "amount=" + amount.getValue());
 
 
                 PaymentParams paymentParams = PaymentParams.builder(amount, paymentType, null)

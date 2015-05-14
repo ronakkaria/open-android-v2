@@ -48,9 +48,9 @@ import retrofit.mime.TypedString;
 
 
 public class PG {
-	
-	Activity activity;
-	
+
+    Activity activity;
+
     private Card card;
     private Bill bill;
     private UserDetails userDetails;
@@ -59,13 +59,13 @@ public class PG {
     private JSONObject payment;
 
     private Bank bank;
-    
+
     private Prepaid prepaid;
 
     private String paymenttype;
-    
+
     private JSONObject customParameters = null;
-    
+
     private LoadMoney loadmoney;
 
     ArrayList<String> mylist = new ArrayList<String>();
@@ -134,8 +134,7 @@ public class PG {
 
         if (TextUtils.isEmpty(card.getCardNumber())) {
             paymenttype = "cardtoken";
-        }
-        else {
+        } else {
             paymenttype = "card";
         }
     }
@@ -144,47 +143,46 @@ public class PG {
         this.bank = bank;
         this.bill = bill;
         this.userDetails = userDetails;
-        if(this.bank.getPaymentType()!=null)
-        	paymenttype = this.bank.getPaymentType().toString();
+        if (this.bank.getPaymentType() != null)
+            paymenttype = this.bank.getPaymentType().toString();
         else
-        	paymenttype = "netbank";
+            paymenttype = "netbank";
     }
-    
+
     public PG(Prepaid prepaid, Bill bill, UserDetails userDetails) {
-         this.bill = bill;
-         this.userDetails = userDetails;
-         this.prepaid = prepaid;
-         paymenttype = "prepaid";
+        this.bill = bill;
+        this.userDetails = userDetails;
+        this.prepaid = prepaid;
+        paymenttype = "prepaid";
     }
-    
+
     public PG(Card card, LoadMoney load, UserDetails userDetails) {
-    	this.card = card;
-    	this.userDetails = userDetails;
-    	
-    	this.loadmoney = load;
-    	
-    	if (TextUtils.isEmpty(card.getCardNumber())) {
+        this.card = card;
+        this.userDetails = userDetails;
+
+        this.loadmoney = load;
+
+        if (TextUtils.isEmpty(card.getCardNumber())) {
             paymenttype = "cardtoken";
-        }
-        else {
+        } else {
             paymenttype = "card";
         }
-    	
+
     }
-    
+
     public PG(Bank bank, LoadMoney load, UserDetails userDetails) {
-    	this.bank = bank;
-    	this.userDetails = userDetails;
-    	this.loadmoney = load;
-    	if(this.bank.getPaymentType()!=null)
-        	paymenttype = this.bank.getPaymentType().toString();
+        this.bank = bank;
+        this.userDetails = userDetails;
+        this.loadmoney = load;
+        if (this.bank.getPaymentType() != null)
+            paymenttype = this.bank.getPaymentType().toString();
         else
-        	paymenttype = "netbank";
+            paymenttype = "netbank";
     }
 
     /**
-     * @deprecated Use {@link com.citrus.sdk.CitrusActivity} instead.
      * @param callback
+     * @deprecated Use {@link com.citrus.sdk.CitrusActivity} instead.
      */
     public void charge(Callback callback) {
         this.callback = callback;
@@ -192,57 +190,54 @@ public class PG {
         validate();
 
     }
-    
+
     public void load(Activity activity, Callback callback) {
-    	this.callback = callback;
-    	
-    	this.activity = activity;
-    	
-    	internal = new Callback() {
-			
-			@Override
-			public void onTaskexecuted(String success, String error) {
-				 if (!TextUtils.isEmpty(success)) {
-					 formprepaidBill(success);
-				 }
-				 else {
-					 PG.this.callback.onTaskexecuted("", error);
-				 }
-					  	
-			}
-		};
-		
-		new GetPrepaidbill()
-		.execute(new String[]{loadmoney.getAmount(), loadmoney.getReturl()});
+        this.callback = callback;
+
+        this.activity = activity;
+
+        internal = new Callback() {
+
+            @Override
+            public void onTaskexecuted(String success, String error) {
+                if (!TextUtils.isEmpty(success)) {
+                    formprepaidBill(success);
+                } else {
+                    PG.this.callback.onTaskexecuted("", error);
+                }
+
+            }
+        };
+
+        new GetPrepaidbill()
+                .execute(new String[]{loadmoney.getAmount(), loadmoney.getReturl()});
     }
-    
-    private void formprepaidBill(String prepaid_bill) {    	
-    	this.bill = new Bill(prepaid_bill, "prepaid");
-    	
-    	validate();
+
+    private void formprepaidBill(String prepaid_bill) {
+        this.bill = new Bill(prepaid_bill, "prepaid");
+
+        validate();
     }
-    
-    public void setCustomParameters(JSONObject customParameters)
-    {
-    	this.customParameters = customParameters;
+
+    public void setCustomParameters(JSONObject customParameters) {
+        this.customParameters = customParameters;
     }
 
     private void validate() {
 
         if (TextUtils.equals(paymenttype.toString(), "card") || TextUtils.equals(paymenttype.toString(), "cardtoken")) {
             if (TextUtils.isEmpty(card.getCardNumber()) && TextUtils.isEmpty(card.getcardToken())) {
-                callback.onTaskexecuted("","Invalid Card or Card token!");
+                callback.onTaskexecuted("", "Invalid Card or Card token!");
                 return;
             }
 
             if (!TextUtils.isEmpty(card.getCardNumber())) {
                 if (!card.validateCard()) {
-                    callback.onTaskexecuted("","Invalid Card!");
+                    callback.onTaskexecuted("", "Invalid Card!");
                     return;
                 }
             }
         }
-
 
 
         String access_key = bill.getAccess_key();
@@ -281,18 +276,30 @@ public class PG {
     private void formjson() {
         JSONObject paymentToken = new JSONObject();
         JSONObject paymentmode;
-        if (TextUtils.equals(paymenttype.toString(), "card")){
+        if (TextUtils.equals(paymenttype.toString(), "card")) {
 
             paymentmode = new JSONObject();
             try {
-                paymentmode.put("cvv", card.getCvvNumber());
+                if (card.getCardType() != null && "MTRO".equalsIgnoreCase(card.getCardType().toString())
+                        && TextUtils.isEmpty(card.getCvvNumber())) {
+                    paymentmode.put("cvv", "123"); //dummy value
+                } else {
+                    paymentmode.put("cvv", card.getCvvNumber());
+                }
+
+
                 paymentmode.put("holder", card.getCardHolderName());
                 paymentmode.put("number", card.getCardNumber());
                 paymentmode.put("scheme", card.getCardType());
                 paymentmode.put("type", card.getCrdr());
-                paymentmode.put("expiry", card.getExpiryMonth() + "/" + card.getExpiryYear());
+                if (card.getCardType() != null && "MTRO".equalsIgnoreCase(card.getCardType().toString())
+                        && TextUtils.isEmpty(card.getExpiryMonth()) && TextUtils.isEmpty(card.getExpiryYear())) {
+                    paymentmode.put("expiry", "11/2019"); // This is the dummy value
+                } else {
+                    paymentmode.put("expiry", card.getExpiryMonth() + "/" + card.getExpiryYear());
+                }
 
-                paymentToken.put("type","paymentOptionToken");
+                paymentToken.put("type", "paymentOptionToken");
                 paymentToken.put("paymentMode", paymentmode);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -300,10 +307,8 @@ public class PG {
                 return;
             }
 
-        }
-        
-        else if(TextUtils.equals(paymenttype.toString(), "prepaid")) {
-        	paymentmode = new JSONObject();
+        } else if (TextUtils.equals(paymenttype.toString(), "prepaid")) {
+            paymentmode = new JSONObject();
             try {
                 paymentmode.put("cvv", "000");
                 paymentmode.put("holder", prepaid.getUserEmail());
@@ -312,37 +317,33 @@ public class PG {
                 paymentmode.put("type", "prepaid");
                 paymentmode.put("expiry", "04/2030");
 
-                paymentToken.put("type","paymentOptionToken");
+                paymentToken.put("type", "paymentOptionToken");
                 paymentToken.put("paymentMode", paymentmode);
             } catch (JSONException e) {
                 e.printStackTrace();
                 callback.onTaskexecuted("", "Problem forming payment Json");
                 return;
             }
-        }
-        
-        else if (TextUtils.equals(paymenttype.toString(), "cardtoken")) {
+        } else if (TextUtils.equals(paymenttype.toString(), "cardtoken")) {
             try {
-                paymentToken.put("type","paymentOptionIdToken");
+                paymentToken.put("type", "paymentOptionIdToken");
                 paymentToken.put("id", card.getcardToken());
                 paymentToken.put("cvv", card.getCvvNumber());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-        }
-        else {
+        } else {
             try {
-                if(paymenttype!=null && paymenttype.equalsIgnoreCase(BankPaymentType.TOKEN.toString())) { //tokenized bank payment
- 	                paymentToken.put("id", bank.getBankToken());
- 	                paymentToken.put("type", bank.getPaymentType().toString()); 
-                }
-                else { //bank payment with CID
-	                paymentmode = new JSONObject();
-	                paymentmode.put("type", "netbanking");
-	                paymentmode.put("code", bank.getCidnumber());
-	                paymentToken.put("type", "paymentOptionToken");
-	                paymentToken.put("paymentMode", paymentmode);
+                if (paymenttype != null && paymenttype.equalsIgnoreCase(BankPaymentType.TOKEN.toString())) { //tokenized bank payment
+                    paymentToken.put("id", bank.getBankToken());
+                    paymentToken.put("type", bank.getPaymentType().toString());
+                } else { //bank payment with CID
+                    paymentmode = new JSONObject();
+                    paymentmode.put("type", "netbanking");
+                    paymentmode.put("code", bank.getCidnumber());
+                    paymentToken.put("type", "paymentOptionToken");
+                    paymentToken.put("paymentMode", paymentmode);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -384,20 +385,19 @@ public class PG {
 
         try {
             payment.put("returnUrl", bill.getReturnurl());
-            
+
             if (bill.getNotifyurl() != null) {
-            	payment.put("notifyUrl", bill.getNotifyurl());
+                payment.put("notifyUrl", bill.getNotifyurl());
             }
-            
+
             payment.put("amount", bill.getAmount());
             payment.put("merchantAccessKey", bill.getAccess_key());
-            
-            if(customParameters!=null)
-            {
-            	payment.put("customParameters", customParameters);
+
+            if (customParameters != null) {
+                payment.put("customParameters", customParameters);
             }
-    
-            
+
+
             payment.put("paymentToken", paymentToken);
             payment.put("merchantTxnId", bill.getTxnId());
             payment.put("requestSignature", bill.getSignature());
@@ -436,69 +436,67 @@ public class PG {
         });
 
     }
-    
-    private class GetPrepaidbill extends AsyncTask<String, Void, JSONObject> {
-    	JSONObject headers, params, response = null;
-    	@Override
-    	protected JSONObject doInBackground(String... params) {
-    		headers = new JSONObject();
-    		OauthToken token = new OauthToken(activity, User.PREPAID_TOKEN);
-    		try {
-    			JSONObject tokenjson = token.getuserToken();
-    			String access_token = null;
-    			if (tokenjson != null) {
-    				access_token = tokenjson.getString("access_token");
-    			}
-    			else {
-    				return Errorclass.addErrorFlag("Prepaid Oauth Token is missing - did you sign in the user?", null);
-    			}
-    			
-    			try {
-    	            headers.put("Authorization", "Bearer " + access_token);
-    	            headers.put("Content-Type", "application/x-www-form-urlencoded");
-    	        } catch (JSONException e) {
-    	            e.printStackTrace();
-    	        }
-    		} catch (JSONException e) {
-    			e.printStackTrace();
-    			return Errorclass.addErrorFlag("Prepaid Oauth Token is missing - did you sign in the user?", null);
-    		}
-    		
-    		try {
-    			this.params = new JSONObject();
-    			this.params.put("amount", params[0]);
-    			this.params.put("currency", "INR");
-    			this.params.put("redirect", params[1]);
 
-    		} catch (JSONException e) {
-    			e.printStackTrace();
-    			return Errorclass.addErrorFlag("Prepaid bill parameters are missing", null);
-    		}
-    		
-    		RESTclient restClient = new RESTclient("prepaidbill", Config.getEnv(), this.params, headers);
-    		
-    		try {
-    			response = restClient.makePostrequest();
-    		} catch (IOException e) {
-    			e.printStackTrace();
-    			return Errorclass.addErrorFlag("IO Exception - check if internet is working!", null);
-    		}
-    		
-    		return response;
-    	}
-    	
-    	@Override
-    	protected void onPostExecute(JSONObject result) {
-    		super.onPostExecute(result);
-    		
-    		if (result.has("error")) {
-    			internal.onTaskexecuted("", result.toString());
-    		}
-    		
-    		else {
-    			internal.onTaskexecuted(result.toString(), "");
-    		}
-    	}
+    private class GetPrepaidbill extends AsyncTask<String, Void, JSONObject> {
+        JSONObject headers, params, response = null;
+
+        @Override
+        protected JSONObject doInBackground(String... params) {
+            headers = new JSONObject();
+            OauthToken token = new OauthToken(activity, User.PREPAID_TOKEN);
+            try {
+                JSONObject tokenjson = token.getuserToken();
+                String access_token = null;
+                if (tokenjson != null) {
+                    access_token = tokenjson.getString("access_token");
+                } else {
+                    return Errorclass.addErrorFlag("Prepaid Oauth Token is missing - did you sign in the user?", null);
+                }
+
+                try {
+                    headers.put("Authorization", "Bearer " + access_token);
+                    headers.put("Content-Type", "application/x-www-form-urlencoded");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return Errorclass.addErrorFlag("Prepaid Oauth Token is missing - did you sign in the user?", null);
+            }
+
+            try {
+                this.params = new JSONObject();
+                this.params.put("amount", params[0]);
+                this.params.put("currency", "INR");
+                this.params.put("redirect", params[1]);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return Errorclass.addErrorFlag("Prepaid bill parameters are missing", null);
+            }
+
+            RESTclient restClient = new RESTclient("prepaidbill", Config.getEnv(), this.params, headers);
+
+            try {
+                response = restClient.makePostrequest();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return Errorclass.addErrorFlag("IO Exception - check if internet is working!", null);
+            }
+
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject result) {
+            super.onPostExecute(result);
+
+            if (result.has("error")) {
+                internal.onTaskexecuted("", result.toString());
+            } else {
+                internal.onTaskexecuted(result.toString(), "");
+            }
+        }
     }
-    
+
 }
