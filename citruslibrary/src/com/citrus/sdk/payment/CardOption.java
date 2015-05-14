@@ -153,6 +153,10 @@ public abstract class CardOption extends PaymentOption {
         return cardNumber;
     }
 
+    public CardScheme getCardScheme() {
+        return cardScheme;
+    }
+
     @Override
     public Drawable getOptionIcon(Context context) {
         // Return the icon depending upon the scheme of the card.

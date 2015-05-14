@@ -29,6 +29,9 @@ import com.citrus.pojo.BindPOJO;
 import com.citrus.retrofit.API;
 import com.citrus.retrofit.RetroFitClient;
 import com.citrus.sdk.classes.Amount;
+import com.citrus.sdk.payment.CardOption;
+import com.citrus.sdk.payment.CreditCardOption;
+import com.citrus.sdk.payment.DebitCardOption;
 import com.citrus.sdk.payment.MerchantPaymentOption;
 import com.citrus.sdk.payment.PaymentBill;
 import com.citrus.sdk.payment.PaymentOption;
@@ -40,6 +43,7 @@ import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.orhanobut.logger.Logger;
 
@@ -290,7 +294,28 @@ public class CitrusClient {
                             if (paymentOptions != null) {
                                 for (int i = 0; i < paymentOptions.length(); i++) {
                                     PaymentOption option = PaymentOption.fromJSONObject(paymentOptions.getJSONObject(i));
-                                    walletList.add(option);
+
+                                    // Check whether the merchant supports the user's payment option and then only add this payment option.
+                                    if (merchantPaymentOption != null) {
+                                        Set<CardOption.CardScheme> creditCardSchemeSet = merchantPaymentOption.getCreditCardSchemeSet();
+                                        Set<CardOption.CardScheme> debitCardSchemeSet = merchantPaymentOption.getDebitCardSchemeSet();
+
+                                        if (option instanceof CreditCardOption && creditCardSchemeSet != null &&
+                                                creditCardSchemeSet.contains(((CreditCardOption) option).getCardScheme())) {
+                                            walletList.add(option);
+                                        } else if (option instanceof DebitCardOption && debitCardSchemeSet != null &&
+                                                debitCardSchemeSet.contains(((DebitCardOption) option).getCardScheme())) {
+                                            walletList.add(option);
+                                        }
+//                                        else if (option instanceof CreditCardOption && cardSchemeSet != null &&
+//                                                cardSchemeSet.contains(((CreditCardOption) option).getCardScheme())) {
+//                                            walletList.add(option);
+//                                        }
+                                    } else {
+                                        // If the merchant payment options are not found, save all the options.
+                                        walletList.add(option);
+                                    }
+
                                 }
                             }
 
