@@ -33,7 +33,7 @@ import com.citrus.payment.UserDetails;
 import com.citruspay.sample.R;
 
 public class PaymentPage extends Activity {
-    public static final String BILL_URL = "https://salty-plateau-1529.herokuapp.com/billGenerator.sandbox.php";
+    public static final String BILL_URL = "https://salty-plateau-1529.herokuapp.com/billGenerator.sandbox.php?transactionId=1234";
 
     Button cardpayment, tokenpayment, bankpay, tokenBankPay;
 
@@ -112,7 +112,7 @@ public class PaymentPage extends Activity {
     private void cardpay(String bill_string) {
         Bill bill = new Bill(bill_string);
 
-        Card card = new Card("4111111111111111", "11", "21", "000", "Tony Stark", "debit");
+        Card card = new Card("6799990100000000019", "", "", "000", "Tony Stark", "debit");
 
         UserDetails userDetails = new UserDetails(customer);
 

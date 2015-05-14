@@ -36,7 +36,14 @@ public class GetBill extends AsyncTask<Void, Void, Void> {
     public GetBill(String url, double amount, Callback callback) {
         billurl = url;
 
-        this.billurl = this.billurl + "?amount=" + amount;
+        if (billurl != null) {
+            if (billurl.contains("?")) {
+                this.billurl = this.billurl + "&amount=" + amount;
+            } else {
+                this.billurl = this.billurl + "?amount=" + amount;
+            }
+        }
+
         this.callback = callback;
     }
 
