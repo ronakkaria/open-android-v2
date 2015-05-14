@@ -106,8 +106,8 @@ public class PrepaidWallet extends Activity {
         withdrawMoney = (Button) this.findViewById(R.id.withdraw_money);
         sendMoneyByEmail = (Button) this.findViewById(R.id.send_money_by_email);
         sendMoneyByMobile = (Button) this.findViewById(R.id.send_money_by_mobile);
-        getMerchantPaymentOptions = (Button) this.findViewById(R.id.get_merchant_payment_options);
-        getWallet = (Button) this.findViewById(R.id.get_wallet);
+//        getMerchantPaymentOptions = (Button) this.findViewById(R.id.get_merchant_payment_options);
+//        getWallet = (Button) this.findViewById(R.id.get_wallet);
 
         btnlogoutUser = (Button) this.findViewById(R.id.logoutUser);
 
@@ -369,46 +369,46 @@ public class PrepaidWallet extends Activity {
                                              }
         );
 
-        getMerchantPaymentOptions.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                getInstance(PrepaidWallet.this).getMerchantPaymentOptions(new com.citrus.sdk.Callback<MerchantPaymentOption>() {
-                    @Override
-                    public void success(MerchantPaymentOption merchantPaymentOption) {
-                        Toast.makeText(PrepaidWallet.this, "merchantPaymentOption received...", Toast.LENGTH_SHORT).show();
-                        Log.d("Citrus", merchantPaymentOption.toString());
-                    }
-
-                    @Override
-                    public void error(CitrusError error) {
-                        Toast.makeText(PrepaidWallet.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-
-                    }
-                });
-            }
-        });
-
-
-        getWallet.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                citrusClient.getWallet(new com.citrus.sdk.Callback<List<PaymentOption>>() {
-                    @Override
-                    public void success(List<PaymentOption> paymentOptionList) {
-                        Toast.makeText(PrepaidWallet.this, "getWallet received...", Toast.LENGTH_SHORT).show();
+//        getMerchantPaymentOptions.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                getInstance(PrepaidWallet.this).getMerchantPaymentOptions(new com.citrus.sdk.Callback<MerchantPaymentOption>() {
+//                    @Override
+//                    public void success(MerchantPaymentOption merchantPaymentOption) {
+//                        Toast.makeText(PrepaidWallet.this, "merchantPaymentOption received...", Toast.LENGTH_SHORT).show();
 //                        Log.d("Citrus", merchantPaymentOption.toString());
-                    }
+//                    }
+//
+//                    @Override
+//                    public void error(CitrusError error) {
+//                        Toast.makeText(PrepaidWallet.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+//
+//                    }
+//                });
+//            }
+//        });
 
-                    @Override
-                    public void error(CitrusError error) {
-                        Toast.makeText(PrepaidWallet.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
 
-                    }
-                });
-            }
-        });
+//        getWallet.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                citrusClient.getWallet(new com.citrus.sdk.Callback<List<PaymentOption>>() {
+//                    @Override
+//                    public void success(List<PaymentOption> paymentOptionList) {
+//                        Toast.makeText(PrepaidWallet.this, "getWallet received...", Toast.LENGTH_SHORT).show();
+////                        Log.d("Citrus", merchantPaymentOption.toString());
+//                    }
+//
+//                    @Override
+//                    public void error(CitrusError error) {
+//                        Toast.makeText(PrepaidWallet.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+//
+//                    }
+//                });
+//            }
+//        });
         btnlogoutUser.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
