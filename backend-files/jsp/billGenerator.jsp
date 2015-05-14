@@ -9,7 +9,7 @@ response.setContentType("application/json");
     String secretKey = "MERCHANT_SECRET_KEY";
 	String returnUrl = "http://YOUR_SERVER/redirectURL.jsp";
 	String txnID = String.valueOf(System.currentTimeMillis());
-	String amount = request.getParameter("amount");
+	String amount = request.getParameter("amount");  //Make sure the datatype of the value is STRING. 
 	String dataString = "merchantAccessKey=" + accessKey + "&transactionId=" + txnID + "&amount=" + amount;
 	SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(), "HmacSHA1");
 	Mac mac = Mac.getInstance("HmacSHA1");
