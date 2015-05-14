@@ -101,6 +101,13 @@ public class Card {
         }
     }
 
+    public boolean validateMaestroCtype() {
+        if(getCrdr()==null)
+            return false;
+        return getCrdr().equalsIgnoreCase(CType.DEBIT.toString())?true:false;//Maestro is debit card
+    }
+
+
     public String getCvvNumber() {
         return this.cardCVV;
     }
@@ -126,7 +133,7 @@ public class Card {
         }
 
         if ("MTRO".equalsIgnoreCase(cardType)) {
-            return validateNumber();
+            return validateNumber() && validateMaestroCtype();
         } else if (cardCVV == null) {
             return validateNumber() && validateExpiryDate();
         } else {
