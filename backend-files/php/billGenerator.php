@@ -5,7 +5,7 @@ $return_url = "http://www.yourwebsite.com/redirectURL.php"; //put your own retur
 
 $txn_id = time() . rand(10000,99999);
 
-$value = $_GET["amount"]; //Charge amount is in INR by default
+$value = $_GET["amount"]; //Make sure the datatype of the value is STRING.  //Charge amount is in INR by default
 
 $data_string = "merchantAccessKey=" . $access_key . "&transactionId=" .$txn_id . "&amount=" . $value;
 
