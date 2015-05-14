@@ -33,6 +33,7 @@ import com.citrus.sdk.payment.CardOption;
 import com.citrus.sdk.payment.CreditCardOption;
 import com.citrus.sdk.payment.DebitCardOption;
 import com.citrus.sdk.payment.MerchantPaymentOption;
+import com.citrus.sdk.payment.NetbankingOption;
 import com.citrus.sdk.payment.PaymentBill;
 import com.citrus.sdk.payment.PaymentOption;
 import com.citrus.sdk.response.CitrusError;
@@ -299,6 +300,7 @@ public class CitrusClient {
                                     if (merchantPaymentOption != null) {
                                         Set<CardOption.CardScheme> creditCardSchemeSet = merchantPaymentOption.getCreditCardSchemeSet();
                                         Set<CardOption.CardScheme> debitCardSchemeSet = merchantPaymentOption.getDebitCardSchemeSet();
+                                        List<NetbankingOption> netbankingOptionList = merchantPaymentOption.getNetbankingOptionList();
 
                                         if (option instanceof CreditCardOption && creditCardSchemeSet != null &&
                                                 creditCardSchemeSet.contains(((CreditCardOption) option).getCardScheme())) {
@@ -311,10 +313,11 @@ public class CitrusClient {
 //                                                cardSchemeSet.contains(((CreditCardOption) option).getCardScheme())) {
 //                                            walletList.add(option);
 //                                        }
-                                    } else {
-                                        // If the merchant payment options are not found, save all the options.
-                                        walletList.add(option);
                                     }
+//                                    else {
+//                                        // If the merchant payment options are not found, save all the options.
+//                                        walletList.add(option);
+//                                    }
 
                                 }
                             }
@@ -502,8 +505,8 @@ public class CitrusClient {
      */
     private synchronized String getAccessToken() {
         // TODO: Return the current loggedin user token
-//        return "Bearer 3fba6c48-2fcf-4b9e-9dc7-9ba6692fb6cf";
-        return "Bearer 92d3a132-c881-4c5c-b1d5-02ccb4cb94b4";
+        return "Bearer 3fba6c48-2fcf-4b9e-9dc7-9ba6692fb6cf";
+//        return "Bearer 92d3a132-c881-4c5c-b1d5-02ccb4cb94b4";
     }
 
     private <T> void sendResponse(Callback callback, T t) {
