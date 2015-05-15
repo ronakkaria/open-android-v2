@@ -20,6 +20,10 @@ import android.text.TextUtils;
 import com.citrus.mobile.Month;
 import com.citrus.mobile.Year;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by salil on 13/2/15.
  */
@@ -218,6 +222,30 @@ public abstract class CardOption extends PaymentOption {
         }
 
         return cvvLength;
+    }
+
+    @Override
+    public String getSavePaymentOptionObject() {
+        JSONObject object = null;
+        try {
+            object = new JSONObject();
+            JSONArray paymentOptions = new JSONArray();
+
+            JSONObject option = new JSONObject();
+            option.put("owner", cardHolderName);
+            option.put("number", cardNumber);
+            option.put("scheme", cardScheme.toString());
+            option.put("expiryDate", cardExpiry);
+            option.put("type", getCardType());
+            paymentOptions.put(option);
+
+            object.put("paymentOptions", paymentOptions);
+            object.put("type", "payment");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return object != null ? object.toString():null;
     }
 
     /**

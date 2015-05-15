@@ -53,7 +53,9 @@ public enum Year {
     }
 
     /**
-     * @param year
+     * Get an object of Year
+     *
+     * @param year - year in yyyy or yy format
      * @return
      */
     public static Year getYear(String year) {

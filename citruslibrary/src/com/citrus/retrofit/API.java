@@ -73,7 +73,12 @@ public interface API {
 
     //bill generator response
     @GET("/{path}")
-    void getBillGeneratorResponse(@Path("path") String path, @Query("amount") String amount, Callback<PaymentBill> callback);
+    void getBill(@Path("path") String path, @Query("amount") String amount, Callback<PaymentBill> callback);
+
+    // Save payment option
+    @Headers("Content-Type: application/json")
+    @PUT("/service/v2/profile/me/payment")
+    void savePaymentOption(@Header("Authorization") String header, @Body TypedString body, Callback<CitrusResponse> callback);
 
     // Send money by email
     @FormUrlEncoded

@@ -49,6 +49,7 @@ import com.citrus.sdk.payment.PaymentBill;
 import com.citrus.sdk.payment.PaymentOption;
 import com.citrus.sdk.payment.PaymentType;
 import com.citrus.sdk.response.CitrusError;
+import com.citrus.sdk.response.CitrusResponse;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,7 +63,10 @@ public class PrepaidWallet extends Activity {
 
     private static final String bill_url = "https://salty-plateau-1529.herokuapp.com/billGenerator.sandbox.php?amount=3.0";
 
-    Button isSignedin, linkuser, setpass, forgot, signin, getbalance, card_load, card_loadWebView, token_load, bank_load, token_bank_Load, citrus_cashpay, citruscashWebView, get_prepaidToken, withdrawMoney, sendMoneyByEmail, sendMoneyByMobile, getMerchantPaymentOptions, getWallet, btnGetbill;
+    Button isSignedin, linkuser, setpass, forgot, signin, getbalance, card_load, card_loadWebView,
+            token_load, bank_load, token_bank_Load, citrus_cashpay, citruscashWebView, get_prepaidToken,
+            withdrawMoney, sendMoneyByEmail, sendMoneyByMobile, getMerchantPaymentOptions,
+            getWallet, btnGetbill, saveBank, saveCard;
 
     Button btnlogoutUser;
     Callback callback;
@@ -111,6 +115,8 @@ public class PrepaidWallet extends Activity {
         getMerchantPaymentOptions = (Button) this.findViewById(R.id.get_merchant_payment_options);
         getWallet = (Button) this.findViewById(R.id.get_wallet);
         btnGetbill = (Button) this.findViewById(R.id.get_bill);
+        saveCard = (Button) this.findViewById(R.id.save_card);
+        saveBank = (Button) this.findViewById(R.id.save_bank);
 
         btnlogoutUser = (Button) this.findViewById(R.id.logoutUser);
 
@@ -446,6 +452,37 @@ public class PrepaidWallet extends Activity {
             }
         });
 
+        saveCard.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                DebitCardOption debitCardOption = new DebitCardOption("Salil Godbole", "41111111111111111", "123", Month.getMonth("04"), Year.getYear("2019"));
+                savePaymentOption(debitCardOption);
+            }
+        });
+
+        saveBank.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NetbankingOption netbankingOption = new NetbankingOption("State Bank of Hyderabad", "CID012");
+                savePaymentOption(netbankingOption);
+            }
+        });
+
+    }
+
+    private void savePaymentOption(PaymentOption paymentOption) {
+        citrusClient.savePaymentOption(paymentOption, new com.citrus.sdk.Callback<CitrusResponse>() {
+            @Override
+            public void success(CitrusResponse citrusResponse) {
+                Log.d("Citrus", "SUCCESS");
+            }
+
+            @Override
+            public void error(CitrusError error) {
+                Log.d("Citrus", error.getMessage());
+            }
+        });
     }
 
     private void processresponse(String response, String error) {

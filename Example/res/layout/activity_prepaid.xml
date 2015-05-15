@@ -175,6 +175,23 @@
               android:layout_margin="10dp"
               android:text="Get Bill" />
 
+          <Button
+              android:id="@+id/save_card"
+              android:layout_width="match_parent"
+              android:layout_height="50dp"
+              android:layout_below="@id/get_bill"
+              android:layout_margin="10dp"
+              android:text="Save Card" />
+
+          <Button
+              android:id="@+id/save_bank"
+              android:layout_width="match_parent"
+              android:layout_height="50dp"
+              android:layout_below="@id/save_card"
+              android:layout_margin="10dp"
+              android:text="Save Bank" />
+
+
       </RelativeLayout>
 
 </ScrollView>

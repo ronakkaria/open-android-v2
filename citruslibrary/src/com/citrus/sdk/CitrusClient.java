@@ -57,6 +57,7 @@ import org.json.JSONObject;
 
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import retrofit.mime.TypedString;
 
 import static com.citrus.sdk.response.CitrusResponse.*;
 
@@ -384,6 +385,22 @@ public class CitrusClient {
 
                 return;
             }
+
+            if (paymentOption != null) {
+                retrofitClient.savePaymentOption(getAccessToken(), new TypedString(paymentOption.getSavePaymentOptionObject()), new retrofit.Callback<CitrusResponse>() {
+                    @Override
+                    public void success(CitrusResponse citrusResponse, Response response) {
+
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+
+                    }
+                });
+            } else {
+                sendError(callback, new CitrusError(ResponseMessages.ERROR_MESSAGE_NULL_PAYMENT_OPTION, Status.FAILED));
+            }
         }
     }
 
@@ -466,6 +483,11 @@ public class CitrusClient {
 
 //    public synchronized void getPrepaidToken()
 
+    /**
+     * Get the merchant available payment options. You need to show the user available payment option in your app.
+     *
+     * @param callback
+     */
     public synchronized void getMerchantPaymentOptions(final Callback<MerchantPaymentOption> callback) {
         if (validate()) {
 

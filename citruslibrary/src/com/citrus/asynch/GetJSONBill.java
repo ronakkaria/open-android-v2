@@ -1,6 +1,5 @@
 package com.citrus.asynch;
 
-import com.citrus.pojo.BillGeneratorPOJO;
 import com.citrus.retrofit.RetroFitClient;
 import com.citrus.sdk.classes.Amount;
 import com.citrus.sdk.payment.PaymentBill;
@@ -33,6 +32,6 @@ public class GetJSONBill {
         String baseURL = url.getProtocol() + "://" + url.getAuthority();
         String path = url.getPath();
         path = path.substring(1);
-        RetroFitClient.getBillGeneratorClient(baseURL).getBillGeneratorResponse(path,amount.getValue(),callback);
+        RetroFitClient.getBillGeneratorClient(baseURL).getBill(path, amount.getValue(), callback);
     }
 }

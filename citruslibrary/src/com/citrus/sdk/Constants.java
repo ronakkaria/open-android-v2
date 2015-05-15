@@ -35,4 +35,5 @@ interface ResponseMessages {
     String ERROR_MESSAGE_FAILED_MERCHANT_PAYMENT_OPTIONS = "ERROR: Unable to fetch merchant payment options";
     String ERROR_MESSAGE_BLANK_CONFIG_PARAMS = "Please make sure SignIn Id, SignIn Secret, SignUp Id, SignUp Secret & Vanity";
     String ERROR_MESSAGE_INVALID_MOBILE_NO = "Invalid Mobile No";
+    String ERROR_MESSAGE_NULL_PAYMENT_OPTION = "ERROR: PaymentOption is null.";
 }
