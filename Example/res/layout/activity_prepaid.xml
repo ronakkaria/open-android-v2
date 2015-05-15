@@ -167,6 +167,14 @@
               android:layout_margin="10dp"
               android:text="Get wallet" />
 
+          <Button
+              android:id="@+id/get_bill"
+              android:layout_width="match_parent"
+              android:layout_height="50dp"
+              android:layout_below="@id/get_wallet"
+              android:layout_margin="10dp"
+              android:text="Get Bill" />
+
       </RelativeLayout>
 
 </ScrollView>

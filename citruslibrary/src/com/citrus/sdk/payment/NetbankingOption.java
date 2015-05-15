@@ -179,4 +179,20 @@ public final class NetbankingOption extends PaymentOption implements Parcelable 
         dest.writeString(this.name);
         dest.writeString(this.token);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        NetbankingOption that = (NetbankingOption) o;
+
+        return bankName.equals(that.bankName);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return bankName.hashCode();
+    }
 }

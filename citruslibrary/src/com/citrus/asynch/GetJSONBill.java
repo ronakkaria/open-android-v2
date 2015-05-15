@@ -2,6 +2,8 @@ package com.citrus.asynch;
 
 import com.citrus.pojo.BillGeneratorPOJO;
 import com.citrus.retrofit.RetroFitClient;
+import com.citrus.sdk.classes.Amount;
+import com.citrus.sdk.payment.PaymentBill;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -13,12 +15,12 @@ import retrofit.Callback;
  */
 public class GetJSONBill {
     String billURL;
-    String amount;
-    Callback<BillGeneratorPOJO> billGeneratorPOJOCallback;
-    public GetJSONBill(String billURL, String amount, Callback<BillGeneratorPOJO> billGeneratorPOJOCallback){
+    Amount amount;
+    Callback<PaymentBill> callback;
+    public GetJSONBill(String billURL, Amount amount, Callback<PaymentBill> callback){
         this.billURL = billURL;
         this.amount = amount;
-        this.billGeneratorPOJOCallback = billGeneratorPOJOCallback;
+        this.callback = callback;
     }
 
     public void getJSONBill() {
@@ -31,6 +33,6 @@ public class GetJSONBill {
         String baseURL = url.getProtocol() + "://" + url.getAuthority();
         String path = url.getPath();
         path = path.substring(1);
-        RetroFitClient.getBillGeneratorClient(baseURL).getBillGeneratorResponse(path,amount,billGeneratorPOJOCallback);
+        RetroFitClient.getBillGeneratorClient(baseURL).getBillGeneratorResponse(path,amount.getValue(),callback);
     }
 }

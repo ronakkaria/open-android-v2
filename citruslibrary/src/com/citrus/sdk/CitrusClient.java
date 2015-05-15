@@ -18,13 +18,16 @@ package com.citrus.sdk;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.citrus.asynch.GetJSONBill;
 import com.citrus.citrususer.RandomPassword;
 import com.citrus.mobile.Config;
 import com.citrus.mobile.OAuth2GrantType;
 import com.citrus.mobile.OauthToken;
 import com.citrus.pojo.AccessTokenPOJO;
+import com.citrus.pojo.BillGeneratorPOJO;
 import com.citrus.pojo.BindPOJO;
 import com.citrus.retrofit.API;
 import com.citrus.retrofit.RetroFitClient;
@@ -308,17 +311,14 @@ public class CitrusClient {
                                         } else if (option instanceof DebitCardOption && debitCardSchemeSet != null &&
                                                 debitCardSchemeSet.contains(((DebitCardOption) option).getCardScheme())) {
                                             walletList.add(option);
+                                        } else if (option instanceof NetbankingOption && netbankingOptionList != null &&
+                                                netbankingOptionList.contains(option)) {
+                                            walletList.add(option);
                                         }
-//                                        else if (option instanceof CreditCardOption && cardSchemeSet != null &&
-//                                                cardSchemeSet.contains(((CreditCardOption) option).getCardScheme())) {
-//                                            walletList.add(option);
-//                                        }
+                                    } else {
+                                        // If the merchant payment options are not found, save all the options.
+                                        walletList.add(option);
                                     }
-//                                    else {
-//                                        // If the merchant payment options are not found, save all the options.
-//                                        walletList.add(option);
-//                                    }
-
                                 }
                             }
 
@@ -393,7 +393,22 @@ public class CitrusClient {
      * @param amount   - Transaction amount
      * @param callback
      */
-    public synchronized void getBill(Amount amount, Callback<PaymentBill> callback) {
+    public synchronized void getBill(String billUrl, Amount amount, Callback<PaymentBill> callback) {
+        // Get the bill from the merchant server.
+
+        new GetJSONBill(billUrl, amount, new retrofit.Callback<PaymentBill>() {
+            @Override
+            public void success(PaymentBill paymentBill, Response response) {
+                Log.d("BILLPOJO**", paymentBill.getAmount().getValue());
+
+//                walletpay(billGeneratorPOJO);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        }).getJSONBill();
 
     }
 
