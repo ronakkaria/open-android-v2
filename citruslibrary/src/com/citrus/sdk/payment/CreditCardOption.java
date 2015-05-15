@@ -30,15 +30,6 @@ public final class CreditCardOption extends CardOption implements android.os.Par
         super(token, cardCVV);
     }
 
-    /**
-     * @param cardHolderName - Name of the card holder.
-     * @param cardNumber     - Card number.
-     * @param cardCVV        - CVV of the card. We do not store CVV at our end.
-     * @param cardExpiry     - Expiry date in MM/YY format.
-     */
-    public CreditCardOption(String cardHolderName, String cardNumber, String cardCVV, String cardExpiry) {
-        super(cardHolderName, cardNumber, cardCVV, cardExpiry);
-    }
 
     /**
      * @param cardHolderName  - Name of the card holder.
@@ -52,6 +43,17 @@ public final class CreditCardOption extends CardOption implements android.os.Par
     }
 
     /**
+     * @param cardHolderName - Name of the card holder.
+     * @param cardNumber     - Card number.
+     * @param cardCVV        - CVV of the card. We do not store CVV at our end.
+     * @param cardExpiry     - Expiry date in MM/YY format.
+     */
+    CreditCardOption(String cardHolderName, String cardNumber, String cardCVV, String cardExpiry) {
+        super(cardHolderName, cardNumber, cardCVV, cardExpiry);
+    }
+
+
+    /**
      * This constructor will be used internally, mostly to display the saved card details.
      *
      * @param name           - User friendly name of the card. e.g. Debit Card (4242) or Credit Card (1234)
@@ -61,7 +63,7 @@ public final class CreditCardOption extends CardOption implements android.os.Par
      * @param cardScheme     - Card scheme e.g. VISA, MASTER etc.
      * @param cardExpiry     - Card expiry date. In MMYYYY format.
      */
-    public CreditCardOption(String name, String token, String cardHolderName, String cardNumber, CardScheme cardScheme, String cardExpiry) {
+    CreditCardOption(String name, String token, String cardHolderName, String cardNumber, CardScheme cardScheme, String cardExpiry) {
         super(name, token, cardHolderName, cardNumber, cardScheme, cardExpiry);
     }
 

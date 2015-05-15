@@ -44,9 +44,12 @@ import com.citrus.sdk.TransactionResponse;
 import com.citrus.sdk.classes.Amount;
 import com.citrus.sdk.payment.DebitCardOption;
 import com.citrus.sdk.payment.MerchantPaymentOption;
+import com.citrus.sdk.payment.NetbankingOption;
+import com.citrus.sdk.payment.PaymentBill;
 import com.citrus.sdk.payment.PaymentOption;
 import com.citrus.sdk.payment.PaymentType;
 import com.citrus.sdk.response.CitrusError;
+import com.citrus.sdk.response.CitrusResponse;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,7 +63,10 @@ public class PrepaidWallet extends Activity {
 
     private static final String bill_url = "https://salty-plateau-1529.herokuapp.com/billGenerator.sandbox.php?amount=3.0";
 
-    Button isSignedin, linkuser, setpass, forgot, signin, getbalance, card_load, card_loadWebView, token_load, bank_load, token_bank_Load, citrus_cashpay, citruscashWebView, get_prepaidToken, withdrawMoney, sendMoneyByEmail, sendMoneyByMobile, getMerchantPaymentOptions, getWallet;
+    Button isSignedin, linkuser, setpass, forgot, signin, getbalance, card_load, card_loadWebView,
+            token_load, bank_load, token_bank_Load, citrus_cashpay, citruscashWebView, get_prepaidToken,
+            withdrawMoney, sendMoneyByEmail, sendMoneyByMobile, getMerchantPaymentOptions,
+            getWallet, btnGetbill, saveBank, saveCard;
 
     Button btnlogoutUser;
     Callback callback;
@@ -106,8 +112,11 @@ public class PrepaidWallet extends Activity {
         withdrawMoney = (Button) this.findViewById(R.id.withdraw_money);
         sendMoneyByEmail = (Button) this.findViewById(R.id.send_money_by_email);
         sendMoneyByMobile = (Button) this.findViewById(R.id.send_money_by_mobile);
-//        getMerchantPaymentOptions = (Button) this.findViewById(R.id.get_merchant_payment_options);
-//        getWallet = (Button) this.findViewById(R.id.get_wallet);
+        getMerchantPaymentOptions = (Button) this.findViewById(R.id.get_merchant_payment_options);
+        getWallet = (Button) this.findViewById(R.id.get_wallet);
+        btnGetbill = (Button) this.findViewById(R.id.get_bill);
+        saveCard = (Button) this.findViewById(R.id.save_card);
+        saveBank = (Button) this.findViewById(R.id.save_bank);
 
         btnlogoutUser = (Button) this.findViewById(R.id.logoutUser);
 
@@ -258,7 +267,7 @@ public class PrepaidWallet extends Activity {
 
                 Bank netbank = new Bank("CID002");
 
-                LoadMoney load = new LoadMoney("100", "https://salty-plateau-1529.herokuapp.com/redirectURL.sandbox.php");
+                LoadMoney load = new LoadMoney("100", "https://salty-plateau-1529.herokuapp.com/redirectUrlLoadCash.php");
 
                 UserDetails userDetails = new UserDetails(customer);
 
@@ -283,7 +292,7 @@ public class PrepaidWallet extends Activity {
                 Bank netbank = new Bank("48ec899d5dd14be93dce01038a8af60d", BankPaymentType.TOKEN);
 
 
-                LoadMoney load = new LoadMoney("1", "http://yourwebsite.com/return_url.php");
+                LoadMoney load = new LoadMoney("1", "https://salty-plateau-1529.herokuapp.com/redirectUrlLoadCash.php");
 
                 UserDetails userDetails = new UserDetails(customer);
 
@@ -325,7 +334,7 @@ public class PrepaidWallet extends Activity {
 
                 Amount amount = new Amount("50");
 
-                PaymentType paymentType = new PaymentType.CitrusCash(amount, "https://salty-plateau-1529.herokuapp.com/billGenerator.sandbox.php?" + "amount=" + amount.getValue());
+                PaymentType paymentType = new PaymentType.PGPayment(amount, "https://salty-plateau-1529.herokuapp.com/billGenerator.sandbox.php?" + "amount=" + amount.getValue());
 
 
                 PaymentParams paymentParams = PaymentParams.builder(amount, paymentType, null)
@@ -369,59 +378,112 @@ public class PrepaidWallet extends Activity {
                                              }
         );
 
-//        getMerchantPaymentOptions.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                getInstance(PrepaidWallet.this).getMerchantPaymentOptions(new com.citrus.sdk.Callback<MerchantPaymentOption>() {
-//                    @Override
-//                    public void success(MerchantPaymentOption merchantPaymentOption) {
-//                        Toast.makeText(PrepaidWallet.this, "merchantPaymentOption received...", Toast.LENGTH_SHORT).show();
-//                        Log.d("Citrus", merchantPaymentOption.toString());
-//                    }
-//
-//                    @Override
-//                    public void error(CitrusError error) {
-//                        Toast.makeText(PrepaidWallet.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-//
-//                    }
-//                });
-//            }
-//        });
+        getMerchantPaymentOptions.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                getInstance(PrepaidWallet.this).getMerchantPaymentOptions(new com.citrus.sdk.Callback<MerchantPaymentOption>() {
+                    @Override
+                    public void success(MerchantPaymentOption merchantPaymentOption) {
+                        Toast.makeText(PrepaidWallet.this, "merchantPaymentOption received...", Toast.LENGTH_SHORT).show();
+                        Log.d("Citrus", merchantPaymentOption.toString());
+                    }
+
+                    @Override
+                    public void error(CitrusError error) {
+                        Toast.makeText(PrepaidWallet.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+            }
+        });
 
 
-//        getWallet.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                citrusClient.getWallet(new com.citrus.sdk.Callback<List<PaymentOption>>() {
-//                    @Override
-//                    public void success(List<PaymentOption> paymentOptionList) {
-//                        Toast.makeText(PrepaidWallet.this, "getWallet received...", Toast.LENGTH_SHORT).show();
-////                        Log.d("Citrus", merchantPaymentOption.toString());
-//                    }
-//
-//                    @Override
-//                    public void error(CitrusError error) {
-//                        Toast.makeText(PrepaidWallet.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-//
-//                    }
-//                });
-//            }
-//        });
+        getWallet.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                citrusClient.getWallet(new com.citrus.sdk.Callback<List<PaymentOption>>() {
+                    @Override
+                    public void success(List<PaymentOption> paymentOptionList) {
+                        Toast.makeText(PrepaidWallet.this, "getWallet received...", Toast.LENGTH_SHORT).show();
+                        Log.d("Citrus", "Length :: " + paymentOptionList.size() + " ::::: " + paymentOptionList.toString());
+
+                        for (PaymentOption option : paymentOptionList) {
+                            if (option instanceof NetbankingOption) {
+                                Log.d("CITRUS", "NETBANKING :: " + option.getToken() + "  " + ((NetbankingOption) option).getBankName());
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void error(CitrusError error) {
+                        Toast.makeText(PrepaidWallet.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+            }
+        });
+
         btnlogoutUser.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(User.logoutUser(PrepaidWallet.this))
+                if (User.logoutUser(PrepaidWallet.this))
                     Toast.makeText(getApplicationContext(), Constants.LOGOUT_SUCCESS_MESSAGE, Toast.LENGTH_LONG).show();
                 else
                     Toast.makeText(getApplicationContext(), Constants.LOGOUT_FAIL_MESSAGE, Toast.LENGTH_LONG).show();
             }
         });
 
+        btnGetbill.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                citrusClient.getBill("https://salty-plateau-1529.herokuapp.com/billGenerator.sandbox.php", new Amount("3.0"), new com.citrus.sdk.Callback<PaymentBill>() {
+                    @Override
+                    public void success(PaymentBill paymentBill) {
+                        Log.d("CItrus", "PaymentBil ::: " + paymentBill.toString());
+                    }
+
+                    @Override
+                    public void error(CitrusError error) {
+                        Toast.makeText(PrepaidWallet.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
+        saveCard.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                DebitCardOption debitCardOption = new DebitCardOption("Salil Godbole", "41111111111111111", "123", Month.getMonth("04"), Year.getYear("2019"));
+                savePaymentOption(debitCardOption);
+            }
+        });
+
+        saveBank.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NetbankingOption netbankingOption = new NetbankingOption("State Bank of Hyderabad", "CID012");
+                savePaymentOption(netbankingOption);
+            }
+        });
+
     }
 
+    private void savePaymentOption(PaymentOption paymentOption) {
+        citrusClient.savePaymentOption(paymentOption, new com.citrus.sdk.Callback<CitrusResponse>() {
+            @Override
+            public void success(CitrusResponse citrusResponse) {
+                Log.d("Citrus", "SUCCESS");
+            }
 
+            @Override
+            public void error(CitrusError error) {
+                Log.d("Citrus", error.getMessage());
+            }
+        });
+    }
 
     private void processresponse(String response, String error) {
 

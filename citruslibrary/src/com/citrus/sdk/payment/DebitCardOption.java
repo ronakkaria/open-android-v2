@@ -34,21 +34,16 @@ public final class DebitCardOption extends CardOption implements Parcelable {
         }
     };
 
-    public DebitCardOption() {
-    }
-
-    public DebitCardOption(String token, String cardCVV) {
-        super(token, cardCVV);
+    DebitCardOption() {
     }
 
     /**
-     * @param cardHolderName - Name of the card holder.
-     * @param cardNumber     - Card number.
-     * @param cardCVV        - CVV of the card. We do not store CVV at our end.
-     * @param cardExpiry     - Expiry date in MM/YY format.
+     * Use this constructor incase of tokenized payment.
+     * @param token
+     * @param cardCVV
      */
-    public DebitCardOption(String cardHolderName, String cardNumber, String cardCVV, String cardExpiry) {
-        super(cardHolderName, cardNumber, cardCVV, cardExpiry);
+    public DebitCardOption(String token, String cardCVV) {
+        super(token, cardCVV);
     }
 
     /**
@@ -62,6 +57,17 @@ public final class DebitCardOption extends CardOption implements Parcelable {
         super(cardHolderName, cardNumber, cardCVV, cardExpiryMonth, cardExpiryYear);
     }
 
+
+    /**
+     * @param cardHolderName - Name of the card holder.
+     * @param cardNumber     - Card number.
+     * @param cardCVV        - CVV of the card. We do not store CVV at our end.
+     * @param cardExpiry     - Expiry date in MM/YY format.
+     */
+    DebitCardOption(String cardHolderName, String cardNumber, String cardCVV, String cardExpiry) {
+        super(cardHolderName, cardNumber, cardCVV, cardExpiry);
+    }
+
     /**
      * This constructor will be used internally, mostly to display the saved card details.
      *
@@ -72,7 +78,7 @@ public final class DebitCardOption extends CardOption implements Parcelable {
      * @param cardScheme     - Card scheme e.g. VISA, MASTER etc.
      * @param cardExpiry     - Card expiry date. In MMYYYY format.
      */
-    public DebitCardOption(String name, String token, String cardHolderName, String cardNumber, CardScheme cardScheme, String cardExpiry) {
+    DebitCardOption(String name, String token, String cardHolderName, String cardNumber, CardScheme cardScheme, String cardExpiry) {
         super(name, token, cardHolderName, cardNumber, cardScheme, cardExpiry);
     }
 

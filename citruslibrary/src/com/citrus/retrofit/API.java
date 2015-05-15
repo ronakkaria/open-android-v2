@@ -6,6 +6,7 @@ import com.citrus.pojo.BindPOJO;
 import com.citrus.pojo.PaymentOptionsPOJO;
 import com.citrus.pojo.StructResponsePOJO;
 import com.citrus.sdk.classes.Amount;
+import com.citrus.sdk.payment.PaymentBill;
 import com.citrus.sdk.response.CitrusResponse;
 import com.citrus.sdk.response.PaymentResponse;
 import com.google.gson.JsonElement;
@@ -72,7 +73,12 @@ public interface API {
 
     //bill generator response
     @GET("/{path}")
-    void getBillGeneratorResponse(@Path("path") String path, @Query("amount") String amount, Callback<BillGeneratorPOJO> billGeneratorPOJOCallback);
+    void getBill(@Path("path") String path, @Query("amount") String amount, Callback<PaymentBill> callback);
+
+    // Save payment option
+    @Headers("Content-Type: application/json")
+    @PUT("/service/v2/profile/me/payment")
+    void savePaymentOption(@Header("Authorization") String header, @Body TypedString body, Callback<CitrusResponse> callback);
 
     // Send money by email
     @FormUrlEncoded
