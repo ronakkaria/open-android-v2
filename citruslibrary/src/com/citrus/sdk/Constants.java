@@ -17,14 +17,36 @@ package com.citrus.sdk;
  * Created by salil on 24/4/15.
  */
 public interface Constants {
-    String INTENT_EXTRA_RETURN_URL = "INTENT_EXTRA_RETURN_URL";
+    String SDK_VERSION = "3.0.1";
+
     String INTENT_EXTRA_TRANSACTION_RESPONSE = "INTENT_EXTRA_TRANSACTION_RESPONSE";
+
+    /**
+     * Use this constant to pass the payment type. {@link com.citrus.sdk.payment.PaymentType}
+     */
+    String INTENT_EXTRA_PAYMENT_TYPE = "INTENT_EXTRA_PAYMENT_TYPE";
+
+    String INTENT_EXTRA_CITRUS_CONFIG = "INTENT_EXTRA_CITRUS_CONFIG";
+
+    @Deprecated
     String INTENT_EXTRA_PAYMENT_PARAMS = "INTENT_EXTRA_PAYMENT_PARAMS";
+
     int REQUEST_CODE_PAYMENT = 10000;
+
     String JS_INTERFACE_NAME = "CitrusResponse";
+
     String CITRUS_PREPAID_COOKIE = "prepaiduser-payauth=''";
+
     String LOGOUT_SUCCESS_MESSAGE = "User Logged Out Successfully.";
+
     String LOGOUT_FAIL_MESSAGE = "Failed to LogOut!!!";
+
+    // Colors
+    String colorPrimaryDark = "#E7961D";
+    String colorPrimary = "#F9A323";
+    String textColor = "#ffffff";
+    String accentColor = "";
+
 }
 
 interface ResponseMessages {

@@ -49,6 +49,7 @@ import com.citrus.payment.Bill;
 import com.citrus.payment.PG;
 import com.citrus.payment.UserDetails;
 import com.citrus.sdk.classes.Amount;
+import com.citrus.sdk.classes.CitrusConfig;
 import com.citrus.sdk.payment.PaymentBill;
 import com.citrus.sdk.payment.PaymentOption;
 import com.citrus.sdk.payment.PaymentType;
@@ -59,9 +60,10 @@ import org.json.JSONObject;
 public class CitrusActivity extends ActionBarActivity {
 
     private WebView mPaymentWebview = null;
-    private String mUrl = null;
     private Context mContext = this;
     private ProgressDialog mProgressDialog = null;
+
+    @Deprecated
     private PaymentParams mPaymentParams = null;
     private PaymentType mPaymentType = null;
     private PaymentOption mPaymentOption = null;
@@ -69,12 +71,10 @@ public class CitrusActivity extends ActionBarActivity {
     private ActionBar mActionBar = null;
     private String mColorPrimary = null;
     private String mColorPrimaryDark = null;
-    private String mVanity = null;
-    private String mMerchantOrItemName = null;
-
-    String sessionCookie;
-
-    CookieManager cookieManager;
+    private CitrusConfig mCitrusConfig = null;
+    private CitrusUser mCitrusUser = null;
+    private String sessionCookie;
+    private CookieManager cookieManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +82,8 @@ public class CitrusActivity extends ActionBarActivity {
         setContentView(R.layout.activity_citrus);
 
         mPaymentParams = getIntent().getParcelableExtra(Constants.INTENT_EXTRA_PAYMENT_PARAMS);
+        mPaymentType = getIntent().getParcelableExtra(Constants.INTENT_EXTRA_PAYMENT_TYPE);
+        mCitrusConfig = getIntent().getParcelableExtra(Constants.INTENT_EXTRA_CITRUS_CONFIG);
 
         // Set payment Params
         if (mPaymentParams != null) {
@@ -89,9 +91,11 @@ public class CitrusActivity extends ActionBarActivity {
             mPaymentOption = mPaymentParams.getPaymentOption();
             mColorPrimary = mPaymentParams.getColorPrimary();
             mColorPrimaryDark = mPaymentParams.getColorPrimaryDark();
-            mVanity = mPaymentParams.getVanity();
+        } else if (mPaymentType != null) {
+            mPaymentOption = mPaymentType.getPaymentOption();
+            mCitrusUser = mPaymentType.getCitrusUser();
         } else {
-            throw new IllegalArgumentException("Payment Params Should not be null");
+            throw new IllegalArgumentException("Payment Type Should not be null");
         }
 
         mActionBar = getSupportActionBar();
@@ -113,7 +117,7 @@ public class CitrusActivity extends ActionBarActivity {
         if (mPaymentType instanceof PaymentType.PGPayment || mPaymentType instanceof PaymentType.CitrusCash) {
             if (mPaymentType.getPaymentBill() != null) {
                 // TODO Need to refactor the code.
-                if(PaymentBill.toJSONObject(mPaymentType.getPaymentBill()) != null) {
+                if (PaymentBill.toJSONObject(mPaymentType.getPaymentBill()) != null) {
                     proceedToPayment(PaymentBill.toJSONObject(mPaymentType.getPaymentBill()).toString());
                 }
             } else {
@@ -123,7 +127,7 @@ public class CitrusActivity extends ActionBarActivity {
             Amount amount = mPaymentType.getAmount();
 
             LoadMoney loadMoney = new LoadMoney(amount.getValue(), mPaymentType.getUrl());
-            PG paymentgateway = new PG(mPaymentOption, loadMoney, new UserDetails(CitrusUser.toJSONObject(mPaymentParams.getUser())));
+            PG paymentgateway = new PG(mPaymentOption, loadMoney, new UserDetails(CitrusUser.toJSONObject(mCitrusUser)));
 
             paymentgateway.load(CitrusActivity.this, new Callback() {
                 @Override
@@ -135,7 +139,6 @@ public class CitrusActivity extends ActionBarActivity {
 
         setTitle("Processing...");
         setActionBarBackground(mColorPrimary, mColorPrimaryDark);
-
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -178,11 +181,9 @@ public class CitrusActivity extends ActionBarActivity {
     private void proceedToPayment(String billJSON) {
 
 
-        if(mPaymentType instanceof PaymentType.CitrusCash) { //pay using citrus cash
+        if (mPaymentType instanceof PaymentType.CitrusCash) { //pay using citrus cash
 
-            final CitrusUser citrusUser = mPaymentParams.getUser();
-
-            UserDetails userDetails = new UserDetails(CitrusUser.toJSONObject(citrusUser));
+            UserDetails userDetails = new UserDetails(CitrusUser.toJSONObject(mCitrusUser));
             Prepaid prepaid = new Prepaid(userDetails.getEmail());
             Bill bill = new Bill(billJSON);
             mTransactionId = bill.getTxnId();
@@ -198,12 +199,10 @@ public class CitrusActivity extends ActionBarActivity {
                 }
             });
 
-        }
-        else {
+        } else {
 
             showDialog("Redirecting to Citrus. Please wait...", false);
-            final CitrusUser citrusUser = mPaymentParams.getUser();
-            UserDetails userDetails = new UserDetails(CitrusUser.toJSONObject(citrusUser));
+            UserDetails userDetails = new UserDetails(CitrusUser.toJSONObject(mCitrusUser));
             Bill bill = new Bill(billJSON);
             mTransactionId = bill.getTxnId();
 
@@ -268,14 +267,12 @@ public class CitrusActivity extends ActionBarActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }
-        else{
+        } else {
             Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
 
             transactionResponse = new TransactionResponse(TransactionResponse.TransactionStatus.FAILED, error, mTransactionId);
             sendResult(transactionResponse);
         }
-
     }
 
 
@@ -323,16 +320,16 @@ public class CitrusActivity extends ActionBarActivity {
     }
 
 
-    private void setCookie(){
+    private void setCookie() {
         cookieManager = CookieManager.getInstance();
         sessionCookie = new PersistentConfig(CitrusActivity.this).getCookieString();
         cookieManager.setCookie(Config.getBaseURL(), sessionCookie);
     }
 
 
-    private  static void removeCookies() {
+    private static void removeCookies() {
         String setCookie = CookieManager.getInstance().getCookie(Config.getBaseURL());
-        CookieManager.getInstance().setCookie(Config.getBaseURL(),Constants.CITRUS_PREPAID_COOKIE);
+        CookieManager.getInstance().setCookie(Config.getBaseURL(), Constants.CITRUS_PREPAID_COOKIE);
     }
 
 
@@ -352,7 +349,10 @@ public class CitrusActivity extends ActionBarActivity {
             mPaymentWebview.destroy();
         }
         mPaymentWebview = null;
-        mUrl = null;
+        mPaymentType = null;
+        mPaymentParams = null;
+        mCitrusConfig = null;
+        mCitrusUser = null;
     }
 
     /**
@@ -402,7 +402,7 @@ public class CitrusActivity extends ActionBarActivity {
 
         @JavascriptInterface
         public void pgResponse(String response) {
-            if(mPaymentType instanceof PaymentType.CitrusCash){
+            if (mPaymentType instanceof PaymentType.CitrusCash) {
                 removeCookies();
             }
             TransactionResponse transactionResponse = TransactionResponse.fromJSON(response);
@@ -416,18 +416,6 @@ public class CitrusActivity extends ActionBarActivity {
          */
         @JavascriptInterface
         public void loadWalletResponse(String response) {
-
-          /*  if (response.contains(":")) {
-                String decodeResp[] = response.split(":");
-                if (decodeResp.length > 0) {
-                    if (TextUtils.equals(decodeResp[0], "SUCCESSFUL")) {
-                        Toast.makeText(getApplicationContext(), "Your wallet is loaded Successfully.", Toast.LENGTH_LONG).show();
-                    } else {
-                        //transaction was fail
-                        Toast.makeText(getApplicationContext(), "Wallet Load Failed.", Toast.LENGTH_LONG).show();
-                    }
-                }
-            }*/
 
             TransactionResponse transactionResponse = TransactionResponse.parseLoadMoneyResponse(response);
             sendResult(transactionResponse);

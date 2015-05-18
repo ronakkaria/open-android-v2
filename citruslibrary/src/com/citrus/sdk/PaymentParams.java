@@ -28,6 +28,11 @@ import java.util.ArrayList;
 /**
  * Created by salil on 9/3/15.
  */
+@Deprecated
+/**
+ * This class is permanently discontinued.
+ * @deprecated - Please use {@link com.citrus.sdk.classes.CitrusConfig} for customization.
+ */
 public final class PaymentParams implements Parcelable {
 
     public static final Creator<PaymentParams> CREATOR = new Creator<PaymentParams>() {
@@ -155,7 +160,7 @@ public final class PaymentParams implements Parcelable {
     private PaymentParams(Amount amount, PaymentType paymentType, PaymentOption paymentOption) {
         if (amount != null && paymentType != null
                 && ((paymentType instanceof PaymentType.CitrusCash && paymentOption == null)
-                || ((paymentOption != null && (paymentType instanceof PaymentType.PGPayment ||  paymentType instanceof PaymentType.LoadMoney))))) {
+                || ((paymentOption != null && (paymentType instanceof PaymentType.PGPayment || paymentType instanceof PaymentType.LoadMoney))))) {
             this.transactionAmount = amount;
             this.paymentType = paymentType;
             this.paymentOption = paymentOption;
