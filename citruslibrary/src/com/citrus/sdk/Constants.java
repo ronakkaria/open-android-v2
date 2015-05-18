@@ -34,7 +34,7 @@ public interface Constants {
     int REQUEST_CODE_PAYMENT = 10000;
 
     String JS_INTERFACE_NAME = "CitrusResponse";
-
+    String HEADER_PREPAID_COOKIE = "prepaiduser-payauth";
     String CITRUS_PREPAID_COOKIE = "prepaiduser-payauth=''";
 
     String LOGOUT_SUCCESS_MESSAGE = "User Logged Out Successfully.";
