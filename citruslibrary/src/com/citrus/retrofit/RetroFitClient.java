@@ -12,6 +12,9 @@ import retrofit.client.OkClient;
 public class RetroFitClient {
     private static API RETROFIT_CLIENT;
     private static String CITRUS_ROOT = null;
+    private static OkHttpClient okHttpClient = null;
+    static CitrusEndPoint citrusEndPoint;
+
 
     private RetroFitClient() {}
 
@@ -27,9 +30,12 @@ public class RetroFitClient {
     }
 
     private static void setupCitrusRetroFitClient() {
+        citrusEndPoint = new CitrusEndPoint(CITRUS_ROOT);
+        okHttpClient = new OkHttpClient();
+        okHttpClient.setFollowRedirects(false);
         RestAdapter builder = new RestAdapter.Builder()
-                .setEndpoint(CITRUS_ROOT)
-                .setClient(new OkClient(new OkHttpClient()))
+                .setEndpoint(citrusEndPoint)
+                .setClient(new OkClient(okHttpClient))
                 .setLogLevel(RestAdapter.LogLevel.FULL)
                 .build();
 
@@ -44,5 +50,17 @@ public class RetroFitClient {
                 .build();
         API billGeneratorClient = restAdapter.create(API.class);
         return billGeneratorClient;
+    }
+
+    public static void  setInterCeptor() {
+        okHttpClient.interceptors().add(new ReceivedCookiesInterceptor());
+    }
+
+    public static void  removeInterCeptor() {
+        okHttpClient.interceptors().clear();
+    }
+
+    public static CitrusEndPoint getCitrusEndPoint() {
+        return citrusEndPoint;
     }
 }

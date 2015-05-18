@@ -13,6 +13,7 @@
 package com.citrus.mobile;
 
 import android.app.Activity;
+import android.content.Context;
 import android.webkit.CookieManager;
 
 import com.citrus.cash.PersistentConfig;
@@ -183,6 +184,19 @@ public class User {
         new PersistentConfig(activity).clearToken(); //clear stored cookies
 
         OauthToken token = new OauthToken(activity, "");
+        return token.clearToken(); //clear stored oauth token
+
+    }
+
+
+    public final static boolean logoutUser(Context context) {
+
+        String setCookie = CookieManager.getInstance().getCookie(Config.getBaseURL());
+        CookieManager.getInstance().setCookie(Config.getBaseURL(), Constants.CITRUS_PREPAID_COOKIE);//remove App Cookie
+
+        new PersistentConfig(context).clearToken(); //clear stored cookies
+
+        OauthToken token = new OauthToken(context, "");
         return token.clearToken(); //clear stored oauth token
 
     }

@@ -9,6 +9,7 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.3.0'
     compile 'com.squareup.okio:okio:1.3.0'
     compile 'com.orhanobut:logger:1.8'
+    compile 'de.greenrobot:eventbus:2.4.0'
 }
 
 android {
