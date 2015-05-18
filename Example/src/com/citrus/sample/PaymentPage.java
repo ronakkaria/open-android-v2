@@ -18,6 +18,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.citrus.mobile.Month;
+import com.citrus.mobile.Year;
 import com.citrus.sdk.CitrusActivity;
 import com.citrus.sdk.Constants;
 import com.citrus.sdk.PaymentParams;
@@ -62,11 +64,11 @@ public class PaymentPage extends Activity {
 
                 Amount amount = new Amount("2.5");
                 PaymentType paymentType = new PaymentType.PGPayment(amount, BILL_URL + "amount=" + amount.getValue());
-                CreditCardOption debitCardOption = new CreditCardOption("My Debit Card", "6759649826438453", "", "");
+                CreditCardOption creditCardOption = new CreditCardOption("My Debit Card", "6759649826438453", "123", Month.getMonth("04"), Year.getYear("19"));
 
                 //Card card = new Card("6759649826438453", "", "", "", "Bruce Banner", "debit");
 
-                PaymentParams paymentParams = PaymentParams.builder(amount, paymentType, debitCardOption)
+                PaymentParams paymentParams = PaymentParams.builder(amount, paymentType, creditCardOption)
                         .environment(PaymentParams.Environment.SANDBOX)
                         .build();
                 startCitrusActivity(paymentParams);
