@@ -22,17 +22,26 @@ import android.webkit.CookieManager;
 import android.widget.Toast;
 
 import com.citrus.cash.PersistentConfig;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.citrus.asynch.GetJSONBill;
 import com.citrus.citrususer.RandomPassword;
 import com.citrus.mobile.Config;
 import com.citrus.mobile.OAuth2GrantType;
 import com.citrus.mobile.OauthToken;
 import com.citrus.mobile.User;
 import com.citrus.pojo.AccessTokenPOJO;
+import com.citrus.pojo.BillGeneratorPOJO;
 import com.citrus.pojo.BindPOJO;
 import com.citrus.retrofit.API;
 import com.citrus.retrofit.RetroFitClient;
 import com.citrus.sdk.classes.Amount;
+import com.citrus.sdk.payment.CardOption;
+import com.citrus.sdk.payment.CreditCardOption;
+import com.citrus.sdk.payment.DebitCardOption;
 import com.citrus.sdk.payment.MerchantPaymentOption;
+import com.citrus.sdk.payment.NetbankingOption;
 import com.citrus.sdk.payment.PaymentBill;
 import com.citrus.sdk.payment.PaymentOption;
 import com.citrus.sdk.response.CitrusError;
@@ -40,6 +49,11 @@ import com.citrus.sdk.response.CitrusResponse;
 import com.citrus.sdk.response.PaymentResponse;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import com.orhanobut.logger.Logger;
 
 import org.json.JSONArray;
@@ -54,6 +68,7 @@ import eventbus.CookieEvents;
 import retrofit.ResponseCallback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import retrofit.mime.TypedString;
 
 import static com.citrus.sdk.response.CitrusResponse.Status;
 
@@ -399,7 +414,27 @@ public class CitrusClient {
                             if (paymentOptions != null) {
                                 for (int i = 0; i < paymentOptions.length(); i++) {
                                     PaymentOption option = PaymentOption.fromJSONObject(paymentOptions.getJSONObject(i));
-                                    walletList.add(option);
+
+                                    // Check whether the merchant supports the user's payment option and then only add this payment option.
+                                    if (merchantPaymentOption != null) {
+                                        Set<CardOption.CardScheme> creditCardSchemeSet = merchantPaymentOption.getCreditCardSchemeSet();
+                                        Set<CardOption.CardScheme> debitCardSchemeSet = merchantPaymentOption.getDebitCardSchemeSet();
+                                        List<NetbankingOption> netbankingOptionList = merchantPaymentOption.getNetbankingOptionList();
+
+                                        if (option instanceof CreditCardOption && creditCardSchemeSet != null &&
+                                                creditCardSchemeSet.contains(((CreditCardOption) option).getCardScheme())) {
+                                            walletList.add(option);
+                                        } else if (option instanceof DebitCardOption && debitCardSchemeSet != null &&
+                                                debitCardSchemeSet.contains(((DebitCardOption) option).getCardScheme())) {
+                                            walletList.add(option);
+                                        } else if (option instanceof NetbankingOption && netbankingOptionList != null &&
+                                                netbankingOptionList.contains(option)) {
+                                            walletList.add(option);
+                                        }
+                                    } else {
+                                        // If the merchant payment options are not found, save all the options.
+                                        walletList.add(option);
+                                    }
                                 }
                             }
 
@@ -465,6 +500,22 @@ public class CitrusClient {
 
                 return;
             }
+
+            if (paymentOption != null) {
+                retrofitClient.savePaymentOption(getAccessToken(), new TypedString(paymentOption.getSavePaymentOptionObject()), new retrofit.Callback<CitrusResponse>() {
+                    @Override
+                    public void success(CitrusResponse citrusResponse, Response response) {
+
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+
+                    }
+                });
+            } else {
+                sendError(callback, new CitrusError(ResponseMessages.ERROR_MESSAGE_NULL_PAYMENT_OPTION, Status.FAILED));
+            }
         }
     }
 
@@ -474,7 +525,22 @@ public class CitrusClient {
      * @param amount   - Transaction amount
      * @param callback
      */
-    public synchronized void getBill(Amount amount, Callback<PaymentBill> callback) {
+    public synchronized void getBill(String billUrl, Amount amount, Callback<PaymentBill> callback) {
+        // Get the bill from the merchant server.
+
+        new GetJSONBill(billUrl, amount, new retrofit.Callback<PaymentBill>() {
+            @Override
+            public void success(PaymentBill paymentBill, Response response) {
+                Log.d("BILLPOJO**", paymentBill.getAmount().getValue());
+
+//                walletpay(billGeneratorPOJO);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        }).getJSONBill();
 
     }
 
@@ -532,6 +598,11 @@ public class CitrusClient {
 
 //    public synchronized void getPrepaidToken()
 
+    /**
+     * Get the merchant available payment options. You need to show the user available payment option in your app.
+     *
+     * @param callback
+     */
     public synchronized void getMerchantPaymentOptions(final Callback<MerchantPaymentOption> callback) {
         if (validate()) {
 
@@ -586,8 +657,8 @@ public class CitrusClient {
      */
     private synchronized String getAccessToken() {
         // TODO: Return the current loggedin user token
-//        return "Bearer 3fba6c48-2fcf-4b9e-9dc7-9ba6692fb6cf";
-        return "Bearer 92d3a132-c881-4c5c-b1d5-02ccb4cb94b4";
+        return "Bearer 3fba6c48-2fcf-4b9e-9dc7-9ba6692fb6cf";
+//        return "Bearer 92d3a132-c881-4c5c-b1d5-02ccb4cb94b4";
     }
 
     private <T> void sendResponse(Callback callback, T t) {

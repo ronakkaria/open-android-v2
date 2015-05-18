@@ -18,6 +18,10 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by salil on 13/2/15.
  */
@@ -163,6 +167,28 @@ public final class NetbankingOption extends PaymentOption implements Parcelable 
     }
 
     @Override
+    public String getSavePaymentOptionObject() {
+        JSONObject object = null;
+        try {
+            object = new JSONObject();
+            JSONArray paymentOptions = new JSONArray();
+
+            JSONObject option = new JSONObject();
+            option.put("owner", "");
+            option.put("bank", bankName);
+            option.put("type", "netbanking");
+            paymentOptions.put(option);
+
+            object.put("paymentOptions", paymentOptions);
+            object.put("type", "payment");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return object != null ? object.toString():null;
+    }
+
+    @Override
     public String toString() {
         return bankName;
     }
@@ -178,5 +204,21 @@ public final class NetbankingOption extends PaymentOption implements Parcelable 
         dest.writeString(this.bankCID);
         dest.writeString(this.name);
         dest.writeString(this.token);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        NetbankingOption that = (NetbankingOption) o;
+
+        return bankName.equals(that.bankName);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return bankName.hashCode();
     }
 }

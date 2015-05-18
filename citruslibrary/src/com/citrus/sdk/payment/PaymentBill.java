@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 
 import com.citrus.sdk.classes.Amount;
+import com.google.gson.annotations.SerializedName;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,12 +19,19 @@ import java.util.Map;
  */
 public class PaymentBill implements Parcelable {
 
+    @SerializedName("amount")
     Amount amount = null;
+    @SerializedName("requestSignature")
     String requestSignature = null;
+    @SerializedName("merchantTxnId")
     String merchantTransactionId = null;
+    @SerializedName("merchantAccessKey")
     String merchantAccessKey = null;
+    @SerializedName("returnUrl")
     String returnUrl = null;
+    @SerializedName("notifyUrl")
     String notifyUrl = null;
+    @SerializedName("customParameters")
     Map<String, String> customParametersMap = null;
 
     public PaymentBill(Amount amount, String requestSignature, String merchantTransactionId,
@@ -203,4 +211,17 @@ public class PaymentBill implements Parcelable {
             return new PaymentBill[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "PaymentBill{" +
+                "amount=" + amount +
+                ", requestSignature='" + requestSignature + '\'' +
+                ", merchantTransactionId='" + merchantTransactionId + '\'' +
+                ", merchantAccessKey='" + merchantAccessKey + '\'' +
+                ", returnUrl='" + returnUrl + '\'' +
+                ", notifyUrl='" + notifyUrl + '\'' +
+                ", customParametersMap=" + customParametersMap +
+                '}';
+    }
 }

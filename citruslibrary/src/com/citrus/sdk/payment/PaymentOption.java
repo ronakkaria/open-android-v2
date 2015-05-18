@@ -102,6 +102,8 @@ public abstract class PaymentOption implements Parcelable {
         this.savePaymentOption = savePaymentOption;
     }
 
+    public abstract String getSavePaymentOptionObject();
+
     public abstract Drawable getOptionIcon(Context context);
 
     @Override

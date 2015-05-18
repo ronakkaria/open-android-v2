@@ -99,7 +99,7 @@ public class MainActivity extends Activity {
     }
 
     private void init() {
-        Config.setEnv("production"); //replace it with "production" when you are ready
+        Config.setEnv("sandbox"); //replace it with "production" when you are ready
         
         /*Replace following details with oauth details provided to you*/
         Config.setupSignupId("xu86orijrw-signup");

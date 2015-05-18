@@ -15,19 +15,15 @@ package com.citrus.sample;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.citrus.mobile.Month;
-import com.citrus.mobile.Year;
 import com.citrus.sdk.CitrusActivity;
 import com.citrus.sdk.Constants;
 import com.citrus.sdk.PaymentParams;
 import com.citrus.sdk.TransactionResponse;
 import com.citrus.sdk.classes.Amount;
 import com.citrus.sdk.payment.CreditCardOption;
-import com.citrus.sdk.payment.DebitCardOption;
 import com.citrus.sdk.payment.NetbankingOption;
 import com.citrus.sdk.payment.PaymentType;
 
@@ -66,7 +62,9 @@ public class PaymentPage extends Activity {
 
                 Amount amount = new Amount("2.5");
                 PaymentType paymentType = new PaymentType.PGPayment(amount, BILL_URL + "amount=" + amount.getValue());
-                DebitCardOption debitCardOption = new DebitCardOption("My Debit Card", "4111111111111111", "123", Month.APR, Year._2016);
+                CreditCardOption debitCardOption = new CreditCardOption("My Debit Card", "6759649826438453", "", "");
+
+                //Card card = new Card("6759649826438453", "", "", "", "Bruce Banner", "debit");
 
                 PaymentParams paymentParams = PaymentParams.builder(amount, paymentType, debitCardOption)
                         .environment(PaymentParams.Environment.SANDBOX)
@@ -116,7 +114,8 @@ public class PaymentPage extends Activity {
 
         TransactionResponse transactionResponse = data.getParcelableExtra(Constants.INTENT_EXTRA_TRANSACTION_RESPONSE);
         if (transactionResponse != null) {
-            Log.d("Citrus", "transactionResponse :: " + transactionResponse.toString());
+            //Log.d("Citrus", "transactionResponse :: " + transactionResponse.toString());
+        //    Logger.d("transactionResponse ::" +transactionResponse.toString());
         }
     }
 }
