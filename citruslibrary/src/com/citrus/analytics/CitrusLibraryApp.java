@@ -4,8 +4,8 @@ import android.app.Application;
 
 import com.citrus.mobile.Config;
 import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
+import com.orhanobut.logger.LogLevel;
 
 import java.util.HashMap;
 
@@ -19,6 +19,8 @@ public class CitrusLibraryApp extends Application {
         ECOMMERCE_TRACKER, // Tracker used by all ecommerce transactions from a company.
     }
 
+    private final String LOG_TAG = "CITRUSLIBRARY";
+
     HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
 
     public CitrusLibraryApp() {
@@ -29,13 +31,23 @@ public class CitrusLibraryApp extends Application {
         if (!mTrackers.containsKey(trackerId)) {
 
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-            analytics.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
+            //analytics.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
             Tracker t = (trackerId == TrackerName.APP_TRACKER) ? analytics.newTracker(Config.getAnalyticsID()):null;
 
            // t.enableAdvertisingIdCollection(true);
             mTrackers.put(trackerId, t);
         }
         return mTrackers.get(trackerId);
+    }
+
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        com.orhanobut.logger.Logger.init(LOG_TAG)
+                .setMethodCount(2)
+                .hideThreadInfo()
+                .setLogLevel(LogLevel.NONE);
     }
 
 
