@@ -91,6 +91,7 @@ public class CitrusActivity extends ActionBarActivity {
             mPaymentOption = mPaymentParams.getPaymentOption();
             mColorPrimary = mPaymentParams.getColorPrimary();
             mColorPrimaryDark = mPaymentParams.getColorPrimaryDark();
+            mCitrusUser = mPaymentParams.getUser();
         } else if (mPaymentType != null) {
             mPaymentOption = mPaymentType.getPaymentOption();
             mCitrusUser = mPaymentType.getCitrusUser();
@@ -160,6 +161,12 @@ public class CitrusActivity extends ActionBarActivity {
         showDialog("Validating Payment Details. Please wait...", false);
 
         String billUrl = mPaymentType.getUrl();
+
+        if (billUrl.contains("?")) {
+            billUrl = billUrl + "&amount=" + mPaymentType.getAmount().getValue();
+        } else {
+            billUrl = billUrl + "?amount=" + mPaymentType.getAmount().getValue();
+        }
 
         new GetBill(billUrl, new Callback() {
             @Override
