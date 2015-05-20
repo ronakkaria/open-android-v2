@@ -240,8 +240,9 @@ public final class TransactionResponse implements Parcelable {
     @Override
     public String toString() {
         return "CitrusTransactionResponse{" +
-                "transactionAmount='" + transactionAmount.toString() + '\'' +
-                "balanceAmount='" + balanceAmount.toString() + '\'' +
+                "transactionAmount='" + (transactionAmount != null ? transactionAmount.toString() : "") + '\'' +
+
+                "balanceAmount='" + (balanceAmount != null ? balanceAmount.toString() : "") + '\'' +
                 ", message='" + message + '\'' +
                 ", responseCode='" + responseCode + '\'' +
                 ", transactionStatus=" + transactionStatus +
