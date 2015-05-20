@@ -17,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.text.TextUtils;
 
 import com.citrus.card.Card;
 import com.citrus.card.CardType;
@@ -127,11 +128,8 @@ public class Wallet {
             e.printStackTrace();
         }
 
-
-
         JSONObject cardJson = new JSONObject();
         JSONObject cardDetails = new JSONObject();
-
 
         try {
             cardJson.put("type", "payment");
@@ -139,8 +137,14 @@ public class Wallet {
             cardDetails.put("number", card.getCardNumber());
             cardDetails.put("scheme", CardType.getScheme(card.getCardType()));
             cardDetails.put("type", card.getCrdr().toLowerCase());
-            cardDetails.put("expiryDate",
-                    card.getExpiryMonth() + "/" + card.getExpiryYear().substring(card.getExpiryYear().length() - 2));
+
+            if (card.getCardType() != null && "MTRO".equalsIgnoreCase(card.getCardType().toString())
+                    && TextUtils.isEmpty(card.getCvvNumber())) {
+                cardDetails.put("expiryDate", "11/19");
+            } else {
+                cardDetails.put("expiryDate",
+                        card.getExpiryMonth() + "/" + card.getExpiryYear().substring(card.getExpiryYear().length() - 2));
+            }
 
             JSONArray array = new JSONArray();
             array.put(cardDetails);
