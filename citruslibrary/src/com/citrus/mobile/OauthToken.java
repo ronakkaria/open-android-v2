@@ -16,6 +16,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.citrus.pojo.AccessTokenPOJO;
+import com.citrus.retrofit.RetroFitClient;
+import com.citrus.sdk.response.CitrusError;
+import com.citrus.sdk.response.CitrusResponse;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,10 +30,14 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
 
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
 
 public class OauthToken {
     private static final String STORED_VALUES = "UserStorage";
-    private  Context context;
+    private Context context;
 
     private Activity activity;
 
@@ -35,6 +46,8 @@ public class OauthToken {
     private SharedPreferences tokenPrefs;
 
     private String base_url, token_type;
+
+    private com.citrus.sdk.Callback callback;
 
     public OauthToken(Activity activity, String token_type) {
         this.activity = activity;
@@ -51,11 +64,17 @@ public class OauthToken {
         this.token_type = token_type;
     }
 
+    public OauthToken(Context context, com.citrus.sdk.Callback callback, String token_type) {
+        this.context = context;
+        tokenPrefs = this.context.getSharedPreferences(STORED_VALUES, 0);
+        base_url = Config.getEnv();
+    }
+
     public boolean createToken(JSONObject usertoken) {
 
         jsontoken = new JSONObject();
 
-        long expiry = new Date().getTime()/1000l;
+        long expiry = new Date().getTime() / 1000l;
 
         try {
             expiry += usertoken.getLong("expires_in");
@@ -64,7 +83,7 @@ public class OauthToken {
             e.printStackTrace();
         }
 
-        for (Iterator<?> keys = usertoken.keys(); keys.hasNext();) {
+        for (Iterator<?> keys = usertoken.keys(); keys.hasNext(); ) {
             String key = (String) keys.next();
 
             try {
@@ -87,13 +106,12 @@ public class OauthToken {
     public JSONObject getuserToken() {
         JSONObject token = null;
         try {
-        	if (tokenPrefs.contains(token_type)) {
+            if (tokenPrefs.contains(token_type)) {
                 token = new JSONObject(tokenPrefs.getString(token_type, null));
-        	}
-        	else {
-        		return null;
-        	}
-       
+            } else {
+                return null;
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
@@ -101,8 +119,7 @@ public class OauthToken {
 
         if (token.has("refresh_token")) {
             return refreshToken(token);
-        }
-        else {
+        } else {
             return token;
         }
 
@@ -168,15 +185,83 @@ public class OauthToken {
             jsontoken = response;
             storeToken();
             return response;
-        }
-        else {
+        } else {
             return null;
         }
     }
-	
-	public boolean clearToken() {
-		SharedPreferences.Editor editor = tokenPrefs.edit();
-		editor.clear();
-		return editor.commit();
-	}
+
+
+    public void getAccessToken(com.citrus.sdk.Callback callback) {
+
+        JSONObject token = null;
+        try {
+            if (tokenPrefs.contains(token_type)) {
+                token = new JSONObject(tokenPrefs.getString(token_type, null));
+            } else {
+                CitrusError error = new CitrusError("Failed to get Access Token", CitrusResponse.Status.FAILED);
+                callback.error(error);
+            }
+
+        } catch (JSONException e) {
+            CitrusError error = new CitrusError("Failed to get Access Token", CitrusResponse.Status.FAILED);
+            callback.error(error);
+        }
+
+        if (token.has("refresh_token")) {
+            refreshToken(token, callback);
+        } else {
+            Gson gson = new GsonBuilder().create();
+            AccessTokenPOJO accessTokenPOJO = gson.fromJson(token.toString(), AccessTokenPOJO.class);
+            callback.success(accessTokenPOJO);
+        }
+    }
+
+
+    private void refreshToken(JSONObject token, com.citrus.sdk.Callback callback) {
+
+        if (hasExpired(token)) {
+            try {
+                getRefreshToken(token.getString("refresh_token"), callback);
+            } catch (JSONException e) {
+                CitrusError error = new CitrusError("Failed to get Access Token", CitrusResponse.Status.FAILED);
+                callback.error(error);
+            }
+        }
+        else {
+            Gson gson = new GsonBuilder().create();
+            AccessTokenPOJO accessTokenPOJO = gson.fromJson(token.toString(), AccessTokenPOJO.class);
+            callback.success(accessTokenPOJO);
+        }
+
+    }
+
+
+    //get Refresh TOken from RetroFitClient
+    private void getRefreshToken(String refreshToken, final com.citrus.sdk.Callback callback) {
+        RetroFitClient.getCitrusRetroFitClient().getRefreshTokenAsync(Config.getSigninId(), Config.getSigninSecret(), OAuth2GrantType.refresh_token.toString(), refreshToken, new Callback<AccessTokenPOJO>() {
+            @Override
+            public void success(AccessTokenPOJO accessTokenPOJO, Response response) {
+                if (accessTokenPOJO.getAccessToken() != null) {
+                    jsontoken = accessTokenPOJO.getJSON();
+                    storeToken();
+                    callback.success(accessTokenPOJO);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                CitrusError citrusError = new CitrusError(error.getMessage(), CitrusResponse.Status.FAILED);
+                callback.error(citrusError);
+            }
+        });
+
+    }
+
+    public boolean clearToken() {
+        SharedPreferences.Editor editor = tokenPrefs.edit();
+        editor.clear();
+        return editor.commit();
+    }
+
+
 }

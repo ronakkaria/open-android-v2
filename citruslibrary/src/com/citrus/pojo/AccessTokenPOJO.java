@@ -39,6 +39,17 @@ public class AccessTokenPOJO {
     @Expose
     private String scope;
 
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    @SerializedName("refresh_token")
+    private String refreshToken;
+
     /**
      *
      * @return

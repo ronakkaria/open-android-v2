@@ -1,7 +1,6 @@
 package com.citrus.retrofit;
 
 import com.citrus.pojo.AccessTokenPOJO;
-import com.citrus.pojo.BillGeneratorPOJO;
 import com.citrus.pojo.BindPOJO;
 import com.citrus.pojo.PaymentOptionsPOJO;
 import com.citrus.pojo.StructResponsePOJO;
@@ -49,14 +48,24 @@ public interface API {
     @POST("/oauth/token")
     void getSignInWithPasswordResponse(@Field("client_id") String client_ID, @Field("client_secret") String client_Secret, @Field("username") String username, @Field("password") String password, @Field("grant_type") String grantType, Callback<AccessTokenPOJO> accessTokenPOJOCallback);
 
+    //getCookie
     @FormUrlEncoded
     @POST("/prepaid/pg/_verify")
     void getCookie(@Field("email") String email, @Field("password") String password, @Field("rmcookie") String rmCookie, Callback<String> cookie);
 
+    //set Password
     @FormUrlEncoded
     @PUT("/service/v2/identity/me/password")
     void setPasswordResponse(@Header("Authorization") String header,@Field("old") String oldPassword, @Field("new") String newPassword, Callback<ResponseCallback> callback);
 
+    @FormUrlEncoded
+    @POST("/oauth/token")
+    AccessTokenPOJO getRefreshToken(@Field("client_id") String client_ID, @Field("client_secret") String client_Secret, @Field("grant_type") String grantType, @Field("refresh_token") String refreshToken);
+
+
+    @FormUrlEncoded
+    @POST("/oauth/token")
+    void getRefreshTokenAsync(@Field("client_id") String client_ID, @Field("client_secret") String client_Secret, @Field("grant_type") String grantType, @Field("refresh_token") String refreshToken, Callback<AccessTokenPOJO> accessTokenPOJOCallback);
 
     //return url from citrus
     @Headers("Content-Type: application/json")
