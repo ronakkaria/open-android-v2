@@ -20,6 +20,9 @@ package com.citrus.sdk;
  */
 public interface ResponseMessages {
 
+    String SUCCESS_MESSAGE_LOAD_MONEY = "Citrus Cash Wallet loaded successfully";
+    String SUCCESS_MESSAGE_RESET_PASSWORD = "Reset password link has been on your email.";
+
     String ERROR_MESSAGE_BLANK_EMAIL_ID_MOBILE_NO = "Please enter emaild id or the mobile no of your friend to send the money";
     String ERROR_MESSAGE_BLANK_AMOUNT = "Please enter the amount to be sent.";
     String ERROR_MESSAGE_USER_NOT_LOGGED_IN = "ERROR: User not logged in. Please login the user before doing this.";
@@ -30,4 +33,8 @@ public interface ResponseMessages {
     String ERROR_MESSAGE_NULL_PAYMENT_OPTION = "ERROR: PaymentOption is null.";
     String ERROR_SIGNUP_TOKEN_NOT_FOUND = "Have you done SignUp? Token not found.!!!";
     String ERROR_SIGNIN_TOKEN_NOT_FOUND = "Have you done SignIn? Token not found.!!!";
+    String ERROR_MESSAGE_RESET_PASSWORD = "Error: Reset password failed";
+    String ERROR_MESSAGE_LOAD_MONEY = "Failed to load money into Citrus Cash";
+
+
 }

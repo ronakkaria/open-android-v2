@@ -1,15 +1,17 @@
 /*
-   Copyright 2014 Citrus Payment Solutions Pvt. Ltd.
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-     http://www.apache.org/licenses/LICENSE-2.0
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-*/
+ *
+ *    Copyright 2014 Citrus Payment Solutions Pvt. Ltd.
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ * /
+ */
 
 package com.citrus.sdk;
 
@@ -19,6 +21,7 @@ import android.text.TextUtils;
 
 
 import com.citrus.sdk.classes.Amount;
+import com.orhanobut.logger.Logger;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -429,31 +432,46 @@ public final class TransactionResponse implements Parcelable {
 
     //http://192.168.27.1:8080/redirectURLLoadCash.jsp#SUCCESSFUL:1472849:1513.00:INR:1427444325000:100.00:INR
     public static TransactionResponse parseLoadMoneyResponse(String response) {
+        Logger.d("parseLoadMoneyResponse :: " + response);
+
         TransactionResponse transactionResponse = null;
         if (response.contains("#")) {
             String token[] = response.split("#");
             if (token != null && token.length == 2) {
                 String decodeResp[] = token[1].split(":");
-                if (TextUtils.equals(decodeResp[0], "SUCCESSFUL")) {
-                    transactionResponse = new TransactionResponse(TransactionStatus.SUCCESSFUL, "Citrus Cash Wallet loaded successfully", decodeResp[1]);
 
-                    String balanceValue = decodeResp[1];
-                    String balanceCurrency = decodeResp[2];
+                String transactionId = null;
+                String balanceValue = null;
+                String balanceCurrency = null;
 
-                    String transactionValue = decodeResp[5];
-                    String transactionCurrency = decodeResp[6];
+                String dateTime = null;
+                String transactionValue = null;
+                String transactionCurrency = null;
+
+                if (decodeResp.length > 1) {
+                    transactionId = decodeResp[1];
+                    balanceValue = decodeResp[2];
+                    balanceCurrency = decodeResp[3];
+
+                    dateTime = decodeResp[4];
+                    transactionValue = decodeResp[5];
+                    transactionCurrency = decodeResp[6];
+
+                    if (TextUtils.equals(decodeResp[0], "SUCCESSFUL")) {
+                        transactionResponse = new TransactionResponse(TransactionStatus.SUCCESSFUL, ResponseMessages.SUCCESS_MESSAGE_LOAD_MONEY, transactionId);
+                    } else {
+                        transactionResponse = new TransactionResponse(TransactionStatus.FAILED, ResponseMessages.ERROR_MESSAGE_LOAD_MONEY, transactionId);
+                    }
 
                     transactionResponse.transactionAmount = new Amount(transactionValue, transactionCurrency);
                     transactionResponse.balanceAmount = new Amount(balanceValue, balanceCurrency);
-
-                } else {
-                    transactionResponse = new TransactionResponse(TransactionStatus.FAILED, "Failed to load money into Citrus Cash", null);
+                    transactionResponse.transactionDetails.transactionDateTime = dateTime;
                 }
             } else {
-                transactionResponse = new TransactionResponse(TransactionStatus.FAILED, "Failed to load money into Citrus Cash", null);
+                transactionResponse = new TransactionResponse(TransactionStatus.FAILED, ResponseMessages.ERROR_MESSAGE_LOAD_MONEY, null);
             }
         } else {
-            transactionResponse = new TransactionResponse(TransactionStatus.FAILED, "Failed to load money into Citrus Cash", null);
+            transactionResponse = new TransactionResponse(TransactionStatus.FAILED, ResponseMessages.ERROR_MESSAGE_LOAD_MONEY, null);
         }
         return transactionResponse;
     }

@@ -1,6 +1,6 @@
 /*
  *
- *    Copyright 2015 Citrus Payment Solutions Pvt. Ltd.
+ *    Copyright 2014 Citrus Payment Solutions Pvt. Ltd.
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -17,16 +17,19 @@ package com.citrus.sdk;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.webkit.CookieManager;
 import android.widget.Toast;
 
 import com.citrus.cash.PersistentConfig;
+
 import android.util.Log;
 import android.widget.Toast;
 
 import com.citrus.asynch.GetJSONBill;
 import com.citrus.citrususer.RandomPassword;
+import com.citrus.debug.DebugLogConfig;
 import com.citrus.mobile.Config;
 import com.citrus.mobile.OAuth2GrantType;
 import com.citrus.mobile.OauthToken;
@@ -201,7 +204,7 @@ public class CitrusClient {
                                                     @Override
                                                     public void success(AccessTokenPOJO accessTokenPOJO, Response response) {
                                                         Logger.d("SET PWD RESPONSE" + accessTokenPOJO.getJSON().toString());
-                                                        CitrusResponse citrusResponse = new CitrusResponse("Sign Up User",Status.SUCCESSFUL);
+                                                        CitrusResponse citrusResponse = new CitrusResponse("Sign Up User", Status.SUCCESSFUL);
                                                         callback.success(citrusResponse);
 
 
@@ -210,7 +213,7 @@ public class CitrusClient {
                                                     @Override
                                                     public void failure(RetrofitError error) {
                                                         Logger.d("SETPWD ERROR **" + error.getMessage());
-                                                        CitrusResponse citrusResponse = new CitrusResponse("Sign In User",Status.SUCCESSFUL);
+                                                        CitrusResponse citrusResponse = new CitrusResponse("Sign In User", Status.SUCCESSFUL);
                                                         callback.success(citrusResponse);
 
                                                     }
@@ -274,15 +277,14 @@ public class CitrusClient {
 
                                     @Override
                                     public void failure(RetrofitError error) {
-                                        if(prepaidCookie != null) {
+                                        if (prepaidCookie != null) {
                                             cookieManager = CookieManager.getInstance();
                                             PersistentConfig config = new PersistentConfig(mContext);
                                             if (config.getCookieString() != null) {
                                                 cookieManager.getInstance().removeSessionCookie();
                                             }
                                             config.setCookie(prepaidCookie);
-                                        }
-                                        else {
+                                        } else {
                                             Logger.d("PREPAID LOGIN UNSUCCESSFUL");
                                         }
                                         EventBus.getDefault().unregister(CitrusClient.this);
@@ -307,22 +309,19 @@ public class CitrusClient {
         });
 
 
-
-
     }
 
     /**
      * Signout the existing logged in user.
      */
     public synchronized void signOut(Callback<CitrusResponse> callback) {
-        if(validate()) {
-            if(User.logoutUser(mContext)) {
+        if (validate()) {
+            if (User.logoutUser(mContext)) {
                 CitrusResponse citrusResponse = new CitrusResponse("User Logged Out Successfully.", Status.SUCCESSFUL);
 
                 callback.success(citrusResponse);
-            }
-            else {
-                CitrusError  citrusError = new CitrusError("Failed to logout.", Status.FAILED);
+            } else {
+                CitrusError citrusError = new CitrusError("Failed to logout.", Status.FAILED);
                 callback.error(citrusError);
             }
         }
@@ -338,7 +337,7 @@ public class CitrusClient {
      */
     public synchronized void setPassword(String emailId, String mobileNo, String password, Callback<CitrusResponse> callback) {
 
-        if(validate()) {
+        if (validate()) {
             OauthToken token = new OauthToken(mContext, SIGNIN_TOKEN);
             JSONObject jsontoken = token.getuserToken();
             try {
@@ -366,13 +365,39 @@ public class CitrusClient {
 
     /**
      * Reset the user password. The password reset link will be sent to the user.
-     *
-     * @param emailId
-     * @param mobileNo
+     *  @param emailId
      * @param callback
      */
-    public synchronized void resetPassword(String emailId, String mobileNo, Callback<CitrusResponse> callback) {
+    public synchronized void resetPassword(final String emailId, @NonNull final Callback<CitrusResponse> callback) {
 
+        OauthToken oauthToken = new OauthToken(mContext);
+        oauthToken.getSignUpToken(new Callback<AccessTokenPOJO>() {
+            @Override
+            public void success(AccessTokenPOJO accessTokenPOJO) {
+                if (accessTokenPOJO != null) {
+                    String signupToken = accessTokenPOJO.getAccessToken();
+
+                    retrofitClient.resetPassword("Bearer " + signupToken, emailId, new retrofit.Callback<JsonElement>() {
+                        @Override
+                        public void success(JsonElement element, Response response) {
+                            callback.success(new CitrusResponse(ResponseMessages.SUCCESS_MESSAGE_RESET_PASSWORD, Status.SUCCESSFUL));
+                        }
+
+                        @Override
+                        public void failure(RetrofitError error) {
+                            sendError(callback, error);
+                        }
+                    });
+                } else {
+                    sendError(callback, new CitrusError(ResponseMessages.ERROR_MESSAGE_RESET_PASSWORD, Status.FAILED));
+                }
+            }
+
+            @Override
+            public void error(CitrusError error) {
+                sendError(callback, error);
+            }
+        });
     }
 
     /**
@@ -767,7 +792,7 @@ public class CitrusClient {
 
     //this event is triggered from ReceivedCookiesInterceptor
     public void onEvent(CookieEvents cookieEvents) {
-       // Logger.d("COOKIE IN CITRUS CLIENT  ****" + cookieEvents.getCookie());
+        // Logger.d("COOKIE IN CITRUS CLIENT  ****" + cookieEvents.getCookie());
         prepaidCookie = cookieEvents.getCookie();
     }
 }
