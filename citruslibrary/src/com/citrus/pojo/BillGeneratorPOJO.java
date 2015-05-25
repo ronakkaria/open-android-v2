@@ -1,5 +1,6 @@
 package com.citrus.pojo;
 
+import com.citrus.sdk.classes.Amount;
 import com.google.gson.annotations.Expose;
 
 /**
@@ -10,7 +11,7 @@ public class BillGeneratorPOJO {
     @Expose
     private String merchantTxnId;
     @Expose
-    private AmountPOJO amount;
+    private Amount amount;
     @Expose
     private String requestSignature;
     @Expose
@@ -43,7 +44,7 @@ public class BillGeneratorPOJO {
      * @return
      * The amount
      */
-    public AmountPOJO getAmount() {
+    public Amount getAmount() {
         return amount;
     }
 
@@ -52,7 +53,7 @@ public class BillGeneratorPOJO {
      * @param amount
      * The amount
      */
-    public void setAmount(AmountPOJO amount) {
+    public void setAmount(Amount amount) {
         this.amount = amount;
     }
 

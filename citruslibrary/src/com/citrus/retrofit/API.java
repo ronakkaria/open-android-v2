@@ -17,7 +17,6 @@ package com.citrus.retrofit;
 
 import com.citrus.pojo.AccessTokenPOJO;
 import com.citrus.pojo.BindPOJO;
-import com.citrus.pojo.PaymentOptionsPOJO;
 import com.citrus.pojo.StructResponsePOJO;
 import com.citrus.sdk.classes.Amount;
 import com.citrus.sdk.payment.PaymentBill;
@@ -90,11 +89,6 @@ public interface API {
     @Headers("Content-Type: application/json")
     @POST("/service/moto/authorize/struct/payment")
     void getPaymentResponse(@Body TypedString body, Callback<StructResponsePOJO> structResponseCallback);
-
-    //payment options of merchant
-    @FormUrlEncoded
-    @POST("/service/v1/merchant/pgsetting")
-    void getPaymentOptions(@Field("vanity") String vanity, Callback<PaymentOptionsPOJO> paymentOptionsCallback);
 
     //payment options of merchant
     @FormUrlEncoded
