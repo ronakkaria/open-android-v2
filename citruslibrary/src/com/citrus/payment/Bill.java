@@ -12,7 +12,7 @@
 */
 package com.citrus.payment;
 
-import com.citrus.pojo.BillGeneratorPOJO;
+import com.citrus.sdk.classes.BillGeneratorPOJO;
 import com.citrus.sdk.classes.Amount;
 
 import org.json.JSONException;

@@ -15,9 +15,9 @@
 
 package com.citrus.retrofit;
 
-import com.citrus.pojo.AccessTokenPOJO;
-import com.citrus.pojo.BindPOJO;
-import com.citrus.pojo.StructResponsePOJO;
+import com.citrus.sdk.classes.AccessToken;
+import com.citrus.sdk.classes.BindPOJO;
+import com.citrus.sdk.classes.StructResponsePOJO;
 import com.citrus.sdk.classes.Amount;
 import com.citrus.sdk.payment.PaymentBill;
 import com.citrus.sdk.response.CitrusResponse;
@@ -46,7 +46,7 @@ public interface API {
 
     @FormUrlEncoded
     @POST("/oauth/token")
-    void getSignUpToken(@Field("client_id") String client_ID, @Field("client_secret") String client_Secret, @Field("grant_type") String grantType, Callback<AccessTokenPOJO> accessTokenPOJOCallback);
+    void getSignUpToken(@Field("client_id") String client_ID, @Field("client_secret") String client_Secret, @Field("grant_type") String grantType, Callback<AccessToken> accessTokenPOJOCallback);
 
 
     @FormUrlEncoded
@@ -56,11 +56,11 @@ public interface API {
     //sign in
     @FormUrlEncoded
     @POST("/oauth/token")
-    void getSignInToken(@Field("client_id") String client_ID, @Field("client_secret") String client_Secret, @Field("username") String username, @Field("grant_type") String grantType, Callback<AccessTokenPOJO> accessTokenPOJOCallback);
+    void getSignInToken(@Field("client_id") String client_ID, @Field("client_secret") String client_Secret, @Field("username") String username, @Field("grant_type") String grantType, Callback<AccessToken> accessTokenPOJOCallback);
 
     @FormUrlEncoded
     @POST("/oauth/token")
-    void getSignInWithPasswordResponse(@Field("client_id") String client_ID, @Field("client_secret") String client_Secret, @Field("username") String username, @Field("password") String password, @Field("grant_type") String grantType, Callback<AccessTokenPOJO> accessTokenPOJOCallback);
+    void getSignInWithPasswordResponse(@Field("client_id") String client_ID, @Field("client_secret") String client_Secret, @Field("username") String username, @Field("password") String password, @Field("grant_type") String grantType, Callback<AccessToken> accessTokenPOJOCallback);
 
     //getCookie
     @FormUrlEncoded
@@ -74,11 +74,11 @@ public interface API {
 
     @FormUrlEncoded
     @POST("/oauth/token")
-    AccessTokenPOJO getRefreshToken(@Field("client_id") String client_ID, @Field("client_secret") String client_Secret, @Field("grant_type") String grantType, @Field("refresh_token") String refreshToken);
+    AccessToken getRefreshToken(@Field("client_id") String client_ID, @Field("client_secret") String client_Secret, @Field("grant_type") String grantType, @Field("refresh_token") String refreshToken);
 
     @FormUrlEncoded
     @POST("/oauth/token")
-    void getRefreshTokenAsync(@Field("client_id") String client_ID, @Field("client_secret") String client_Secret, @Field("grant_type") String grantType, @Field("refresh_token") String refreshToken, Callback<AccessTokenPOJO> accessTokenPOJOCallback);
+    void getRefreshTokenAsync(@Field("client_id") String client_ID, @Field("client_secret") String client_Secret, @Field("grant_type") String grantType, @Field("refresh_token") String refreshToken, Callback<AccessToken> accessTokenPOJOCallback);
 
     //payment options of merchant
     @FormUrlEncoded

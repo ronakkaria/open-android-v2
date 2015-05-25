@@ -25,18 +25,15 @@ import android.widget.Toast;
 import com.citrus.cash.PersistentConfig;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.citrus.asynch.GetJSONBill;
 import com.citrus.citrususer.RandomPassword;
-import com.citrus.debug.DebugLogConfig;
 import com.citrus.mobile.Config;
 import com.citrus.mobile.OAuth2GrantType;
 import com.citrus.mobile.OauthToken;
 import com.citrus.mobile.User;
-import com.citrus.pojo.AccessTokenPOJO;
-import com.citrus.pojo.BillGeneratorPOJO;
-import com.citrus.pojo.BindPOJO;
+import com.citrus.sdk.classes.AccessToken;
+import com.citrus.sdk.classes.BindPOJO;
 import com.citrus.retrofit.API;
 import com.citrus.retrofit.RetroFitClient;
 import com.citrus.sdk.classes.Amount;
@@ -62,9 +59,6 @@ import com.orhanobut.logger.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import eventbus.CookieEvents;
@@ -172,15 +166,15 @@ public class CitrusClient {
 
             final Callback<CitrusResponse> callbackApp = callback;
 
-            retrofitClient.getSignUpToken(Config.getSignupId(), Config.getSignupSecret(), OAuth2GrantType.implicit.toString(), new retrofit.Callback<AccessTokenPOJO>() {
+            retrofitClient.getSignUpToken(Config.getSignupId(), Config.getSignupSecret(), OAuth2GrantType.implicit.toString(), new retrofit.Callback<AccessToken>() {
                 @Override
-                public void success(AccessTokenPOJO accessTokenPOJO, Response response) {
-                    Logger.d("accessTokenPOJO " + accessTokenPOJO.getJSON().toString());
+                public void success(AccessToken accessToken, Response response) {
+                    Logger.d("accessToken " + accessToken.getJSON().toString());
 
-                    if (accessTokenPOJO.getAccessToken() != null) {
+                    if (accessToken.getAccessToken() != null) {
                         OauthToken signuptoken = new OauthToken(mContext, SIGNUP_TOKEN);
-                        signuptoken.createToken(accessTokenPOJO.getJSON()); //Oauth Token received
-                        String header = "Bearer " + accessTokenPOJO.getAccessToken();
+                        signuptoken.createToken(accessToken.getJSON()); //Oauth Token received
+                        String header = "Bearer " + accessToken.getAccessToken();
 
                         retrofitClient.getBindResponse(header, emailId, mobileNo, new retrofit.Callback<BindPOJO>() {
                             @Override
@@ -188,22 +182,22 @@ public class CitrusClient {
                                 Logger.d("BIND RESPONSE " + bindPOJO.getUsername());
 
                                 if (bindPOJO.getUsername() != null) {
-                                    retrofitClient.getSignInToken(Config.getSigninId(), Config.getSigninSecret(), bindPOJO.getUsername(), OAuth2GrantType.username.toString(), new retrofit.Callback<AccessTokenPOJO>() {
+                                    retrofitClient.getSignInToken(Config.getSigninId(), Config.getSigninSecret(), bindPOJO.getUsername(), OAuth2GrantType.username.toString(), new retrofit.Callback<AccessToken>() {
                                         @Override
-                                        public void success(AccessTokenPOJO accessTokenPOJO, Response response) {
-                                            Logger.d("SIGNIN accessToken" + accessTokenPOJO.getJSON().toString());
-                                            if (accessTokenPOJO.getAccessToken() != null) {
+                                        public void success(AccessToken accessToken, Response response) {
+                                            Logger.d("SIGNIN accessToken" + accessToken.getJSON().toString());
+                                            if (accessToken.getAccessToken() != null) {
                                                 OauthToken token = new OauthToken(mContext, SIGNIN_TOKEN);
-                                                token.createToken(accessTokenPOJO.getJSON());
+                                                token.createToken(accessToken.getJSON());
 
                                                 RandomPassword pwd = new RandomPassword();
 
                                                 String random_pass = pwd.generate(emailId, mobileNo);
 
-                                                retrofitClient.getSignInWithPasswordResponse(Config.getSigninId(), Config.getSigninSecret(), emailId, random_pass, OAuth2GrantType.password.toString(), new retrofit.Callback<AccessTokenPOJO>() {
+                                                retrofitClient.getSignInWithPasswordResponse(Config.getSigninId(), Config.getSigninSecret(), emailId, random_pass, OAuth2GrantType.password.toString(), new retrofit.Callback<AccessToken>() {
                                                     @Override
-                                                    public void success(AccessTokenPOJO accessTokenPOJO, Response response) {
-                                                        Logger.d("SET PWD RESPONSE" + accessTokenPOJO.getJSON().toString());
+                                                    public void success(AccessToken accessToken, Response response) {
+                                                        Logger.d("SET PWD RESPONSE" + accessToken.getJSON().toString());
                                                         CitrusResponse citrusResponse = new CitrusResponse("Sign Up User", Status.SUCCESSFUL);
                                                         callback.success(citrusResponse);
 
@@ -253,20 +247,20 @@ public class CitrusClient {
     public synchronized void signIn(final String emailId, final String password, Callback<CitrusResponse> callback) {
 
         //grant Type username token saved
-        retrofitClient.getSignInToken(Config.getSigninId(), Config.getSigninSecret(), emailId, OAuth2GrantType.username.toString(), new retrofit.Callback<AccessTokenPOJO>() {
+        retrofitClient.getSignInToken(Config.getSigninId(), Config.getSigninSecret(), emailId, OAuth2GrantType.username.toString(), new retrofit.Callback<AccessToken>() {
             @Override
-            public void success(AccessTokenPOJO accessTokenPOJO, Response response) {
-                if (accessTokenPOJO.getAccessToken() != null) {
+            public void success(AccessToken accessToken, Response response) {
+                if (accessToken.getAccessToken() != null) {
                     OauthToken token = new OauthToken(mContext, SIGNIN_TOKEN);
-                    token.createToken(accessTokenPOJO.getJSON());///grant Type username token saved
+                    token.createToken(accessToken.getJSON());///grant Type username token saved
 
-                    retrofitClient.getSignInWithPasswordResponse(Config.getSigninId(), Config.getSigninSecret(), emailId, password, OAuth2GrantType.password.toString(), new retrofit.Callback<AccessTokenPOJO>() {
+                    retrofitClient.getSignInWithPasswordResponse(Config.getSigninId(), Config.getSigninSecret(), emailId, password, OAuth2GrantType.password.toString(), new retrofit.Callback<AccessToken>() {
                         @Override
-                        public void success(AccessTokenPOJO accessTokenPOJO, Response response) {
-                            Logger.d("SIGN IN RESPONSE " + accessTokenPOJO.getJSON().toString());
-                            if (accessTokenPOJO.getAccessToken() != null) {
+                        public void success(AccessToken accessToken, Response response) {
+                            Logger.d("SIGN IN RESPONSE " + accessToken.getJSON().toString());
+                            if (accessToken.getAccessToken() != null) {
                                 OauthToken token = new OauthToken(mContext, PREPAID_TOKEN);
-                                token.createToken(accessTokenPOJO.getJSON());///grant Type password token saved
+                                token.createToken(accessToken.getJSON());///grant Type password token saved
                                 RetroFitClient.setInterCeptor();
                                 EventBus.getDefault().register(CitrusClient.this);
                                 retrofitClient.getCookie(emailId, password, "true", new retrofit.Callback<String>() {
@@ -371,11 +365,11 @@ public class CitrusClient {
     public synchronized void resetPassword(final String emailId, @NonNull final Callback<CitrusResponse> callback) {
 
         OauthToken oauthToken = new OauthToken(mContext);
-        oauthToken.getSignUpToken(new Callback<AccessTokenPOJO>() {
+        oauthToken.getSignUpToken(new Callback<AccessToken>() {
             @Override
-            public void success(AccessTokenPOJO accessTokenPOJO) {
-                if (accessTokenPOJO != null) {
-                    String signupToken = accessTokenPOJO.getAccessToken();
+            public void success(AccessToken accessToken) {
+                if (accessToken != null) {
+                    String signupToken = accessToken.getAccessToken();
 
                     retrofitClient.resetPassword("Bearer " + signupToken, emailId, new retrofit.Callback<JsonElement>() {
                         @Override

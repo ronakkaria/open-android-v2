@@ -18,7 +18,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.citrus.pojo.AccessTokenPOJO;
+import com.citrus.sdk.classes.AccessToken;
 import com.citrus.retrofit.RetroFitClient;
 import com.citrus.sdk.Constants;
 import com.citrus.sdk.ResponseMessages;
@@ -201,23 +201,23 @@ public class OauthToken {
     }
 
 
-    public void getSignUpToken(com.citrus.sdk.Callback<AccessTokenPOJO> callback) {
+    public void getSignUpToken(com.citrus.sdk.Callback<AccessToken> callback) {
         this.token_type = Constants.SIGNUP_TOKEN;
         getAccessToken(callback);
     }
 
-    public void getSignInToken(com.citrus.sdk.Callback<AccessTokenPOJO> callback) {
+    public void getSignInToken(com.citrus.sdk.Callback<AccessToken> callback) {
         this.token_type = Constants.SIGNIN_TOKEN;
         getAccessToken(callback);
     }
 
 
-    public void getPrepaidToken(com.citrus.sdk.Callback<AccessTokenPOJO> callback) {
+    public void getPrepaidToken(com.citrus.sdk.Callback<AccessToken> callback) {
         this.token_type = Constants.PREPAID_TOKEN;
         getAccessToken(callback);
     }
 
-    private void getAccessToken(com.citrus.sdk.Callback<AccessTokenPOJO> callback) {
+    private void getAccessToken(com.citrus.sdk.Callback<AccessToken> callback) {
 
         JSONObject token = null;
         try {
@@ -227,8 +227,8 @@ public class OauthToken {
                     refreshToken(token, callback);
                 } else { //return AccessToken Object
                     Gson gson = new GsonBuilder().create();
-                    AccessTokenPOJO accessTokenPOJO = gson.fromJson(token.toString(), AccessTokenPOJO.class);
-                    callback.success(accessTokenPOJO);
+                    AccessToken accessToken = gson.fromJson(token.toString(), AccessToken.class);
+                    callback.success(accessToken);
                 }
             } else {
                 String errorMessage = token_type.equalsIgnoreCase(Constants.SIGNUP_TOKEN)? ResponseMessages.ERROR_SIGNUP_TOKEN_NOT_FOUND:ResponseMessages.ERROR_SIGNIN_TOKEN_NOT_FOUND;
@@ -257,8 +257,8 @@ public class OauthToken {
         }
         else {
             Gson gson = new GsonBuilder().create();
-            AccessTokenPOJO accessTokenPOJO = gson.fromJson(token.toString(), AccessTokenPOJO.class);
-            callback.success(accessTokenPOJO);
+            AccessToken accessToken = gson.fromJson(token.toString(), AccessToken.class);
+            callback.success(accessToken);
         }
 
     }
@@ -266,13 +266,13 @@ public class OauthToken {
 
     //get Refresh TOken from RetroFitClient
     private void getRefreshToken(String refreshToken, final com.citrus.sdk.Callback callback) {
-        RetroFitClient.getCitrusRetroFitClient().getRefreshTokenAsync(Config.getSigninId(), Config.getSigninSecret(), OAuth2GrantType.refresh_token.toString(), refreshToken, new Callback<AccessTokenPOJO>() {
+        RetroFitClient.getCitrusRetroFitClient().getRefreshTokenAsync(Config.getSigninId(), Config.getSigninSecret(), OAuth2GrantType.refresh_token.toString(), refreshToken, new Callback<AccessToken>() {
             @Override
-            public void success(AccessTokenPOJO accessTokenPOJO, Response response) {
-                if (accessTokenPOJO.getAccessToken() != null) {
-                    jsontoken = accessTokenPOJO.getJSON();
+            public void success(AccessToken accessToken, Response response) {
+                if (accessToken.getAccessToken() != null) {
+                    jsontoken = accessToken.getJSON();
                     storeToken();
-                    callback.success(accessTokenPOJO);
+                    callback.success(accessToken);
                 }
             }
 

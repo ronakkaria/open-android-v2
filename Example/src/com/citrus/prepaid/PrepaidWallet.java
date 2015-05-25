@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -31,7 +30,7 @@ import com.citrus.netbank.BankPaymentType;
 import com.citrus.payment.Bill;
 import com.citrus.payment.PG;
 import com.citrus.payment.UserDetails;
-import com.citrus.pojo.BillGeneratorPOJO;
+import com.citrus.sdk.classes.BillGeneratorPOJO;
 import com.citrus.sample.GetBill;
 import com.citrus.sample.R;
 import com.citrus.sample.WebPage;
@@ -43,15 +42,10 @@ import com.citrus.sdk.PaymentParams;
 import com.citrus.sdk.TransactionResponse;
 import com.citrus.sdk.classes.Amount;
 import com.citrus.sdk.payment.DebitCardOption;
-import com.citrus.sdk.payment.MerchantPaymentOption;
-import com.citrus.sdk.payment.PaymentOption;
 import com.citrus.sdk.payment.PaymentType;
-import com.citrus.sdk.response.CitrusError;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.List;
 
 import static com.citrus.sdk.CitrusClient.Environment;
 import static com.citrus.sdk.CitrusClient.getInstance;

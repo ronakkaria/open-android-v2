@@ -1,4 +1,4 @@
-package com.citrus.pojo;
+package com.citrus.sdk.classes;
 
 import com.citrus.sdk.classes.Amount;
 import com.google.gson.annotations.Expose;

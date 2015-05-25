@@ -30,7 +30,7 @@ import com.citrus.mobile.RESTclient;
 import com.citrus.mobile.User;
 import com.citrus.netbank.Bank;
 import com.citrus.netbank.BankPaymentType;
-import com.citrus.pojo.StructResponsePOJO;
+import com.citrus.sdk.classes.StructResponsePOJO;
 import com.citrus.retrofit.RetroFitClient;
 import com.citrus.sdk.payment.CardOption;
 import com.citrus.sdk.payment.NetbankingOption;

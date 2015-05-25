@@ -13,7 +13,7 @@
  * /
  */
 
-package com.citrus.pojo;
+package com.citrus.sdk.classes;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
@@ -25,7 +25,7 @@ import org.json.JSONObject;
 /**
  * Created by MANGESH KADAM on 5/11/2015.
  */
-public class AccessTokenPOJO {
+public class AccessToken {
 
     @SerializedName("access_token")
     @Expose

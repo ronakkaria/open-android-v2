@@ -13,7 +13,7 @@
  * /
  */
 
-package com.citrus.pojo;
+package com.citrus.sdk.classes;
 
 /**
  * Created by MANGESH KADAM on 5/12/2015.
