@@ -24,7 +24,10 @@ import com.citrus.sdk.Constants;
 /**
  * Created by salil on 18/5/15.
  */
-public class CitrusConfig implements Parcelable {
+public class CitrusConfig {
+
+    private static CitrusConfig instance = null;
+
     private boolean usePGHealth = false;
     private boolean autoReadOTP = false;
 
@@ -47,6 +50,20 @@ public class CitrusConfig implements Parcelable {
      */
     private String accentColor = Constants.accentColor;
 
+    private CitrusConfig() {}
+
+    public static CitrusConfig getInstance() {
+        if (instance == null) {
+            synchronized (CitrusConfig.class) {
+                if (instance == null) {
+                    instance = new CitrusConfig();
+                }
+            }
+        }
+
+        return instance;
+    }
+
 //    public void setUsePGHealth(boolean usePGHealth) {
 //        this.usePGHealth = usePGHealth;
 //    }
@@ -55,73 +72,36 @@ public class CitrusConfig implements Parcelable {
 //        this.autoReadOTP = autoReadOTP;
 //    }
 
-    public void setColorPrimaryDark(String colorPrimaryDark) {
+    public synchronized void setColorPrimaryDark(String colorPrimaryDark) {
         this.colorPrimaryDark = colorPrimaryDark;
     }
 
-    public void setColorPrimary(String colorPrimary) {
+    public synchronized void setColorPrimary(String colorPrimary) {
         this.colorPrimary = colorPrimary;
     }
 
-    public void setTextColorPrimary(String textColorPrimary) {
+    public synchronized void setTextColorPrimary(String textColorPrimary) {
         this.textColorPrimary = textColorPrimary;
     }
 
-    public void setAccentColor(String accentColor) {
+    public synchronized void setAccentColor(String accentColor) {
         this.accentColor = accentColor;
     }
 
-    public int getColorPrimaryDark() {
+    public synchronized int getColorPrimaryDark() {
         return Color.parseColor(colorPrimaryDark);
     }
 
-    public int getColorPrimary() {
+    public synchronized int getColorPrimary() {
         return Color.parseColor(colorPrimary);
     }
 
-    public int getTextColorPrimary() {
+    public synchronized int getTextColorPrimary() {
         return Color.parseColor(textColorPrimary);
     }
 
-    public int getAccentColor() {
+    public synchronized int getAccentColor() {
         return Color.parseColor(accentColor);
     }
 
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeByte(usePGHealth ? (byte) 1 : (byte) 0);
-        dest.writeByte(autoReadOTP ? (byte) 1 : (byte) 0);
-        dest.writeString(this.colorPrimaryDark);
-        dest.writeString(this.colorPrimary);
-        dest.writeString(this.textColorPrimary);
-        dest.writeString(this.accentColor);
-    }
-
-    public CitrusConfig() {
-    }
-
-    private CitrusConfig(Parcel in) {
-        this.usePGHealth = in.readByte() != 0;
-        this.autoReadOTP = in.readByte() != 0;
-        this.colorPrimaryDark = in.readString();
-        this.colorPrimary = in.readString();
-        this.textColorPrimary = in.readString();
-        this.accentColor = in.readString();
-    }
-
-    public static final Parcelable.Creator<CitrusConfig> CREATOR = new Parcelable.Creator<CitrusConfig>() {
-        public CitrusConfig createFromParcel(Parcel source) {
-            return new CitrusConfig(source);
-        }
-
-        public CitrusConfig[] newArray(int size) {
-            return new CitrusConfig[size];
-        }
-    };
 }
