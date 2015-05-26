@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Build;
 
 import com.citrus.mobile.Config;
+import com.citrus.sdk.Constants;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -98,10 +99,10 @@ public class EventsManager {
      * @param webViewEvents
      * @param connectionType
      * @param paymentType
-     * @return
+     * @return consolidated String to log into events
      */
     public static String getWebViewEventLabel(WebViewEvents webViewEvents, ConnectionType connectionType, PaymentType paymentType) {
-        String eventLabel = webViewEvents.toString()+"_" +connectionType.toString()+"_"+paymentType.toString()+"_"+String.valueOf(Build.VERSION.SDK_INT);
+        String eventLabel = webViewEvents.toString()+"_" +connectionType.toString()+"_"+paymentType.toString()+"_"+String.valueOf(Build.VERSION.SDK_INT)+ "_"+String.valueOf(Constants.SDK_VERSION);
         return eventLabel;
     }
 
@@ -110,10 +111,10 @@ public class EventsManager {
      * @param connectionType
      * @param paymentType
      * @param transactionType
-     * @return
+     * @return consolidated String to log into events
      */
     public static String getPaymentEventLabel(ConnectionType connectionType, PaymentType paymentType, TransactionType transactionType) {
-        String eventLabel = connectionType.toString()+"_"+paymentType.toString()+"_"+String.valueOf(Build.VERSION.SDK_INT)+"_" + transactionType.toString();
+        String eventLabel = connectionType.toString()+"_"+paymentType.toString()+"_"+String.valueOf(Build.VERSION.SDK_INT)+"_" + transactionType.toString()+"_"+String.valueOf(Constants.SDK_VERSION);
         return eventLabel;
     }
 
