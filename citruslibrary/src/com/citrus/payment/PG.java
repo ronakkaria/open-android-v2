@@ -254,12 +254,7 @@ public class PG {
             try {
                 paymentToken.put("type", "paymentOptionIdToken");
                 paymentToken.put("id", card.getcardToken());
-                if (!TextUtils.isEmpty(card.getCvvNumber())) {
-                    paymentToken.put("cvv", card.getCvvNumber());
-                }
-                {
-                    paymentToken.put("cvv", "123"); // dummy value c
-                }
+                paymentToken.put("cvv", card.getCvvNumber());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
