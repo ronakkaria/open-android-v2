@@ -36,7 +36,7 @@ public class RetroFitClient {
         RestAdapter builder = new RestAdapter.Builder()
                 .setEndpoint(citrusEndPoint)
                 .setClient(new OkClient(okHttpClient))
-                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setLogLevel(RestAdapter.LogLevel.NONE)
                 .build();
 
         RETROFIT_CLIENT = builder.create(API.class);
@@ -46,7 +46,7 @@ public class RetroFitClient {
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(baseHost)
                 .setClient(new OkClient(new OkHttpClient()))
-                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setLogLevel(RestAdapter.LogLevel.NONE)
                 .build();
         API billGeneratorClient = restAdapter.create(API.class);
         return billGeneratorClient;
