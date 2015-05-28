@@ -234,9 +234,9 @@ public class PrepaidWallet extends Activity {
             @Override
             public void onClick(View v) {
 
-                Card card = new Card("c210ecd40f9837e7895068a69f1129d4", "808");
+                Card card = new Card("94a4def03fdac35749bfd2746e5cd6f9", "808");
 
-                LoadMoney load = new LoadMoney("5", "https://salty-plateau-1529.herokuapp.com/redirectURL.sandbox.php");
+                LoadMoney load = new LoadMoney("5", "https://salty-plateau-1529.herokuapp.com/redirectUrlLoadCash.php");
 
                 UserDetails userDetails = new UserDetails(customer);
 
@@ -259,7 +259,7 @@ public class PrepaidWallet extends Activity {
 
                 Bank netbank = new Bank("CID002");
 
-                LoadMoney load = new LoadMoney("5", "https://salty-plateau-1529.herokuapp.com/redirectURL.sandbox.php");
+                LoadMoney load = new LoadMoney("5", "https://salty-plateau-1529.herokuapp.com/redirectUrlLoadCash.php");
 
                 UserDetails userDetails = new UserDetails(customer);
 
@@ -281,10 +281,10 @@ public class PrepaidWallet extends Activity {
             public void onClick(View v) {
 
 
-                Bank netbank = new Bank("48ec899d5dd14be93dce01038a8af60d", BankPaymentType.TOKEN);
+                Bank netbank = new Bank("b66352b2d465699d6fa7cfb520ba27b5", BankPaymentType.TOKEN);
 
 
-                LoadMoney load = new LoadMoney("1", "http://yourwebsite.com/return_url.php");
+                LoadMoney load = new LoadMoney("1", "https://salty-plateau-1529.herokuapp.com/redirectUrlLoadCash.php");
 
                 UserDetails userDetails = new UserDetails(customer);
 
