@@ -30,7 +30,6 @@ import com.citrus.netbank.BankPaymentType;
 import com.citrus.payment.Bill;
 import com.citrus.payment.PG;
 import com.citrus.payment.UserDetails;
-import com.citrus.sdk.classes.BillGeneratorPOJO;
 import com.citrus.sample.GetBill;
 import com.citrus.sample.R;
 import com.citrus.sample.WebPage;
@@ -41,6 +40,7 @@ import com.citrus.sdk.Constants;
 import com.citrus.sdk.PaymentParams;
 import com.citrus.sdk.TransactionResponse;
 import com.citrus.sdk.classes.Amount;
+import com.citrus.sdk.classes.BillGeneratorPOJO;
 import com.citrus.sdk.payment.DebitCardOption;
 import com.citrus.sdk.payment.PaymentType;
 
@@ -65,6 +65,13 @@ public class PrepaidWallet extends Activity {
 
 
     CitrusClient citrusClient;
+
+    private final  String emailID = "testeremail@mailinator.com";
+    private final String mobileNo = "9769507476";
+    private final String password = "tester@123";
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,7 +148,7 @@ public class PrepaidWallet extends Activity {
             @Override
             public void onClick(View v) {
                 new LinkUser(PrepaidWallet.this, callback)
-                        .execute(new String[]{"testeremail@mailinator.com", "9769507476"});
+                        .execute(new String[]{emailID, mobileNo});
             }
         });
 
@@ -150,7 +157,7 @@ public class PrepaidWallet extends Activity {
             @Override
             public void onClick(View v) {
                 new SetPassword(PrepaidWallet.this, callback)
-                        .execute(new String[]{"testeremail@mailinator.com", "9769507476", "tester@123"});
+                        .execute(new String[]{emailID, mobileNo, password});
             }
         });
 
@@ -158,7 +165,7 @@ public class PrepaidWallet extends Activity {
 
             @Override
             public void onClick(View v) {
-                new ForgotPass(PrepaidWallet.this, "testeremail@mailinator.com", callback)
+                new ForgotPass(PrepaidWallet.this, emailID, callback)
                         .execute();
             }
         });
@@ -168,7 +175,7 @@ public class PrepaidWallet extends Activity {
             @Override
             public void onClick(View v) {
                 new SignIn(PrepaidWallet.this, callback)
-                        .execute(new String[]{"testeremail@mailinator.com", "tester@123"});
+                        .execute(new String[]{emailID, password});
             }
         });
 
@@ -176,7 +183,7 @@ public class PrepaidWallet extends Activity {
 
             @Override
             public void onClick(View v) {
-                Prepaid user = new Prepaid("testeremail@mailinator.com");
+                Prepaid user = new Prepaid(emailID);
                 user.getBalance(PrepaidWallet.this, callback);
             }
         });
@@ -188,7 +195,7 @@ public class PrepaidWallet extends Activity {
 
                 Card card = new Card("4111111111111111", "04", "21", "778", "Bruce Banner", "debit");
 
-                LoadMoney load = new LoadMoney("10", "https://salty-plateau-1529.herokuapp.com/redirectUrlLoadCash.php");
+                LoadMoney load = new LoadMoney("5", "https://salty-plateau-1529.herokuapp.com/redirectUrlLoadCash.php");
 
                 UserDetails userDetails = new UserDetails(customer);
 
@@ -209,7 +216,7 @@ public class PrepaidWallet extends Activity {
             public void onClick(View v) {
                 CitrusUser citrusUser = new CitrusUser("mangesh.kadam@citruspay.com", "8692862420");
 
-                Amount amount = new Amount("500");
+                Amount amount = new Amount("5");
                 PaymentType paymentType = new PaymentType.LoadMoney(amount, "https://salty-plateau-1529.herokuapp.com/redirectUrlLoadCash.php");
                 DebitCardOption debitCardOption = new DebitCardOption("My Debit Card", "4111111111111111", "123", Month.getMonth("05"), Year.getYear("17"));
                 PaymentParams paymentParams = PaymentParams.builder(amount, paymentType, debitCardOption)
@@ -229,7 +236,7 @@ public class PrepaidWallet extends Activity {
 
                 Card card = new Card("c210ecd40f9837e7895068a69f1129d4", "808");
 
-                LoadMoney load = new LoadMoney("100", "https://salty-plateau-1529.herokuapp.com/redirectURL.sandbox.php");
+                LoadMoney load = new LoadMoney("5", "https://salty-plateau-1529.herokuapp.com/redirectURL.sandbox.php");
 
                 UserDetails userDetails = new UserDetails(customer);
 
@@ -252,7 +259,7 @@ public class PrepaidWallet extends Activity {
 
                 Bank netbank = new Bank("CID002");
 
-                LoadMoney load = new LoadMoney("100", "https://salty-plateau-1529.herokuapp.com/redirectURL.sandbox.php");
+                LoadMoney load = new LoadMoney("5", "https://salty-plateau-1529.herokuapp.com/redirectURL.sandbox.php");
 
                 UserDetails userDetails = new UserDetails(customer);
 
@@ -315,9 +322,9 @@ public class PrepaidWallet extends Activity {
         citruscashWebView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                CitrusUser citrusUser = new CitrusUser("testeremail@mailinator.com", "");
+                CitrusUser citrusUser = new CitrusUser(emailID, "");
 
-                Amount amount = new Amount("50");
+                Amount amount = new Amount("5");
 
                 PaymentType paymentType = new PaymentType.CitrusCash(amount, "https://salty-plateau-1529.herokuapp.com/billGenerator.sandbox.php?" + "amount=" + amount.getValue());
 
@@ -450,11 +457,12 @@ public class PrepaidWallet extends Activity {
         Config.setupSignupId("test-signup");
         Config.setupSignupSecret("c78ec84e389814a05d3ae46546d16d2e");
 
-        Config.setSigninId("gogo-pre-wallet");
-        Config.setSigninSecret("e6f1b840c652d2ffc46530faaac8b771");
+        Config.setSigninId("test-signin");
+        Config.setSigninSecret("52f7e15efd4208cf5345dd554443fd99");
 
 
-        citrusClient.init("test-signup", "c78ec84e389814a05d3ae46546d16d2e", "gogo-pre-wallet", "e6f1b840c652d2ffc46530faaac8b771", "prepaid", Environment.SANDBOX);
+        citrusClient.init("test-signup", "c78ec84e389814a05d3ae46546d16d2e", "test-signin", "52f7e15efd4208cf5345dd554443fd99", "prepaid", Environment.SANDBOX);
+
 
     }
 
@@ -465,8 +473,8 @@ public class PrepaidWallet extends Activity {
         try {
             customer.put("firstName", "Tester");
             customer.put("lastName", "Citrus");
-            customer.put("email", "testeremail@mailinator.com");
-            customer.put("mobileNo", "9769507476");
+            customer.put("email", emailID);
+            customer.put("mobileNo", mobileNo);
             customer.put("street1", "streetone");
             customer.put("street2", "streettwo");
             customer.put("city", "Mumbai");
@@ -482,7 +490,7 @@ public class PrepaidWallet extends Activity {
     private void walletpay(String bill_string) {
         Bill bill = new Bill(bill_string);
 
-        Prepaid prepaid = new Prepaid("testeremail@mailinator.com");
+        Prepaid prepaid = new Prepaid(emailID);
 
         UserDetails userDetails = new UserDetails(customer);
 
@@ -500,7 +508,7 @@ public class PrepaidWallet extends Activity {
     private void walletpay(BillGeneratorPOJO billGeneratorPOJO) {
         Bill bill = new Bill(billGeneratorPOJO);
 
-        Prepaid prepaid = new Prepaid("testeremail@mailinator.com");
+        Prepaid prepaid = new Prepaid(emailID);
 
         UserDetails userDetails = new UserDetails(customer);
 
