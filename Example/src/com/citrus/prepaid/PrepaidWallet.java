@@ -66,9 +66,9 @@ public class PrepaidWallet extends Activity {
 
     CitrusClient citrusClient;
 
-    private final  String emailID = "testeremail@mailinator.com";
+    private final  String emailID = "developercitrus@mailinator.com";
     private final String mobileNo = "9769507476";
-    private final String password = "tester@123";
+    private final String password = "Citrus@123";
 
 
 
