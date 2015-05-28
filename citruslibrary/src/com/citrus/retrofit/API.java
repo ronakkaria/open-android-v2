@@ -17,6 +17,7 @@ package com.citrus.retrofit;
 
 import com.citrus.sdk.classes.AccessToken;
 import com.citrus.sdk.classes.BindPOJO;
+import com.citrus.sdk.classes.CitrusPrepaidBill;
 import com.citrus.sdk.classes.StructResponsePOJO;
 import com.citrus.sdk.classes.Amount;
 import com.citrus.sdk.payment.PaymentBill;
@@ -121,5 +122,9 @@ public interface API {
     @FormUrlEncoded
     @POST("/service/v2/prepayment/transfer/extended")
     void sendMoneyByMobile(@Header("Authorization") String header, @Field("amount") String amount, @Field("currency") String currency, @Field("message") String message, @Field("to") String mobileNo, Callback<PaymentResponse> callback);
+
+    @FormUrlEncoded
+    @POST("/service/v2/prepayment/load")
+    void getPrepaidBill(@Header("Authorization") String header, @Field("amount") String amount, @Field("redirect") String redirectURL, @Field("currency") String currency, Callback<CitrusPrepaidBill> callback);
 
 }

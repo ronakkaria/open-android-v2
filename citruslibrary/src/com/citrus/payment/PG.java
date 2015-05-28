@@ -30,11 +30,15 @@ import com.citrus.mobile.RESTclient;
 import com.citrus.mobile.User;
 import com.citrus.netbank.Bank;
 import com.citrus.netbank.BankPaymentType;
-import com.citrus.sdk.classes.StructResponsePOJO;
 import com.citrus.retrofit.RetroFitClient;
+import com.citrus.sdk.classes.AccessToken;
+import com.citrus.sdk.classes.CitrusPrepaidBill;
+import com.citrus.sdk.classes.StructResponsePOJO;
 import com.citrus.sdk.payment.CardOption;
 import com.citrus.sdk.payment.NetbankingOption;
 import com.citrus.sdk.payment.PaymentOption;
+import com.citrus.sdk.response.CitrusError;
+import com.orhanobut.logger.Logger;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -211,6 +215,8 @@ public class PG {
 
         new GetPrepaidbill()
                 .execute(new String[]{loadmoney.getAmount(), loadmoney.getReturl()});
+
+      //  getPrepaidBill(loadmoney.getAmount(), loadmoney.getReturl());
     }
 
     private void formprepaidBill(String prepaid_bill) {
@@ -275,6 +281,7 @@ public class PG {
 
     private void formjson() {
         JSONObject paymentToken = new JSONObject();
+        boolean isTokenizedPayment = false;
         JSONObject paymentmode;
         if (TextUtils.equals(paymenttype.toString(), "card")) {
 
@@ -307,7 +314,8 @@ public class PG {
                 return;
             }
 
-        } else if (TextUtils.equals(paymenttype.toString(), "prepaid")) {
+        } else if (TextUtils.equals(paymenttype.toString(), "prepaid")) { //pay using citrus cash
+            isTokenizedPayment =true;
             paymentmode = new JSONObject();
             try {
                 paymentmode.put("cvv", "000");
@@ -324,11 +332,14 @@ public class PG {
                 callback.onTaskexecuted("", "Problem forming payment Json");
                 return;
             }
-        } else if (TextUtils.equals(paymenttype.toString(), "cardtoken")) {
+        } else if (TextUtils.equals(paymenttype.toString(), "cardtoken")) { //tokenized card payment
+            isTokenizedPayment = true;
             try {
                 paymentToken.put("type", "paymentOptionIdToken");
                 paymentToken.put("id", card.getcardToken());
                 paymentToken.put("cvv", card.getCvvNumber());
+                isTokenizedPayment = true;
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -336,6 +347,7 @@ public class PG {
         } else {
             try {
                 if (paymenttype != null && paymenttype.equalsIgnoreCase(BankPaymentType.TOKEN.toString())) { //tokenized bank payment
+                    isTokenizedPayment = true;
                     paymentToken.put("id", bank.getBankToken());
                     paymentToken.put("type", bank.getPaymentType().toString());
                 } else { //bank payment with CID
@@ -401,6 +413,13 @@ public class PG {
             payment.put("paymentToken", paymentToken);
             payment.put("merchantTxnId", bill.getTxnId());
             payment.put("requestSignature", bill.getSignature());
+            if(isTokenizedPayment) //Priyank Changes {
+            {
+                payment.put("requestOrigin", "MSDKW");
+            }
+            else {
+                payment.put("requestOrigin", "MSDKG");
+            }
             payment.put("userDetails", userdetails);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -497,6 +516,36 @@ public class PG {
                 internal.onTaskexecuted(result.toString(), "");
             }
         }
+    }
+
+
+    void getPrepaidBill(final String amount, final String returnURL) {
+        OauthToken token = new OauthToken(activity);
+        token.getPrepaidToken(new com.citrus.sdk.Callback<AccessToken>() {
+            @Override
+            public void success(AccessToken accessToken) {
+                String header = "Bearer " + accessToken.getAccessToken();
+                RetroFitClient.getCitrusRetroFitClient().getPrepaidBill(header, amount, returnURL, "INR", new retrofit.Callback<CitrusPrepaidBill>() {
+                    @Override
+                    public void success(CitrusPrepaidBill citrusPrepaidBill, Response response) {
+                        Logger.d("PREPAID BILL RESONSE ***" + citrusPrepaidBill.toString());
+                        internal.onTaskexecuted(citrusPrepaidBill.toString(), "");
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        Logger.d("Failed to get Prepaid Bill" + error.getMessage());
+                    }
+                });
+            }
+
+            @Override
+            public void error(CitrusError error) {
+                Logger.d("Failed to get Prepaid Token***");
+            }
+        });
+
+
     }
 
 }

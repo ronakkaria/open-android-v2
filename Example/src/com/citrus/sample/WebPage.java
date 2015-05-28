@@ -99,7 +99,7 @@ public class WebPage extends Activity {
                if (response.contains(":")) {
                 String decodeResp[] = response.split(":");
                 if (decodeResp.length > 0) {
-                    if (TextUtils.equals(decodeResp[0], "SUCCESSFUL")) {
+                    if (TextUtils.equals(decodeResp[0], "#SUCCESSFUL")) {
                         Toast.makeText(getApplicationContext(), "Your wallet is loaded Successfully.", Toast.LENGTH_LONG).show();
                         finish();
                     } else {
