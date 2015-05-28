@@ -105,6 +105,7 @@ public class WebPage extends Activity {
                     } else {
                         //transaction was fail
                         Toast.makeText(getApplicationContext(), "Wallet Load Failed.", Toast.LENGTH_LONG).show();
+                        finish();
                     }
                 }
             }
