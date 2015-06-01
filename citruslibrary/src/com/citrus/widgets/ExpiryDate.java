@@ -19,9 +19,13 @@ import java.util.Locale;
 
 import android.content.Context;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.widget.EditText;
+
+import com.citrus.mobile.Month;
+import com.citrus.mobile.Year;
 
 public class ExpiryDate extends EditText{
 	private String mLastInput = "";
@@ -105,6 +109,35 @@ public class ExpiryDate extends EditText{
 		super(context);
 		init();
 	}
+
+	public Month getMonth() {
+		String cardExpiry = getText().toString();
+		Month month = null;
+
+		if (!TextUtils.isEmpty(cardExpiry)) {
+			String[] expiry = cardExpiry.split("/");
+			if (expiry.length == 2) {
+				month = Month.getMonth(expiry[0]);
+			}
+		}
+
+		return month;
+	}
+
+	public Year getYear() {
+		String cardExpiry = getText().toString();
+		Year year = null;
+
+		if (!TextUtils.isEmpty(cardExpiry)) {
+			String[] expiry = cardExpiry.split("/");
+			if (expiry.length == 2) {
+				year = Year.getYear(expiry[1]);
+			}
+		}
+
+		return year;
+	}
+
 
 	private void init() {
 		addTextChangedListener(customWatcher);
