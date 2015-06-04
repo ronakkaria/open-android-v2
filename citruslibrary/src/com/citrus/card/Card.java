@@ -21,6 +21,7 @@ public class Card {
     private String cardnumber;
     private String cardCVV;
     private String nameOnCard;
+    private String nickName;
     private String cardType;
     private String expMonth;
     private String expYear;
@@ -44,6 +45,25 @@ public class Card {
         this.expMonth = month;
         this.expYear = year;
         this.crdr = crdr;
+    }
+
+    /**
+     * @param cardNum
+     * @param nickname
+     * @param month
+     * @param year
+     * @param cvv
+     * @param name
+     * @param crdr
+     */
+    public Card(String cardNum, String nickname, String month, String year, String cvv, String name, String crdr) {
+        this.cardnumber = normalizeCardNumber(cardNum);
+        this.cardCVV = cvv;
+        this.nameOnCard = name;
+        this.expMonth = month;
+        this.expYear = year;
+        this.crdr = crdr;
+        this.nickName = nickname;
     }
 
     public Card(String cardNum, Month month, Year year, String cvv, String name, CType cardType) {
@@ -72,6 +92,10 @@ public class Card {
 
     public String getCardHolderName() {
         return this.nameOnCard;
+    }
+
+    public String getNickName() {
+        return nickName;
     }
 
     public String getCrdr() {

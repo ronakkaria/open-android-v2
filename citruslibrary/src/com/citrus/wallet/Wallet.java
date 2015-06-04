@@ -129,7 +129,6 @@ public class Wallet {
         }
 
 
-
         JSONObject cardJson = new JSONObject();
         JSONObject cardDetails = new JSONObject();
 
@@ -137,6 +136,7 @@ public class Wallet {
         try {
             cardJson.put("type", "payment");
             cardDetails.put("owner", card.getCardHolderName());
+            cardDetails.put("name", card.getNickName());
             cardDetails.put("number", card.getCardNumber());
             cardDetails.put("scheme", CardType.getScheme(card.getCardType()));
             cardDetails.put("type", card.getCrdr().toLowerCase());
@@ -206,12 +206,12 @@ public class Wallet {
         RESTclient resTclient = new RESTclient("wallet", base_url, null, headers);
 
         JSONObject response;
-		try {
-			response = resTclient.makegetRequest();
-		} catch (JSONException e) {
-			e.printStackTrace();
-			return "Unable to get User Wallet";
-		}
+        try {
+            response = resTclient.makegetRequest();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return "Unable to get User Wallet";
+        }
 
         return response.toString();
     }
