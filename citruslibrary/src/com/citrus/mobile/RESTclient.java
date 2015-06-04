@@ -45,13 +45,13 @@ public class RESTclient {
     private JSONObject params, headers;
 
     private String type, base_url;
-    
+
     private HttpClient httpClient;
 
     private HttpResponse response;
 
 
-     public RESTclient(String type, String base_url, JSONObject params, JSONObject headers) {
+    public RESTclient(String type, String base_url, JSONObject params, JSONObject headers) {
 
         this.params = params;
         this.headers = headers;
@@ -79,91 +79,91 @@ public class RESTclient {
             return;
         }
         this.base_url = base_url;
-     }
+    }
 
 
-     public JSONObject makePostrequest() throws IOException {
-    	 HttpParams redirectparams = new BasicHttpParams();
-    	 redirectparams.setParameter("http.protocol.handle-redirects",false);
-    	 
-         httpClient = new DefaultHttpClient();
-         HttpPost httpPost = null;
-         try {
-             httpPost = new HttpPost(urls.getString(base_url) + urls.getString(type));
-             httpPost.setParams(redirectparams);
-         } catch (JSONException e) {
-             e.printStackTrace();
-         }
+    public JSONObject makePostrequest() throws IOException {
+        HttpParams redirectparams = new BasicHttpParams();
+        redirectparams.setParameter("http.protocol.handle-redirects", false);
 
-         List<NameValuePair> postData = new ArrayList<NameValuePair>(2);
-         Iterator<String> iter = params.keys();
-         while (iter.hasNext()) {
-             String key = iter.next();
-             try {
-                 String value = params.getString(key);
-                 postData.add(new BasicNameValuePair(key, value));
-             } catch (JSONException e) {
-                 Log.d("exception", e.toString());
-             }
-         }
+        httpClient = new DefaultHttpClient();
+        HttpPost httpPost = null;
+        try {
+            httpPost = new HttpPost(urls.getString(base_url) + urls.getString(type));
+            httpPost.setParams(redirectparams);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-         httpPost.setEntity(new UrlEncodedFormEntity(postData));
+        List<NameValuePair> postData = new ArrayList<NameValuePair>(2);
+        Iterator<String> iter = params.keys();
+        while (iter.hasNext()) {
+            String key = iter.next();
+            try {
+                String value = params.getString(key);
+                postData.add(new BasicNameValuePair(key, value));
+            } catch (JSONException e) {
+                Log.d("exception", e.toString());
+            }
+        }
 
-         Iterator<String> iterhead = headers.keys();
-         while (iterhead.hasNext()) {
-             String key = iterhead.next();
-             try {
-                 String value = headers.getString(key);
-                 httpPost.addHeader(key, value);
-             } catch (JSONException e) {
-            	 return null;
-             }
-         }
+        httpPost.setEntity(new UrlEncodedFormEntity(postData));
 
-         try {
-             response = httpClient.execute(httpPost);
-         } catch (IOException e) {
-             e.printStackTrace();
-         }
-         return parseResponse(response);
-     }
-    
-     public JSONObject makePostrequest(JSONObject details) throws IOException {
-    	 HttpParams redirectparams = new BasicHttpParams();
-    	 redirectparams.setParameter("http.protocol.handle-redirects",false);
-    	 
-         httpClient = new DefaultHttpClient();
-         HttpPost httpPost = null;
-         try {
-             httpPost = new HttpPost(urls.getString(base_url) + urls.getString(type));
-             httpPost.setParams(redirectparams);
-         } catch (JSONException e) {
-             e.printStackTrace();
-         }
+        Iterator<String> iterhead = headers.keys();
+        while (iterhead.hasNext()) {
+            String key = iterhead.next();
+            try {
+                String value = headers.getString(key);
+                httpPost.addHeader(key, value);
+            } catch (JSONException e) {
+                return null;
+            }
+        }
 
-         httpPost.setEntity(new StringEntity(details.toString()));
-         
-         Iterator<String> iterhead = headers.keys();
-         while (iterhead.hasNext()) {
-             String key = iterhead.next();
-             try {
-                 String value = headers.getString(key);
-                 httpPost.addHeader(key, value);
-             } catch (JSONException e) {
-            	 return null;
-             }
-         }
+        try {
+            response = httpClient.execute(httpPost);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return parseResponse(response);
+    }
 
-         try {
-             response = httpClient.execute(httpPost);
-         } catch (IOException e) {
-             e.printStackTrace();
-         }
-         return parseResponse(response);
-     } 
-     
+    public JSONObject makePostrequest(JSONObject details) throws IOException {
+        HttpParams redirectparams = new BasicHttpParams();
+        redirectparams.setParameter("http.protocol.handle-redirects", false);
+
+        httpClient = new DefaultHttpClient();
+        HttpPost httpPost = null;
+        try {
+            httpPost = new HttpPost(urls.getString(base_url) + urls.getString(type));
+            httpPost.setParams(redirectparams);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        httpPost.setEntity(new StringEntity(details.toString()));
+
+        Iterator<String> iterhead = headers.keys();
+        while (iterhead.hasNext()) {
+            String key = iterhead.next();
+            try {
+                String value = headers.getString(key);
+                httpPost.addHeader(key, value);
+            } catch (JSONException e) {
+                return null;
+            }
+        }
+
+        try {
+            response = httpClient.execute(httpPost);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return parseResponse(response);
+    }
+
     public JSONObject makePutrequest() {
-    	HttpClient client = new DefaultHttpClient();
+        HttpClient client = new DefaultHttpClient();
 
         HttpPut put = null;
         try {
@@ -179,10 +179,10 @@ public class RESTclient {
                 String value = headers.getString(key);
                 put.addHeader(key, value);
             } catch (JSONException e) {
-            	e.printStackTrace();
+                e.printStackTrace();
             }
         }
-        
+
         List<NameValuePair> putdata = new ArrayList<NameValuePair>(2);
         Iterator<String> iter = params.keys();
         while (iter.hasNext()) {
@@ -194,7 +194,7 @@ public class RESTclient {
                 Log.d("exception", e.toString());
             }
         }
-        
+
         try {
             put.setEntity(new UrlEncodedFormEntity(putdata));
         } catch (UnsupportedEncodingException e) {
@@ -250,7 +250,7 @@ public class RESTclient {
         HttpClient httpClient = new DefaultHttpClient();
         HttpGet httpGet = null;
         try {
-        		httpGet = new HttpGet(urls.getString(base_url) + urls.getString(type));
+            httpGet = new HttpGet(urls.getString(base_url) + urls.getString(type));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -262,7 +262,7 @@ public class RESTclient {
                 String value = headers.getString(key);
                 httpGet.addHeader(key, value);
             } catch (JSONException e) {
-            	return new JSONObject().put("error", "unable to find headers");
+                return new JSONObject().put("error", "unable to find headers");
             }
         }
 
@@ -307,11 +307,11 @@ public class RESTclient {
 
     private JSONObject parseResponse(HttpResponse response) {
         try {
-        	
-        	if (response == null) {
-        		return formError(600, "Null response - is your internet connection functional?");
-        	}
-        	
+
+            if (response == null) {
+                return formError(600, "Null response - is your internet connection functional?");
+            }
+
             switch (response.getStatusLine().getStatusCode()) {
                 case HttpStatus.SC_OK:
                     return new JSONObject(EntityUtils.toString(response.getEntity()));
@@ -328,37 +328,39 @@ public class RESTclient {
                 case HttpStatus.SC_GATEWAY_TIMEOUT:
                     return formError(504, "gatewaytimeout");
                 case HttpStatus.SC_MOVED_TEMPORARILY:
-                	return getCookies(response);
+                    return getCookies(response);
 
                 default:
                     return formError(response.getStatusLine().getStatusCode(), "unknownerror");
             }
-        }
-        catch (JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
             return formError(600, "jsonexception");
         } catch (IOException e) {
             e.printStackTrace();
             return formError(600, "ioexception");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return formError(600, "__exception");
         }
 
     }
-    
+
     private JSONObject getCookies(HttpResponse response) {
-    	Header[] headers = response.getAllHeaders();
-    	JSONObject cookies = new JSONObject();
-    	for (int i = 0; i < headers.length; i++) {
-    		Header h = headers[i];
-    		try {
-				cookies.put(h.getName(), h.getValue());
-			} catch (JSONException e) {
-				e.printStackTrace();
-				return null;
-			}
-    	} 
-    	return cookies;
+        Header[] headers = response.getAllHeaders();
+        JSONObject cookies = new JSONObject();
+        for (int i = 0; i < headers.length; i++) {
+            Header h = headers[i];
+            try {
+                cookies.put(h.getName(), h.getValue());
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return cookies;
     }
-    
+
     private JSONObject formError(int status, String message) {
         JSONObject error = new JSONObject();
         try {

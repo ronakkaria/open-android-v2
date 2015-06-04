@@ -21,6 +21,7 @@ public class Card {
     private String cardnumber;
     private String cardCVV;
     private String nameOnCard;
+    private String nickName;
     private String cardType;
     private String expMonth;
     private String expYear;
@@ -44,6 +45,25 @@ public class Card {
         this.expMonth = month;
         this.expYear = year;
         this.crdr = crdr;
+    }
+
+    /**
+     * @param cardNum
+     * @param nickname
+     * @param month
+     * @param year
+     * @param cvv
+     * @param name
+     * @param crdr
+     */
+    public Card(String cardNum, String nickname, String month, String year, String cvv, String name, String crdr) {
+        this.cardnumber = normalizeCardNumber(cardNum);
+        this.cardCVV = cvv;
+        this.nameOnCard = name;
+        this.expMonth = month;
+        this.expYear = year;
+        this.crdr = crdr;
+        this.nickName = nickname;
     }
 
     public Card(String cardNum, Month month, Year year, String cvv, String name, CType cardType) {
@@ -102,9 +122,9 @@ public class Card {
     }
 
     public boolean validateMaestroCtype() {
-        if(getCrdr()==null)
+        if (getCrdr() == null)
             return false;
-        return getCrdr().equalsIgnoreCase(CType.DEBIT.toString())?true:false;//Maestro is debit card
+        return getCrdr().equalsIgnoreCase(CType.DEBIT.toString()) ? true : false;//Maestro is debit card
     }
 
 
@@ -114,6 +134,10 @@ public class Card {
 
     public String getcardToken() {
         return this.token;
+    }
+
+    public String getNickName() {
+        return nickName;
     }
 
     private String normalizeCardNumber(String number) {
