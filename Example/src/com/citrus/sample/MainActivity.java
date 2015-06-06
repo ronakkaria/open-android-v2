@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.citrus.asynch.Binduser;
+import com.citrus.asynch.DeleteCard;
 import com.citrus.asynch.GetWallet;
 import com.citrus.asynch.Savecard;
 import com.citrus.card.Card;
@@ -31,7 +32,7 @@ import com.citruspay.sample.R;
 
 public class MainActivity extends Activity {
 
-	Button bind, savecard, getWallet, paybutton, logoutButton, widgetButton;
+	Button bind, savecard, deletecard, getWallet, paybutton, logoutButton, widgetButton;
 
 	Callback callback;
 
@@ -39,7 +40,7 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
+		
 		init();
 
 		callback = new Callback() {
@@ -52,6 +53,8 @@ public class MainActivity extends Activity {
 		bind = (Button) this.findViewById(R.id.bind);
 
 		savecard = (Button) this.findViewById(R.id.savecard);
+
+		deletecard = (Button) this.findViewById(R.id.deletecard);
 
         getWallet = (Button) this.findViewById(R.id.getWallet);
 
@@ -79,6 +82,15 @@ public class MainActivity extends Activity {
 				else
 					Toast.makeText(getApplicationContext(), "Bind the user before saving card details.", Toast.LENGTH_LONG).show();
 
+			}
+		});
+
+		deletecard.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				new DeleteCard(MainActivity.this, callback)
+						.execute(new String[]{"4242", "VISA"});
 			}
 		});
 
@@ -127,7 +139,7 @@ public class MainActivity extends Activity {
 
 	private void init() {
 
-		Config.setEnv("sandbox"); // replace it with production when you are ready
+		Config.setEnv("production"); // replace it with production when you are ready
 
 		Config.setupSignupId("test-signup");
 		Config.setupSignupSecret("c78ec84e389814a05d3ae46546d16d2e");
