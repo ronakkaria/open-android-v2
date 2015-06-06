@@ -87,7 +87,7 @@ public class CitrusActivity extends ActionBarActivity {
 
         mPaymentParams = getIntent().getParcelableExtra(Constants.INTENT_EXTRA_PAYMENT_PARAMS);
         mPaymentType = getIntent().getParcelableExtra(Constants.INTENT_EXTRA_PAYMENT_TYPE);
-        mCitrusConfig = getIntent().getParcelableExtra(Constants.INTENT_EXTRA_CITRUS_CONFIG);
+        mCitrusConfig = CitrusConfig.getInstance();
 
         // Set payment Params
         if (mPaymentParams != null) {
