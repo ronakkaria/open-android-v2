@@ -466,6 +466,8 @@ public final class TransactionResponse implements Parcelable {
                     transactionResponse.transactionAmount = new Amount(transactionValue, transactionCurrency);
                     transactionResponse.balanceAmount = new Amount(balanceValue, balanceCurrency);
                     transactionResponse.transactionDetails.transactionDateTime = dateTime;
+                } else {
+                    transactionResponse = new TransactionResponse(TransactionStatus.FAILED, ResponseMessages.ERROR_MESSAGE_LOAD_MONEY, null);
                 }
             } else {
                 transactionResponse = new TransactionResponse(TransactionStatus.FAILED, ResponseMessages.ERROR_MESSAGE_LOAD_MONEY, null);
