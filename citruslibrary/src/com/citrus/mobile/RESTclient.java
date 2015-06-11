@@ -444,7 +444,7 @@ public class RESTclient {
             response = httpClient.execute(httpPost);
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return formError(600, "Is your internet connection functional?");
         }
 
         return parseResponse(response);
