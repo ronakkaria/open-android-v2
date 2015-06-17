@@ -41,7 +41,12 @@ public class Card {
     public Card(String cardNum, String month, String year, String cvv, String name, String crdr) {
         this.cardnumber = normalizeCardNumber(cardNum);
         this.cardCVV = cvv;
-        this.nameOnCard = name;
+        if (!android.text.TextUtils.isEmpty(name)) {
+            this.nameOnCard = name;
+        } else {
+            this.nameOnCard = "Name On Card";
+        }
+
         this.expMonth = month;
         this.expYear = year;
         this.crdr = crdr;
@@ -59,7 +64,11 @@ public class Card {
     public Card(String cardNum, String nickname, String month, String year, String cvv, String name, String crdr) {
         this.cardnumber = normalizeCardNumber(cardNum);
         this.cardCVV = cvv;
-        this.nameOnCard = name;
+        if (!android.text.TextUtils.isEmpty(name)) {
+            this.nameOnCard = name;
+        } else {
+            this.nameOnCard = "Name On Card";
+        }
         this.expMonth = month;
         this.expYear = year;
         this.crdr = crdr;
@@ -69,7 +78,11 @@ public class Card {
     public Card(String cardNum, Month month, Year year, String cvv, String name, CType cardType) {
         this.cardnumber = normalizeCardNumber(cardNum);
         this.cardCVV = cvv;
-        this.nameOnCard = name;
+        if (!android.text.TextUtils.isEmpty(name)) {
+            this.nameOnCard = name;
+        } else {
+            this.nameOnCard = "Name On Card";
+        }
         this.expMonth = month.toString();
         this.expYear = year.toString();
         this.crdr = cardType.toString();
