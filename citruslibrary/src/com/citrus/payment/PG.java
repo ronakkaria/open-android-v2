@@ -13,12 +13,6 @@
 package com.citrus.payment;
 
 
-import java.io.IOException;
-import java.util.ArrayList;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.text.TextUtils;
@@ -36,6 +30,12 @@ import com.citrus.mobile.RESTclient;
 import com.citrus.mobile.User;
 import com.citrus.netbank.Bank;
 import com.citrus.netbank.BankPaymentType;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 
 public class PG {
@@ -115,7 +115,12 @@ public class PG {
     public void charge(Callback callback) {
         this.callback = callback;
 
-        validate();
+        // Check if the server is returning the correct bill value.
+        if (bill != null && bill.isValid()) {
+            validate();
+        } else {
+            callback.onTaskexecuted("", "Unable to get bill from server. Please try again.");
+        }
 
     }
 
