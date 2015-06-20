@@ -12,57 +12,68 @@
 */
 package com.citrus.payment;
 
+import android.text.TextUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
 public class Bill {
-    private String txnId, signature, access_key, returnurl, notifyurl=null;
+    private String txnId, signature, access_key, returnurl, notifyurl = null;
     private JSONObject amount;
 
     public Bill(String bill) {
         JSONObject jsonBill = null;
         try {
             jsonBill = new JSONObject(bill);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        try {
-            this.txnId = jsonBill.getString("merchantTxnId");
-            this.amount = jsonBill.getJSONObject("amount");
-            this.signature = jsonBill.getString("requestSignature");
-            this.access_key = jsonBill.getString("merchantAccessKey");
-            this.returnurl = jsonBill.getString("returnUrl");
-            
-            if (jsonBill.has("notifyUrl")) {
-            	this.notifyurl = jsonBill.getString("notifyUrl");
+
+            if (jsonBill != null) {
+
+                this.txnId = jsonBill.getString("merchantTxnId");
+                this.amount = jsonBill.getJSONObject("amount");
+                this.signature = jsonBill.getString("requestSignature");
+                this.access_key = jsonBill.getString("merchantAccessKey");
+                this.returnurl = jsonBill.getString("returnUrl");
+
+                if (jsonBill.has("notifyUrl")) {
+                    this.notifyurl = jsonBill.getString("notifyUrl");
+                }
             }
-            
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
-    
+
     public Bill(String bill, String type) {
-    	JSONObject jsonBill = null;
+        JSONObject jsonBill = null;
         try {
             jsonBill = new JSONObject(bill);
+            if (jsonBill != null) {
+
+                this.txnId = jsonBill.getString("merchantTransactionId");
+                this.amount = jsonBill.getJSONObject("amount");
+                this.signature = jsonBill.getString("signature");
+                this.access_key = jsonBill.getString("merchantAccessKey");
+                this.returnurl = jsonBill.getString("returnUrl");
+
+                if (jsonBill.has("notifyUrl")) {
+                    this.notifyurl = jsonBill.getString("notifyUrl");
+                }
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        try {
-            this.txnId = jsonBill.getString("merchantTransactionId");
-            this.amount = jsonBill.getJSONObject("amount");
-            this.signature = jsonBill.getString("signature");
-            this.access_key = jsonBill.getString("merchantAccessKey");
-            this.returnurl = jsonBill.getString("returnUrl");
-            
-            if (jsonBill.has("notifyUrl")) {
-            	this.notifyurl = jsonBill.getString("notifyUrl");
-            }
-            
-        } catch (JSONException e) {
-            e.printStackTrace();
+    }
+
+    public boolean isValid() {
+        if (!TextUtils.isEmpty(txnId) && amount != null && !TextUtils.isEmpty(signature)
+                && !TextUtils.isEmpty(access_key) && !TextUtils.isEmpty(returnurl)) {
+
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -85,8 +96,8 @@ public class Bill {
     public String getReturnurl() {
         return this.returnurl;
     }
-    
+
     public String getNotifyurl() {
-    	return this.notifyurl;
+        return this.notifyurl;
     }
 }
